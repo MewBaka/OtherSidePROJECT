@@ -11,6 +11,11 @@ https://afdian.net/a/OtherSideProject
 
 我们已入驻爱发电，部分开发日志将会发布于此，您也可以自由捐赠，助力更好的侧面
 
+## ？
+
+<img width="713" alt="image" src="https://github.com/MewBaka/OtherSideProject/assets/131328257/ddb8d477-3ae0-4a29-85ee-52ba2e5626fc">
+
+
 ## 盈利方式以及须知
 
 盈利方式主要依靠捐赠以及周边出售，前期可能略微烧钱，但我不是大饼主义者，我不会让自己手下掏钱，但是我自己掏不出太多，只能按捐赠额分成给手下 =（
