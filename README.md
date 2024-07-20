@@ -51,6 +51,6 @@ https://afdian.net/a/OtherSideProject
 
 ### 昕夕亭——Minecraft服务器
 
-点击链接火速进入：https://qiusyan.top/
+点击链接火速进入：https://docs.mc.qiusyan.top/
 
-> 会不会是我一厢情愿
+> Made with Love. 💖
