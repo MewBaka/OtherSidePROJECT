@@ -1,0 +1,68 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/script.rpy", line 24, in script
+    e "您已创建一个新的 Ren'Py 游戏。"
+  File "game/screens.rpy", line 264, in execute
+    screen quick_menu():
+  File "game/screens.rpy", line 264, in execute
+    screen quick_menu():
+  File "game/screens.rpy", line 266, in execute
+    imagebutton:
+  File "game/screens.rpy", line 266, in keywords
+    imagebutton:
+  File "game/screens.rpy", line 269, in <module>
+    action [Preference("auto-forward", "toggle"), ToggleScreen(notify("hellp"))]
+NameError: name 'notify' is not defined
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/script.rpy", line 24, in script
+    e "您已创建一个新的 Ren'Py 游戏。"
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/ast.py", line 921, in execute
+    renpy.exports.say(who, what, *args, **kwargs)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/exports.py", line 1373, in say
+    who(what, *args, **kwargs)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/character.py", line 1266, in __call__
+    self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/character.py", line 927, in do_display
+    display_say(who,
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/character.py", line 666, in display_say
+    rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/ui.py", line 299, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 3377, in interact
+    repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 3810, in interact_core
+    root_widget.visit_all(lambda i : i.per_interact())
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 582, in visit_all
+    d.visit_all(callback, seen)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 582, in visit_all
+    d.visit_all(callback, seen)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 582, in visit_all
+    d.visit_all(callback, seen)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/screen.py", line 451, in visit_all
+    callback(self)
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/core.py", line 3810, in <lambda>
+    root_widget.visit_all(lambda i : i.per_interact())
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/screen.py", line 462, in per_interact
+    self.update()
+  File "/Users/mac/Documents/renpy-8.0.3-sdk/renpy/display/screen.py", line 653, in update
+    self.screen.function(**self.scope)
+  File "game/screens.rpy", line 264, in execute
+    screen quick_menu():
+  File "game/screens.rpy", line 264, in execute
+    screen quick_menu():
+  File "game/screens.rpy", line 266, in execute
+    imagebutton:
+  File "game/screens.rpy", line 266, in keywords
+    imagebutton:
+  File "game/screens.rpy", line 269, in <module>
+    action [Preference("auto-forward", "toggle"), ToggleScreen(notify("hellp"))]
+NameError: name 'notify' is not defined
+
+macOS-10.16-x86_64-i386-64bit x86_64
+Ren'Py 8.0.3.22090809
+OtherSide 1.0
+Mon Jul 22 15:30:32 2024

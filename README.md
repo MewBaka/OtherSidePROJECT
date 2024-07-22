@@ -7,6 +7,10 @@
 
 一款全新异世冒险百合向视觉小说
 
+## 项目结构
+
+文档等在本文件夹,游戏本体在 `/game/` 文件夹,在导入到Ren'Py程序时,请将目录设置为克隆目录的上一级目录下(如克隆到Desktop/OtherSideProject,那么就选择Desktop作为Ren'Py的工作目录)
+
 ## 🌩 欢迎来到我们的爱发电
 
 https://afdian.net/a/OtherSideProject
