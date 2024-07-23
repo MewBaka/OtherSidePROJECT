@@ -301,6 +301,8 @@ screen navigation():
 
         textbutton _("设置") action ShowMenu("preferences")
 
+        textbutton "画廊" action ShowMenu("gallery")
+
         if _in_replay:
 
             textbutton _("结束回放") action EndReplay(confirm=True)
@@ -309,17 +311,19 @@ screen navigation():
 
             textbutton _("标题界面") action MainMenu()
 
-        textbutton _("关于") action ShowMenu("about")
+        # textbutton _("关于") action ShowMenu("about")
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## “帮助”对移动设备来说并非必需或相关。
-            textbutton _("帮助") action ShowMenu("help")
+            # textbutton _("帮助") action ShowMenu("help")
+            pass
 
         if renpy.variant("pc"):
 
             ## 退出按钮在 iOS 上是被禁止使用的，在安卓和网页上也不是必要的。
-            textbutton _("退出") action Quit(confirm=not main_menu)
+            # textbutton _("退出") action Quit(confirm=not main_menu)
+            pass
 
 
 style navigation_button is gui_button
@@ -364,6 +368,8 @@ screen main_menu():
             text "[config.version]":
                 style "main_menu_version"
 
+screen gallery():
+    tag gallery
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
