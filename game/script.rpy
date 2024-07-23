@@ -20,7 +20,14 @@ label pre_start():
         $ newest_slot = max(saved_games, key=lambda x: x[3])
         $ newest_time = datetime.datetime.fromtimestamp(newest_slot[3]).strftime('%Y-%m-%d %H:%M:%S')
         $ renpy.notify("最近的存档时间为：" + newest_time)
-        $ renpy.call_screen("confirm", "你已有一个存档，是否使用该存档？最新存档时间：" + newest_time, yes_action=lambda: renpy.call("load_saved_game", newest_slot=newest_slot[0]), no_action=lambda: Return())
+        $ renpy.call_screen(
+            "confirm", 
+            "您已有一个存档，是否使用该存档？", 
+            yes_action=lambda: renpy.call("load_saved_game", newest_slot=newest_slot[0]), 
+            no_action=lambda: Return(),
+            yes_title="读取存档",
+            no_title="继续开始新游戏"
+        )
 
     return
 
