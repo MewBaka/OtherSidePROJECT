@@ -224,33 +224,43 @@ style choice_button is default:
 style choice_button_text is default:
     properties gui.button_text_properties("choice_button")
 
+
+init python:
+    def show_notification():
+        renpy.notify("自动前进已" + ("启用" if preferences.afm_enable else "禁用"))
+
 screen quick_menu():
     zorder 100
     imagebutton:
                 idle "gui/quick_menu_button/auto.png"
                 hover "gui/quick_menu_button/auto_hover.png"
-                action Preference("auto-forward", "toggle")
+                action [Preference("auto-forward", "toggle"), Function(show_notification)]
+                at move_button
                 
     imagebutton:
                 idle "gui/quick_menu_button/history.png"
                 hover "gui/quick_menu_button/history_hover.png"
                 action ShowMenu('history')
                 xalign 0.1
+                at move_button
     imagebutton:
                 idle "gui/quick_menu_button/save.png"
                 hover "gui/quick_menu_button/save_hover.png"
                 action ShowMenu('save')
                 xalign 0.19
+                at move_button
     imagebutton:
                 idle "gui/quick_menu_button/fsave.png"
                 hover "gui/quick_menu_button/fsave_hover.png"
                 action QuickSave() 
                 xalign 0.23
+                at move_button
     imagebutton:
                 idle "gui/quick_menu_button/fread.png"
                 hover "gui/quick_menu_button/fread_hover.png"
                 action QuickLoad()
                 xalign 0.27
+                at move_button
 
 
 ## 此代码确保只要用户没有主动隐藏界面，就会在游戏中显示 quick_menu 界面。
@@ -332,6 +342,16 @@ style navigation_button_text is gui_button_text
 style navigation_button:
     size_group "navigation"
     properties gui.button_properties("navigation_button")
+
+transform move_button:
+    xoffset 0
+    yoffset 0
+    on hover:
+        # linear 0.1 xoffset 10
+        linear 0.1 alpha 1.0
+    on idle:
+        # linear 0.1 xoffset 0
+        linear 0.1 alpha 0.5
 
 style navigation_button_text:
     properties gui.button_text_properties("navigation_button")
