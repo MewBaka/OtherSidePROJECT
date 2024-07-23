@@ -315,23 +315,23 @@ translate None strings:
 
     # renpy/common/00action_file.rpy:780
     old "Next file page."
-    new "下一页存档。"
+    new "下一页存档"
 
     # renpy/common/00action_file.rpy:852
     old "Previous file page."
-    new "上一页存档。"
+    new "上一页存档"
 
     # renpy/common/00action_file.rpy:913
     old "Quick save complete."
-    new "快速保存完成。"
+    new "快速保存完成"
 
     # renpy/common/00action_file.rpy:931
     old "Quick save."
-    new "快速保存。"
+    new "快速保存"
 
     # renpy/common/00action_file.rpy:950
     old "Quick load."
-    new "快速读取。"
+    new "快速读取"
 
     # renpy/common/00action_other.rpy:381
     old "Language [text]"

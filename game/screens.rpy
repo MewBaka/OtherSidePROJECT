@@ -301,6 +301,8 @@ screen navigation():
 
         textbutton _("设置") action ShowMenu("preferences")
 
+        textbutton "画廊" action ShowMenu("gallery")
+
         if _in_replay:
 
             textbutton _("结束回放") action EndReplay(confirm=True)
@@ -309,17 +311,19 @@ screen navigation():
 
             textbutton _("标题界面") action MainMenu()
 
-        textbutton _("关于") action ShowMenu("about")
+        # textbutton _("关于") action ShowMenu("about")
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## “帮助”对移动设备来说并非必需或相关。
-            textbutton _("帮助") action ShowMenu("help")
+            # textbutton _("帮助") action ShowMenu("help")
+            pass
 
         if renpy.variant("pc"):
 
             ## 退出按钮在 iOS 上是被禁止使用的，在安卓和网页上也不是必要的。
-            textbutton _("退出") action Quit(confirm=not main_menu)
+            # textbutton _("退出") action Quit(confirm=not main_menu)
+            pass
 
 
 style navigation_button is gui_button
@@ -364,6 +368,8 @@ screen main_menu():
             text "[config.version]":
                 style "main_menu_version"
 
+screen gallery():
+    tag gallery
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -1107,7 +1113,7 @@ style help_label_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#confirm
 
-screen confirm(message, yes_action, no_action):
+screen confirm(message, yes_action, no_action, yes_title=None, no_title=None):
 
     ## 显示此界面时，确保其他界面无法输入。
     modal True
@@ -1133,8 +1139,8 @@ screen confirm(message, yes_action, no_action):
                 xalign 0.5
                 spacing 150
 
-                textbutton _("确定") action yes_action
-                textbutton _("取消") action no_action
+                textbutton yes_title or _("确定") action yes_action
+                textbutton no_title or _("取消") action no_action
 
     ## 右键点击退出并答复 no（取消）。
     key "game_menu" action no_action
