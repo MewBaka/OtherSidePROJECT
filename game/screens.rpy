@@ -390,8 +390,108 @@ screen main_menu():
             text "[config.version]":
                 style "main_menu_version"
 
-screen gallery():
-    tag gallery
+init python:
+    # 步骤1，创建Gallery对象。
+    g = Gallery()
+
+    # 步骤2，在画廊中添加按钮和图像。
+
+    # 一个图像一直解锁状态的按钮。
+    g.button("title")
+    g.image("title")
+
+    # 添加一个包含自动解锁图像的按钮。
+    g.button("dawn")
+    g.image("dawn1")
+    g.unlock("dawn1")
+
+    # 该按钮有多个关联图像。
+    # 我们使用unlock_image函数，这样就不需要同时调用“.image”和“.unlock”了。
+    # 我们也在第一张图像上添加了一个变换效果。
+    g.button("dark")
+    g.unlock_image("bigbeach1")
+    # g.transform(slowpan)
+    g.unlock_image("beach1 mary")
+    g.unlock_image("beach2")
+    g.unlock_image("beach3")
+
+    # 该按钮有一个关联的条件，允许游戏选择是否解锁图片。
+    g.button("end1")
+    g.condition("persistent.unlock_1")
+    g.image("transfer")
+    g.image("moonpic")
+    g.image("girlpic")
+    g.image("nogirlpic")
+    g.image("bad_ending")
+
+    g.button("end2")
+    g.condition("persistent.unlock_2")
+    g.image("library")
+    g.image("beach1 nomoon")
+    g.image("bad_ending")
+
+    # 该按钮的最后一张图像有一个关联条件，只有只有达到两种结局才会解锁。
+    g.button("end3")
+    g.condition("persistent.unlock_3")
+    g.image("littlemary2")
+    g.image("littlemary")
+    g.image("good_ending")
+    g.condition("persistent.unlock_3 and persistent.unlock_4")
+
+    g.button("end4")
+    g.condition("persistent.unlock_4")
+    g.image("hospital1")
+    g.image("hospital2")
+    g.image("hospital3")
+    g.image("heaven")
+    g.image("white")
+    g.image("good_ending")
+    g.condition("persistent.unlock_3 and persistent.unlock_4")
+
+    # 后面两个按钮包含会同时显示的多个图片。
+    # 这可能会用于在背景上显示人物立绘。
+    g.button("dawn mary")
+    g.unlock_image("dawn1", "mary dawn wistful")
+    g.unlock_image("dawn1", "mary dawn smiling")
+    g.unlock_image("dawn1", "mary dawn vhappy")
+
+    g.button("dark mary")
+    g.unlock_image("beach2", "mary dark wistful")
+    g.unlock_image("beach2", "mary dark smiling")
+    g.unlock_image("beach2", "mary dark vhappy")
+
+    # 用于图像切换使用的转场(transition)。
+    g.transition = dissolve
+
+screen gallery:
+
+    # 确保画廊界面替换主菜单。
+    tag menu
+
+    use game_menu(_("画廊"), scroll=None):
+
+        # 按钮网格(grid)。
+        grid 3 3 spacing 20:
+
+            xfill True
+            yfill True
+
+            # 调用make_button显示具体的按钮。
+            add g.make_button("dark", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            add g.make_button("dawn", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            add g.make_button("end1", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+
+            add g.make_button("end2", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            add g.make_button("end3", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            add g.make_button("end4", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+
+            add g.make_button("dark mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            add g.make_button("dawn mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
+            # add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
+
+            # 用于响应后返回主菜单的界面。
+            # 也能用于导航到其他画廊界面。
+        # textbutton "Return" action Return() xalign 0.0 yalign 1.0 xoffset 30 yoffset -30
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
