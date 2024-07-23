@@ -231,8 +231,10 @@ init python:
 
 screen quick_menu():
     zorder 100
+
+    $ auto_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_hover.png"
     imagebutton:
-                idle "gui/quick_menu_button/auto.png"
+                idle auto_image
                 hover "gui/quick_menu_button/auto_hover.png"
                 action [Preference("auto-forward", "toggle"), Function(show_notification)]
                 at move_button
