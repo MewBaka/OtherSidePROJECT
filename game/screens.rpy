@@ -226,18 +226,36 @@ style choice_button_text is default:
 
 
 init python:
-    def show_notification():
+    def show_afm_notification():
         renpy.notify("自动前进已" + ("启用" if preferences.afm_enable else "禁用"))
+
+transform move_button:
+    on hover:
+        linear 0.1 yoffset 5
+        linear 0.1 alpha 1.0
+    on idle:
+        linear 0.1 yoffset 0
+        linear 0.1 alpha 0.5
+
+transform afm_move_button:
+    on hover:
+        linear 0.1 yoffset 5
+        linear 0.1 alpha 1.0
+    on idle:
+        linear 0.1 yoffset 0
+        linear 0.1 alpha 1.0
 
 screen quick_menu():
     zorder 100
 
-    $ auto_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable.png"
+    $ afm_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable.png"
+    $ afm_hover = afm_image
+    $ afm_button_transform = move_button if not preferences.afm_enable else afm_move_button
     imagebutton:
-                idle auto_image
-                hover "gui/quick_menu_button/auto_hover.png"
-                action [Preference("auto-forward", "toggle"), Function(show_notification)]
-                at move_button
+                idle afm_image
+                hover afm_image
+                action [Preference("auto-forward", "toggle"), Function(show_afm_notification)]
+                at afm_button_transform
     imagebutton:
                 idle "gui/quick_menu_button/history.png"
                 hover "gui/quick_menu_button/history_hover.png"
@@ -343,16 +361,6 @@ style navigation_button_text is gui_button_text
 style navigation_button:
     size_group "navigation"
     properties gui.button_properties("navigation_button")
-
-transform move_button:
-    xoffset 0
-    yoffset 0
-    on hover:
-        linear 0.1 yoffset 5
-        linear 0.1 alpha 1.0
-    on idle:
-        linear 0.1 yoffset 0
-        linear 0.1 alpha 0.5
 
 style navigation_button_text:
     properties gui.button_text_properties("navigation_button")
