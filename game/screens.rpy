@@ -1375,6 +1375,7 @@ screen notify(message):
 
     zorder 100
     style_prefix "notify"
+    add "gui/overlay/notify.png" at resize_notify_bg, notify_appear
  
     frame at notify_appear:
         text "[message!tq]"
@@ -1383,12 +1384,15 @@ screen notify(message):
 
 
 transform notify_appear:
+    xalign -1.0
     on show:
-        alpha 0
-        linear .25 alpha 1.0
+        ease_cubic 0.6 xalign 0.0
     on hide:
-        linear .5 alpha 0.0
+        ease_cubic 0.6 xalign -1.0
 
+transform resize_notify_bg:
+    size (720, 250)
+    ypos gui.notify_background_ypos
 
 style notify_frame is empty
 style notify_text is gui_text
@@ -1396,11 +1400,13 @@ style notify_text is gui_text
 style notify_frame:
     ypos gui.notify_ypos
 
-    background Frame("gui/notify.png", gui.notify_frame_borders, tile=gui.frame_tile)
+    # background Frame("gui/overlay/notify.png", gui.notify_frame_borders, tile=gui.frame_tile)
     padding gui.notify_frame_borders.padding
 
 style notify_text:
     properties gui.text_properties("notify")
+    xoffset 40
+    yoffset 20
 
 
 ## NVL 模式界面 ####################################################################
