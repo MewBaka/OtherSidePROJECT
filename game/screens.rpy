@@ -1242,7 +1242,7 @@ style help_label_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#confirm
 
-screen confirm(message, yes_action, no_action, yes_title=None, no_title=None):
+screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_title=None):
 
     ## 显示此界面时，确保其他界面无法输入。
     modal True
@@ -1268,8 +1268,11 @@ screen confirm(message, yes_action, no_action, yes_title=None, no_title=None):
                 xalign 0.5
                 spacing 150
 
-                textbutton yes_title or _("确定") action yes_action
-                textbutton no_title or _("取消") action no_action
+                $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
+                $ n_action = [Return()] if no_action is None else [no_action, Return()]
+
+                textbutton yes_title or _("确定") action y_action
+                textbutton no_title or _("取消") action n_action
 
     ## 右键点击退出并答复 no（取消）。
     key "game_menu" action no_action
