@@ -4,3 +4,4 @@ errors.txt
 traceback.txt
 saves
 cache
+cache/*
