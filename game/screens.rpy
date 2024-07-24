@@ -232,36 +232,35 @@ init python:
 screen quick_menu():
     zorder 100
 
-    $ auto_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_hover.png"
+    $ auto_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable.png"
     imagebutton:
                 idle auto_image
                 hover "gui/quick_menu_button/auto_hover.png"
                 action [Preference("auto-forward", "toggle"), Function(show_notification)]
                 at move_button
-                
     imagebutton:
                 idle "gui/quick_menu_button/history.png"
                 hover "gui/quick_menu_button/history_hover.png"
                 action ShowMenu('history')
-                xalign 0.1
+                xalign 0.09
                 at move_button
     imagebutton:
                 idle "gui/quick_menu_button/save.png"
                 hover "gui/quick_menu_button/save_hover.png"
                 action ShowMenu('save')
-                xalign 0.19
+                xalign 0.13
                 at move_button
     imagebutton:
                 idle "gui/quick_menu_button/fsave.png"
                 hover "gui/quick_menu_button/fsave_hover.png"
                 action QuickSave() 
-                xalign 0.23
+                xalign 0.17
                 at move_button
     imagebutton:
                 idle "gui/quick_menu_button/fread.png"
                 hover "gui/quick_menu_button/fread_hover.png"
                 action QuickLoad()
-                xalign 0.27
+                xalign 0.21
                 at move_button
 
 
@@ -349,10 +348,10 @@ transform move_button:
     xoffset 0
     yoffset 0
     on hover:
-        # linear 0.1 xoffset 10
+        linear 0.1 yoffset 5
         linear 0.1 alpha 1.0
     on idle:
-        # linear 0.1 xoffset 0
+        linear 0.1 yoffset 0
         linear 0.1 alpha 0.5
 
 style navigation_button_text:
