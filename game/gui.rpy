@@ -28,7 +28,7 @@ define gui.gallery_image_width = 300
 define gui.accent_color = '#ffffff'
 
 ## 当文本按钮既未被选中也未被悬停时使用的颜色。
-define gui.idle_color = '#aaaaaa'
+define gui.idle_color = '#1f1f1f'
 
 ## 小的颜色用于小的文本，需要更亮/更暗才能达到同样的效果。
 define gui.idle_small_color = '#888888'
@@ -50,7 +50,7 @@ define gui.hover_muted_color = '#99adc1'
 
 ## 对话和菜单选择文本使用的颜色。
 define gui.text_color = '#ffffff'
-define gui.interface_text_color = '#404040'
+define gui.interface_text_color = '#1f1f1f'
 
 
 ## 字体和字体大小 #####################################################################
