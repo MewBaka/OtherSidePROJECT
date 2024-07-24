@@ -73,7 +73,7 @@ style vslider:
 
 style frame:
     padding gui.frame_borders.padding
-    background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
+    # background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
 
@@ -1242,7 +1242,7 @@ style help_label_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#confirm
 
-screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_title=None):
+screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_title=None, title="提示"):
 
     ## 显示此界面时，确保其他界面无法输入。
     modal True
@@ -1251,28 +1251,40 @@ screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_titl
 
     style_prefix "confirm"
 
-    add "gui/overlay/confirm.png"
 
     frame:
 
         vbox:
             xalign .5
             yalign .5
-            spacing 45
+            spacing 10
+            add "gui/overlay/confirm.png"
+
+            # label _(title):
+            #     style "confirm_prompt"
+            #     xalign -0.15
+            #     yoffset -35
 
             label _(message):
                 style "confirm_prompt"
                 xalign 0.5
+                yoffset -330
+
 
             hbox:
                 xalign 0.5
-                spacing 150
+                yoffset -300
+                spacing 20
 
                 $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
                 $ n_action = [Return()] if no_action is None else [no_action, Return()]
 
-                textbutton yes_title or _("确定") action y_action
-                textbutton no_title or _("取消") action n_action
+                textbutton yes_title or _("确定"):
+                    action y_action
+                    style "confirm_button"
+                textbutton no_title or _("取消"):
+                    action n_action
+                    style "confirm_button"
 
     ## 右键点击退出并答复 no（取消）。
     key "game_menu" action no_action
@@ -1285,8 +1297,8 @@ style confirm_button is gui_medium_button
 style confirm_button_text is gui_medium_button_text
 
 style confirm_frame:
-    background Frame([ "gui/confirm_frame.png", "gui/frame.png"], gui.confirm_frame_borders, tile=gui.frame_tile)
-    padding gui.confirm_frame_borders.padding
+    # background Frame("gui/overlay/confirm.png", 10, 10, tile=gui.frame_tile)
+    padding (200, 110, 200, 110)
     xalign .5
     yalign .5
 
@@ -1296,9 +1308,14 @@ style confirm_prompt_text:
 
 style confirm_button:
     properties gui.button_properties("confirm_button")
+    padding (80, 15, 80, 15)
+
 
 style confirm_button_text:
     properties gui.button_text_properties("confirm_button")
+
+init python:
+    style.confirm_text_white = Style(style.confirm_button)
 
 screen skip_indicator():
 
