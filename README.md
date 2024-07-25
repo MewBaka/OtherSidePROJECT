@@ -1,8 +1,5 @@
 # OtherSideProject 「侧面」
 
->[!WARNING]  
-> 本项目为长远计划，可以查看下方的时间轴来了解之后的事，预计明年八月份正式发布
-
 「欢迎来到兰特斯，异世界的旅者」
 
 一款全新异世冒险百合向视觉小说
@@ -20,14 +17,11 @@ https://afdian.net/a/OtherSideProject
 ## 📅 制作时间轴
 ![image](https://github.com/user-attachments/assets/e09b4c9f-0505-47f4-9216-c9dd0e52830b)
 
+预计明年八月份正式发布
 
 ## 📚 典
 
 <img width="713" alt="image" src="https://github.com/MewBaka/OtherSideProject/assets/131328257/ddb8d477-3ae0-4a29-85ee-52ba2e5626fc">
-
-## 🤔 盈利方式以及须知
-
-盈利方式主要依靠捐赠以及周边出售，前期可能略微烧钱，但我不是大饼主义者，我不会让自己手下掏钱，但是我自己掏不出太多，只能按捐赠额分成给手下 =（
 
 ## 💻 平台考虑
 
@@ -45,11 +39,15 @@ https://afdian.net/a/OtherSideProject
 
 **GitHub**，**Gitee（镜像）**，**自己网站**，**Steam（如果可以）**
 
-## 😄 目前招募中...
+## 😄 制作人员
 
-美术x2（一人负责立绘，一人负责CG）音乐x1（负责背景音乐，最好还要会编曲作曲）剪辑x1（剪辑PV）宣发x2 配音若干
+**Origin story by** Wangzixu_旭
 
-有想法请联系 1480357968（QQ）
+**程序设计**：Nomen， 0x24a | **程序UI设计**：WangZixu_旭
+
+**LOGO原稿设计**：墨泽影 | **设定，脚本编写**：WangZixu_旭，瓦西里.舒克申_Official，神郭嘉，程方宇 Cecffrvy，Bika
+
+**MewBakaLOGO原稿设计**：南介私雨，WangZixu_旭 | **特别感谢**：糖屑
 
 ## 😊 友情链接
 
