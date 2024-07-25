@@ -76,7 +76,7 @@ label GameEnd:
 
 为了后期维护方便，本仓库采用多分支
 
-`beta_version` 测试版分支
+`beta` 测试版分支
 
 `dev_xxx` xxx负责开发的分支
 
@@ -86,7 +86,7 @@ label GameEnd:
 
 其中，**doc**分支仅允许修改文档文件，**script**分支仅允许修改`/game/script.rpy`文件。若需修改其他程序类文件，请单独打开一个分支，命名为：**dev_你的名字**。若发现提交的Pull Requests中修改了不应修改的内容（如在script分支修改程序），则此Pull Requests不予通过
 
-请推送到**beta_version**分支，推送到**main**分支的Pull Requests不予通过
+请推送到**beta**分支，推送到**main**分支的Pull Requests不予通过
 
 ### 合并周期
 
