@@ -232,7 +232,7 @@ define gui.file_slot_rows = 2
 ## 这些变量控制各种用户界面元素的位置和间距。
 
 ## 导航按钮左侧相对于屏幕左侧的位置。
-define gui.navigation_xpos = 60
+define gui.navigation_xpos = 30
 
 ## 快进指示器的垂直位置。
 define gui.skip_ypos = 15

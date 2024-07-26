@@ -245,6 +245,12 @@ transform afm_move_button:
         linear 0.1 yoffset 0
         linear 0.1 alpha 1.0
 
+transform main_menu_move_button:
+    on hover:
+        easein_cubic 0.3 xoffset 10
+    on idle:
+        easein_cubic 0.3 xoffset 0
+
 screen quick_menu():
     zorder 100
 
@@ -312,25 +318,43 @@ screen navigation():
         style_prefix "navigation"
 
         xpos gui.navigation_xpos
-        yalign 0.5
+        yalign 0.9
 
-        spacing gui.navigation_spacing
+        spacing -10
+
+        
+        imagebutton:
+            idle "gui/button/main_menu/settings_idle.png"
+            hover "gui/button/main_menu/settings_hover.png"
+            action ShowMenu("preferences")
+            at main_menu_move_button
+
+        imagebutton:
+            idle "gui/button/main_menu/gallery_idle.png"
+            hover "gui/button/main_menu/gallery_hover.png"
+            action ShowMenu("gallery")
+            at main_menu_move_button
+
+        imagebutton:
+            idle "gui/button/main_menu/saves_idle.png"
+            hover "gui/button/main_menu/saves_hover.png"
+            action ShowMenu("load")
+            at main_menu_move_button
 
         if main_menu:
 
-            textbutton _("开始游戏") action Start()
+            imagebutton:
+
+                idle "gui/button/main_menu/new_idle.png"
+                hover "gui/button/main_menu/new_hover.png"
+                action Start()
+                at main_menu_move_button
 
         else:
 
             textbutton _("历史") action ShowMenu("history")
 
             textbutton _("保存") action ShowMenu("save")
-
-        textbutton _("读取游戏") action ShowMenu("load")
-
-        textbutton _("设置") action ShowMenu("preferences")
-
-        textbutton "画廊" action ShowMenu("gallery")
 
         if _in_replay:
 
@@ -507,10 +531,10 @@ style main_menu_title is main_menu_text
 style main_menu_version is main_menu_text
 
 style main_menu_frame:
-    xsize 420
+    xsize 600
     yfill True
 
-    background "gui/overlay/main_menu.png"
+    # background "gui/overlay/main_menu.png"
 
 style main_menu_vbox:
     xalign 1.0
