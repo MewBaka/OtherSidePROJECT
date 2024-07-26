@@ -212,9 +212,9 @@ style choice_button is button
 style choice_button_text is button_text
 
 style choice_vbox:
-    xalign 0.5
-    ypos 405
-    yanchor 0.5
+    xalign 0.9
+    ypos 750
+    yanchor 0.0
 
     spacing gui.choice_spacing
 
@@ -250,6 +250,11 @@ transform main_menu_move_button:
         easein_cubic 0.3 xoffset 10
     on idle:
         easein_cubic 0.3 xoffset 0
+
+transform main_menu_move_in:
+    xalign -1.0
+    on show:
+        easeout_cubic 0.3 xalign 0.0
 
 screen quick_menu():
     zorder 100
@@ -395,6 +400,24 @@ style navigation_button_text:
 ## 用于在 Ren'Py 启动时显示标题菜单。
 ##
 ## https://www.renpy.cn/doc/screen_special.html#main-menu
+
+# init python:
+#     # 定义一个自定义的转场效果
+#     def shrink_in_transition(old_widget, new_widget):
+#         # 创建一个 Transform 对象来表示旧的 widget
+#         old_transform = renpy.display.transform.Transform(old_widget, zoom=2.0, alpha=0.0, time=1.0)
+#         # 创建一个 Transform 对象来表示新的 widget
+#         new_transform = renpy.display.transform.Transform(new_widget, zoom=1.0, alpha=1.0, time=1.0)
+        
+#         # 返回一个 Composite 对象，包含旧的和新的 Transform
+#         return renpy.display.layout.Composite(
+#             size=(renpy.config.screen_width, renpy.config.screen_height),
+#             children=[
+#                 (0, 0, old_transform),
+#                 (0, 0, new_transform)
+#             ]
+#         )
+
 
 screen main_menu():
 

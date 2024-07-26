@@ -191,16 +191,16 @@ define gui.quick_button_text_selected_color = gui.accent_color
 ##
 ## 游戏内菜单使用的选项按钮。
 
-define gui.choice_button_width = 1185
-define gui.choice_button_height = None
+define gui.choice_button_width = 600
+define gui.choice_button_height = 70
 define gui.choice_button_tile = False
 define gui.choice_button_borders = Borders(150, 8, 150, 8)
 define gui.choice_button_text_font = gui.text_font
 define gui.choice_button_text_size = gui.text_size
 define gui.choice_button_text_xalign = 0.5
-define gui.choice_button_text_idle_color = "#cccccc"
-define gui.choice_button_text_hover_color = "#cccccc"
-define gui.choice_button_text_insensitive_color = "#444444"
+define gui.choice_button_text_idle_color = "#000"
+define gui.choice_button_text_hover_color = "#000"
+define gui.choice_button_text_insensitive_color = "#000"
 
 
 ## 存档按钮 ########################################################################
