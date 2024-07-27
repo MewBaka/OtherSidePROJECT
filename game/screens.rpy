@@ -212,9 +212,9 @@ style choice_button is button
 style choice_button_text is button_text
 
 style choice_vbox:
-    xalign 0.5
-    ypos 405
-    yanchor 0.5
+    xalign 0.9
+    ypos 750
+    yanchor 0.0
 
     spacing gui.choice_spacing
 
@@ -244,6 +244,29 @@ transform afm_move_button:
     on idle:
         linear 0.1 yoffset 0
         linear 0.1 alpha 1.0
+
+transform main_menu_move_button:
+    yoffset -20
+    zoom 1.2
+    on hover:
+        easein_cubic 0.3 xoffset 10
+    on idle:
+        easein_cubic 0.3 xoffset 0
+
+transform main_menu_move_button_reverse:
+    yoffset -20
+    zoom 1.2
+    on hover:
+        easein_cubic 0.3 xoffset -10
+        easein_cubic 0.3 alpha 1.0
+    on idle:
+        easein_cubic 0.3 xoffset 0
+        easein_cubic 0.3 alpha 0.9
+
+transform main_menu_move_in:
+    xalign -1.0
+    on show:
+        easeout_cubic 0.3 xalign 0.0
 
 screen quick_menu():
     zorder 100
@@ -312,25 +335,43 @@ screen navigation():
         style_prefix "navigation"
 
         xpos gui.navigation_xpos
-        yalign 0.5
+        yalign 0.9
 
-        spacing gui.navigation_spacing
+        spacing -10
+
+        
+        imagebutton:
+            idle "gui/button/main_menu/settings_idle.png"
+            hover "gui/button/main_menu/settings_hover.png"
+            action ShowMenu("preferences")
+            at main_menu_move_button
+
+        imagebutton:
+            idle "gui/button/main_menu/gallery_idle.png"
+            hover "gui/button/main_menu/gallery_hover.png"
+            action ShowMenu("gallery")
+            at main_menu_move_button
+
+        imagebutton:
+            idle "gui/button/main_menu/saves_idle.png"
+            hover "gui/button/main_menu/saves_hover.png"
+            action ShowMenu("load")
+            at main_menu_move_button
 
         if main_menu:
 
-            textbutton _("开始游戏") action Start()
+            imagebutton:
+
+                idle "gui/button/main_menu/new_idle.png"
+                hover "gui/button/main_menu/new_hover.png"
+                action Start()
+                at main_menu_move_button
 
         else:
 
             textbutton _("历史") action ShowMenu("history")
 
             textbutton _("保存") action ShowMenu("save")
-
-        textbutton _("读取游戏") action ShowMenu("load")
-
-        textbutton _("设置") action ShowMenu("preferences")
-
-        textbutton "画廊" action ShowMenu("gallery")
 
         if _in_replay:
 
@@ -372,6 +413,24 @@ style navigation_button_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#main-menu
 
+# init python:
+#     # 定义一个自定义的转场效果
+#     def shrink_in_transition(old_widget, new_widget):
+#         # 创建一个 Transform 对象来表示旧的 widget
+#         old_transform = renpy.display.transform.Transform(old_widget, zoom=2.0, alpha=0.0, time=1.0)
+#         # 创建一个 Transform 对象来表示新的 widget
+#         new_transform = renpy.display.transform.Transform(new_widget, zoom=1.0, alpha=1.0, time=1.0)
+        
+#         # 返回一个 Composite 对象，包含旧的和新的 Transform
+#         return renpy.display.layout.Composite(
+#             size=(renpy.config.screen_width, renpy.config.screen_height),
+#             children=[
+#                 (0, 0, old_transform),
+#                 (0, 0, new_transform)
+#             ]
+#         )
+
+
 screen main_menu():
 
     ## 此语句可确保替换掉任何其他菜单界面。
@@ -386,16 +445,40 @@ screen main_menu():
     ## use 语句将其他的界面包含进此界面。标题界面的实际内容在导航界面中。
     use navigation
 
+    # 在右上角，靠右对齐的两个按钮
+    vbox:
+        style "main_menu_vbox"
+        spacing -10
+        xalign 1.0
+        yalign 0.1
+        yoffset 0
+
+        imagebutton:
+            idle "gui/button/main_menu/github_idle.png"
+            hover "gui/button/main_menu/github_hover.png"
+            action OpenURL("https://github.com/MewBaka/OtherSideProject/")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
+        imagebutton:
+            idle "gui/button/main_menu/afdian_idle.png"
+            hover "gui/button/main_menu/afdian_hover.png"
+            action OpenURL("https://afdian.com/a/OtherSideProject")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
+
     if gui.show_name:
 
-        vbox:
-            style "main_menu_vbox"
+        hbox:
+            style "main_menu_hbox"
+            spacing 40
 
-            text "[config.name!t]":
-                style "main_menu_title"
+            vbox:
+                style "main_menu_vbox"
 
-            text "[config.version]":
-                style "main_menu_version"
+            # add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
+                
 
 init python:
     # 步骤1，创建Gallery对象。
@@ -507,10 +590,10 @@ style main_menu_title is main_menu_text
 style main_menu_version is main_menu_text
 
 style main_menu_frame:
-    xsize 420
+    xsize 600
     yfill True
 
-    background "gui/overlay/main_menu.png"
+    # background "gui/overlay/main_menu.png"
 
 style main_menu_vbox:
     xalign 1.0
@@ -518,6 +601,9 @@ style main_menu_vbox:
     xmaximum 1200
     yalign 1.0
     yoffset -30
+
+style main_menu_hbox:
+    yoffset 60
 
 style main_menu_text:
     properties gui.text_properties("main_menu", accent=True)
@@ -1268,12 +1354,12 @@ screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_titl
             label _(message):
                 style "confirm_prompt"
                 xalign 0.5
-                yoffset -330
+                yoffset -255
 
 
             hbox:
                 xalign 0.5
-                yoffset -300
+                yoffset -230
                 spacing 20
 
                 $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
@@ -1391,7 +1477,7 @@ transform notify_appear:
         ease_cubic 0.6 xalign -1.0
 
 transform resize_notify_bg:
-    size (720, 250)
+    size (460, 155)
     ypos gui.notify_background_ypos
 
 style notify_frame is empty
@@ -1405,8 +1491,8 @@ style notify_frame:
 
 style notify_text:
     properties gui.text_properties("notify")
-    xoffset 40
-    yoffset 20
+    xoffset 20
+    yoffset -25
 
 
 ## NVL 模式界面 ####################################################################
