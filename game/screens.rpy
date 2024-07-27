@@ -246,6 +246,8 @@ transform afm_move_button:
         linear 0.1 alpha 1.0
 
 transform main_menu_move_button:
+    yoffset -20
+    zoom 1.2
     on hover:
         easein_cubic 0.3 xoffset 10
     on idle:
@@ -435,14 +437,15 @@ screen main_menu():
 
     if gui.show_name:
 
-        vbox:
-            style "main_menu_vbox"
+        hbox:
+            style "main_menu_hbox"
+            spacing 40
 
-            text "[config.name!t]":
-                style "main_menu_title"
+            vbox:
+                style "main_menu_vbox"
 
-            text "[config.version]":
-                style "main_menu_version"
+            add im.Scale("gui/Window.png", 1850, 970)
+                
 
 init python:
     # 步骤1，创建Gallery对象。
@@ -565,6 +568,9 @@ style main_menu_vbox:
     xmaximum 1200
     yalign 1.0
     yoffset -30
+
+style main_menu_hbox:
+    yoffset 60
 
 style main_menu_text:
     properties gui.text_properties("main_menu", accent=True)
