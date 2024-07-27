@@ -253,6 +253,16 @@ transform main_menu_move_button:
     on idle:
         easein_cubic 0.3 xoffset 0
 
+transform main_menu_move_button_reverse:
+    yoffset -20
+    zoom 1.2
+    on hover:
+        easein_cubic 0.3 xoffset -10
+        easein_cubic 0.3 alpha 1.0
+    on idle:
+        easein_cubic 0.3 xoffset 0
+        easein_cubic 0.3 alpha 0.9
+
 transform main_menu_move_in:
     xalign -1.0
     on show:
@@ -435,6 +445,29 @@ screen main_menu():
     ## use 语句将其他的界面包含进此界面。标题界面的实际内容在导航界面中。
     use navigation
 
+    # 在右上角，靠右对齐的两个按钮
+    vbox:
+        style "main_menu_vbox"
+        spacing -10
+        xalign 1.0
+        yalign 0.1
+        yoffset 0
+
+        imagebutton:
+            idle "gui/button/main_menu/github_idle.png"
+            hover "gui/button/main_menu/github_hover.png"
+            action OpenURL("https://github.com/MewBaka/OtherSideProject/")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
+        imagebutton:
+            idle "gui/button/main_menu/afdian_idle.png"
+            hover "gui/button/main_menu/afdian_hover.png"
+            action OpenURL("https://afdian.com/a/OtherSideProject")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
+
     if gui.show_name:
 
         hbox:
@@ -444,7 +477,7 @@ screen main_menu():
             vbox:
                 style "main_menu_vbox"
 
-            add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
+            # add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
                 
 
 init python:
