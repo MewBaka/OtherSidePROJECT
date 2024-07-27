@@ -367,15 +367,15 @@ screen navigation():
                 action Start()
                 at main_menu_move_button
 
-        else:
+        # else:
 
-            textbutton _("历史") action ShowMenu("history")
+            # textbutton _("历史") action ShowMenu("history")
 
-            textbutton _("保存") action ShowMenu("save")
+            # textbutton _("保存") action ShowMenu("save")
 
-        if _in_replay:
+        # if _in_replay:
 
-            textbutton _("结束回放") action EndReplay(confirm=True)
+        #     textbutton _("结束回放") action EndReplay(confirm=True)
 
         elif not main_menu:
 
@@ -395,6 +395,16 @@ screen navigation():
             # textbutton _("退出") action Quit(confirm=not main_menu)
             pass
 
+
+screen panel():
+    hbox:
+        style "main_menu_hbox"
+        spacing 40
+
+        vbox:
+            style "main_menu_vbox"
+
+        add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
 
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
@@ -629,8 +639,10 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     if main_menu:
         add gui.main_menu_background
+        use panel
     else:
         add gui.game_menu_background
+        use panel
 
     frame:
         style "game_menu_outer_frame"
@@ -993,6 +1005,8 @@ screen preferences():
                         textbutton _("全部静音"):
                             action Preference("all mute", "toggle")
                             style "mute_all_button"
+
+    
 
 
 style pref_label is gui_label
