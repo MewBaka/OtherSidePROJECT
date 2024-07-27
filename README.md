@@ -25,9 +25,9 @@ https://afdian.net/a/OtherSideProject
 
 ## 💻 平台考虑
 
-**MacOS，Linux，Windows，Android** 免费游玩
+**MacOS，Linux，Windows**
 
-**iOS**平台可考虑下载ipa自签名/购买提供的证书服务
+Android/iOS平台考虑社区移植
 
 ## 💻 技术栈
 
