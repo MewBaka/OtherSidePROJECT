@@ -62,7 +62,7 @@ define gui.text_font = "AlibabaPuHuiTi-3-75-SemiBold.ttf"
 define gui.name_text_font = "AlibabaPuHuiTi-3-85-Bold.ttf"
 
 ## 游戏外文本使用的字体。
-define gui.interface_text_font = "SourceHanSansLite.ttf"
+define gui.interface_text_font = "AlibabaPuHuiTi-3-75-SemiBold.ttf"
 
 ## 普通对话文本的大小。
 define gui.text_size = 33
