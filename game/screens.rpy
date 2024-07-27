@@ -444,7 +444,7 @@ screen main_menu():
             vbox:
                 style "main_menu_vbox"
 
-            add im.Scale("gui/Window.png", 1850, 970)
+            add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
                 
 
 init python:
