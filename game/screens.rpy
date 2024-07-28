@@ -732,11 +732,14 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     #     action Return()
 
-    label title
+    label title at preference_title
 
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
 
+transform preference_title:
+    xoffset 150
+    yoffset 75
 
 style game_menu_outer_frame is empty
 style game_menu_navigation_frame is empty
