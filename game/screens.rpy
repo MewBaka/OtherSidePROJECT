@@ -253,6 +253,9 @@ transform main_menu_move_button:
     on idle:
         easein_cubic 0.3 xoffset 0
 
+transform transparent:
+    alpha 0.0
+
 transform main_menu_move_button_reverse:
     yoffset -20
     zoom 1.2
@@ -339,26 +342,52 @@ screen navigation():
 
         spacing -10
 
+
+        if not main_menu:
         
-        imagebutton:
-            idle "gui/button/main_menu/settings_idle.png"
-            hover "gui/button/main_menu/settings_hover.png"
-            action ShowMenu("preferences")
-            at main_menu_move_button
+            imagebutton:
+                idle "gui/button/main_menu/settings_idle.png"
+                hover "gui/button/main_menu/settings_hover.png"
+                action ShowMenu("preferences")
+                at transparent
 
-        imagebutton:
-            idle "gui/button/main_menu/gallery_idle.png"
-            hover "gui/button/main_menu/gallery_hover.png"
-            action ShowMenu("gallery")
-            at main_menu_move_button
+            imagebutton:
+                idle "gui/button/main_menu/continue_idle.png"
+                hover "gui/button/main_menu/continue_hover.png"
+                action Return()
+                at main_menu_move_button
 
-        imagebutton:
-            idle "gui/button/main_menu/saves_idle.png"
-            hover "gui/button/main_menu/saves_hover.png"
-            action ShowMenu("load")
-            at main_menu_move_button
+            imagebutton:
+                idle "gui/button/main_menu/saves_idle.png"
+                hover "gui/button/main_menu/saves_hover.png"
+                action ShowMenu("load")
+                at main_menu_move_button
 
-        if main_menu:
+            imagebutton:
+
+                idle "gui/button/main_menu/return_idle.png"
+                hover "gui/button/main_menu/return_hover.png"
+                action MainMenu()
+                at main_menu_move_button
+
+        else:
+            imagebutton:
+                idle "gui/button/main_menu/settings_idle.png"
+                hover "gui/button/main_menu/settings_hover.png"
+                action ShowMenu("preferences")
+                at main_menu_move_button
+
+            imagebutton:
+                idle "gui/button/main_menu/gallery_idle.png"
+                hover "gui/button/main_menu/gallery_hover.png"
+                action ShowMenu("gallery")
+                at main_menu_move_button
+
+            imagebutton:
+                idle "gui/button/main_menu/saves_idle.png"
+                hover "gui/button/main_menu/saves_hover.png"
+                action ShowMenu("load")
+                at main_menu_move_button
 
             imagebutton:
 
@@ -377,9 +406,9 @@ screen navigation():
 
         #     textbutton _("结束回放") action EndReplay(confirm=True)
 
-        elif not main_menu:
+        # elif not main_menu:
 
-            textbutton _("标题界面") action MainMenu()
+        #     textbutton _("标题界面") action MainMenu()
 
         # textbutton _("关于") action ShowMenu("about")
 
@@ -474,6 +503,13 @@ screen main_menu():
             idle "gui/button/main_menu/afdian_idle.png"
             hover "gui/button/main_menu/afdian_hover.png"
             action OpenURL("https://afdian.com/a/OtherSideProject")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
+        imagebutton:
+            idle "gui/button/main_menu/about_idle.png"
+            hover "gui/button/main_menu/about_hover.png"
+            action ShowMenu("about")
             at main_menu_move_button_reverse
             xalign 1.0
 
@@ -691,10 +727,10 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     use navigation
 
-    textbutton _("返回"):
-        style "return_button"
+    # textbutton _("返回"):
+    #     style "return_button"
 
-        action Return()
+    #     action Return()
 
     label title
 
