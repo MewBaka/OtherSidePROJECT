@@ -7,3 +7,4 @@ cache
 cache/*
 *.pyc
 *.rpyc
+*/*.rpyc
