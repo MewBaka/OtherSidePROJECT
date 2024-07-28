@@ -1404,12 +1404,12 @@ screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_titl
             label _(message):
                 style "confirm_prompt"
                 xalign 0.5
-                yoffset -330
+                yoffset -255
 
 
             hbox:
                 xalign 0.5
-                yoffset -300
+                yoffset -230
                 spacing 20
 
                 $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
@@ -1527,7 +1527,7 @@ transform notify_appear:
         ease_cubic 0.6 xalign -1.0
 
 transform resize_notify_bg:
-    size (720, 250)
+    size (460, 155)
     ypos gui.notify_background_ypos
 
 style notify_frame is empty
@@ -1541,8 +1541,8 @@ style notify_frame:
 
 style notify_text:
     properties gui.text_properties("notify")
-    xoffset 40
-    yoffset 20
+    xoffset 20
+    yoffset -25
 
 
 ## NVL 模式界面 ####################################################################

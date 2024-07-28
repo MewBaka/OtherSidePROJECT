@@ -5,3 +5,5 @@ traceback.txt
 saves
 cache
 cache/*
+*.pyc
+*.rpyc
