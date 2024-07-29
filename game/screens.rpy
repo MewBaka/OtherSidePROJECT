@@ -530,71 +530,20 @@ init python:
     # 步骤1，创建Gallery对象。
     g = Gallery()
 
-    # 步骤2，在画廊中添加按钮和图像。
-
-    # 一个图像一直解锁状态的按钮。
-    g.button("title")
-    g.image("title")
-
-    # 添加一个包含自动解锁图像的按钮。
-    g.button("dawn")
-    g.image("dawn1")
-    g.unlock("dawn1")
-
-    # 该按钮有多个关联图像。
-    # 我们使用unlock_image函数，这样就不需要同时调用“.image”和“.unlock”了。
-    # 我们也在第一张图像上添加了一个变换效果。
-    g.button("dark")
-    g.unlock_image("bigbeach1")
-    # g.transform(slowpan)
-    g.unlock_image("beach1 mary")
-    g.unlock_image("beach2")
-    g.unlock_image("beach3")
-
     # 该按钮有一个关联的条件，允许游戏选择是否解锁图片。
-    g.button("end1")
+    g.button("dark")
     g.condition("persistent.unlock_1")
-    g.image("transfer")
-    g.image("moonpic")
+    g.image("dawn")
+    g.image("dark")
     g.image("girlpic")
     g.image("nogirlpic")
     g.image("bad_ending")
 
-    g.button("end2")
+    g.button("dawn")
     g.condition("persistent.unlock_2")
     g.image("library")
     g.image("beach1 nomoon")
     g.image("bad_ending")
-
-    # 该按钮的最后一张图像有一个关联条件，只有只有达到两种结局才会解锁。
-    g.button("end3")
-    g.condition("persistent.unlock_3")
-    g.image("littlemary2")
-    g.image("littlemary")
-    g.image("good_ending")
-    g.condition("persistent.unlock_3 and persistent.unlock_4")
-
-    g.button("end4")
-    g.condition("persistent.unlock_4")
-    g.image("hospital1")
-    g.image("hospital2")
-    g.image("hospital3")
-    g.image("heaven")
-    g.image("white")
-    g.image("good_ending")
-    g.condition("persistent.unlock_3 and persistent.unlock_4")
-
-    # 后面两个按钮包含会同时显示的多个图片。
-    # 这可能会用于在背景上显示人物立绘。
-    g.button("dawn mary")
-    g.unlock_image("dawn1", "mary dawn wistful")
-    g.unlock_image("dawn1", "mary dawn smiling")
-    g.unlock_image("dawn1", "mary dawn vhappy")
-
-    g.button("dark mary")
-    g.unlock_image("beach2", "mary dark wistful")
-    g.unlock_image("beach2", "mary dark smiling")
-    g.unlock_image("beach2", "mary dark vhappy")
 
     # 用于图像切换使用的转场(transition)。
     g.transition = dissolve
@@ -603,6 +552,8 @@ screen gallery:
 
     # 确保画廊界面替换主菜单。
     tag menu
+
+    use click_to_return
 
     use game_menu(_("画廊"), scroll=None):
 
@@ -615,14 +566,6 @@ screen gallery:
             # 调用make_button显示具体的按钮。
             add g.make_button("dark", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
             add g.make_button("dawn", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end1", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-
-            add g.make_button("end2", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end3", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end4", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-
-            add g.make_button("dark mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("dawn mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
             # add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
 
             # 用于响应后返回主菜单的界面。
@@ -842,12 +785,16 @@ screen save():
 
     tag menu
 
+    use click_to_return
+
     use file_slots(_("保存"))
 
 
 screen load():
 
     tag menu
+
+    use click_to_return
 
     use file_slots(_("读取存档"))
 
@@ -914,11 +861,11 @@ screen file_slots(title):
 
                 textbutton _("<") action FilePagePrevious()
 
-                if config.has_autosave:
-                    textbutton _("{#auto_page}A") action FilePage("auto")
+                # if config.has_autosave:
+                #     textbutton _("{#auto_page}A") action FilePage("auto")
 
-                if config.has_quicksave:
-                    textbutton _("{#quick_page}Q") action FilePage("quick")
+                # if config.has_quicksave:
+                #     textbutton _("{#quick_page}Q") action FilePage("quick")
 
                 ## range(1, 10) 给出 1 到 9 之间的数字。
                 for page in range(1, 10):
@@ -965,9 +912,27 @@ style slot_button_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#preferences
 
+screen click_to_return():
+    button:
+        action Return()
+        style "default"
+        xysize (config.screen_width, config.screen_height)
+        background None
+
+init python:
+    def toggle_ffk():
+        if config.keymap["skip"].count("K_LCTRL") == 0:
+            config.keymap["skip"].append("K_LCTRL")
+            config.keymap["skip"].append("K_RCTRL")
+        else:
+            config.keymap["skip"].remove("K_LCTRL")
+            config.keymap["skip"].remove("K_RCTRL")
+
 screen preferences():
 
     tag menu
+
+    use click_to_return
 
     use game_menu(_("设置"), scroll="viewport"):
 
@@ -976,32 +941,34 @@ screen preferences():
             hbox:
                 box_wrap True
 
-                if renpy.variant("pc") or renpy.variant("web"):
+                # if renpy.variant("pc") or renpy.variant("web"):
 
-                    vbox:
-                        style_prefix "radio"
-                        label _("显示")
-                        textbutton _("窗口") action Preference("display", "window")
-                        textbutton _("") action Preference("display", "fullscreen")
+                #     vbox:
+                #         style_prefix "radio"
+                #         label _("显示")
+                #         textbutton _("窗口") action Preference("display", "window")
+                #         textbutton _("") action Preference("display", "fullscreen")
 
-                vbox:
-                    style_prefix "check"
-                    label _("快进")
-                    textbutton _("未读文本") action Preference("skip", "toggle")
-                    textbutton _("选项后继续") action Preference("after choices", "toggle")
-                    textbutton _("忽略转场") action InvertSelected(Preference("transitions", "toggle"))
+                # vbox:
+                #     style_prefix "check"
+                #     label _("快进")
+                #     textbutton _("未读文本") action Preference("skip", "toggle")
+                #     textbutton _("选项后继续") action Preference("after choices", "toggle")
+                #     textbutton _("忽略转场") action InvertSelected(Preference("transitions", "toggle"))
 
                 ## 可在此处添加 radio_pref 或 check_pref 类型的额外 vbox，以添加
                 ## 额外的创建者定义的偏好设置。
 
             null height (4 * gui.pref_spacing)
 
+            $ active_ffk = ffk_active if "K_LCTRL" in config.keymap["skip"] else ffk_inactive
+            $ active_ffk_text = "使用Ctrl快进游戏(开)" if "K_LCTRL" in config.keymap["skip"] else "使用Ctrl快进游戏(关)"
+
             hbox:
                 style_prefix "slider"
                 box_wrap True
 
                 vbox:
-
                     label _("文字速度")
 
                     bar value Preference("text speed")
@@ -1009,6 +976,8 @@ screen preferences():
                     label _("自动前进时间")
 
                     bar value Preference("auto-forward time")
+
+                    textbutton _(active_ffk_text) action Function(toggle_ffk) at active_ffk
 
                 vbox:
 
@@ -1073,6 +1042,12 @@ style slider_pref_vbox is pref_vbox
 
 style mute_all_button is check_button
 style mute_all_button_text is check_button_text
+
+transform ffk_active:
+    alpha 1.0
+
+transform ffk_inactive:
+    alpha 0.5
 
 style pref_label:
     top_margin gui.pref_spacing
