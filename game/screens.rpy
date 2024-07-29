@@ -393,7 +393,7 @@ screen navigation():
 
                 idle "gui/button/main_menu/new_idle.png"
                 hover "gui/button/main_menu/new_hover.png"
-                action Start()
+                action [Start(), renpy.transition(dissolve)]
                 at main_menu_move_button
 
         # else:
@@ -822,33 +822,43 @@ screen file_slots(title):
                     style "page_label_text"
                     value page_name_value
 
-            ## 存档位网格。
-            grid gui.file_slot_cols gui.file_slot_rows:
+            ## 存档位列表。
+            viewport:
                 style_prefix "slot"
-
                 xalign 0.5
                 yalign 0.5
+                mousewheel True
+                draggable True
+                scrollbars "vertical"
+                ysize 600  # 调整高度
+                yoffset 0
+                xoffset 200
 
-                spacing gui.slot_spacing
+                vbox:
+                    spacing gui.slot_spacing
 
-                for i in range(gui.file_slot_cols * gui.file_slot_rows):
+                    for row in range(gui.file_slot_rows):
+                        hbox:
+                            spacing gui.slot_spacing
+                            for col in range(2):  # 两列
+                                $ slot = row * 2 + col + 1
 
-                    $ slot = i + 1
+                                if slot <= gui.file_slot_cols * gui.file_slot_rows:
+                                    button:
+                                        action FileAction(slot)
 
-                    button:
-                        action FileAction(slot)
+                                        has hbox
 
-                        has vbox
+                                        add FileScreenshot(slot) xalign 0.5
 
-                        add FileScreenshot(slot) xalign 0.5
+                                        vbox:
+                                            text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
+                                                style "slot_time_text"
 
-                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
-                            style "slot_time_text"
+                                            text FileSaveName(slot):
+                                                style "slot_name_text"
 
-                        text FileSaveName(slot):
-                            style "slot_name_text"
-
-                        key "save_delete" action FileDelete(slot)
+                                        key "save_delete" action FileDelete(slot)
 
             ## 用于访问其他页面的按钮。
             hbox:
@@ -861,18 +871,11 @@ screen file_slots(title):
 
                 textbutton _("<") action FilePagePrevious()
 
-                # if config.has_autosave:
-                #     textbutton _("{#auto_page}A") action FilePage("auto")
-
-                # if config.has_quicksave:
-                #     textbutton _("{#quick_page}Q") action FilePage("quick")
-
                 ## range(1, 10) 给出 1 到 9 之间的数字。
                 for page in range(1, 10):
                     textbutton "[page]" action FilePage(page)
 
                 textbutton _(">") action FilePageNext()
-
 
 style page_label is gui_label
 style page_label_text is gui_label_text
