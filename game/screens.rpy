@@ -849,7 +849,7 @@ screen load():
 
     tag menu
 
-    use file_slots(_("读取游戏"))
+    use file_slots(_("读取存档"))
 
 
 screen file_slots(title):
@@ -908,7 +908,7 @@ screen file_slots(title):
                 style_prefix "page"
 
                 xalign 0.5
-                yalign 1.0
+                yalign 0.94
 
                 spacing gui.page_spacing
 
@@ -1406,14 +1406,14 @@ screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_titl
 
             label _(message):
                 style "confirm_prompt"
-                xalign 0.5
+                xalign 0.63
                 yoffset -255
 
 
             hbox:
                 xalign 0.5
                 yoffset -230
-                spacing 20
+                spacing 0
 
                 $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
                 $ n_action = [Return()] if no_action is None else [no_action, Return()]
@@ -1438,8 +1438,8 @@ style confirm_button_text is gui_medium_button_text
 style confirm_frame:
     # background Frame("gui/overlay/confirm.png", 10, 10, tile=gui.frame_tile)
     padding (200, 110, 200, 110)
-    xalign .5
-    yalign .5
+    xalign 0.5
+    yalign 0.5
 
 style confirm_prompt_text:
     text_align 0.5
@@ -1545,7 +1545,7 @@ style notify_frame:
 style notify_text:
     properties gui.text_properties("notify")
     xoffset 20
-    yoffset -25
+    yoffset -29
 
 
 ## NVL 模式界面 ####################################################################
