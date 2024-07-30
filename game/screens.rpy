@@ -336,6 +336,9 @@ style quick_button_text:
 
 define Transition_time = 0.3
 
+# init python:
+#     renpy.transition(dissolve)
+
 screen navigation():
 
     vbox:
@@ -397,7 +400,7 @@ screen navigation():
 
                 idle "gui/button/main_menu/new_idle.png"
                 hover "gui/button/main_menu/new_hover.png"
-                action Start()
+                action [Start(), renpy.transition(Dissolve(Transition_time))]
                 at main_menu_move_button
 
         # else:
