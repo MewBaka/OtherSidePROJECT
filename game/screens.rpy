@@ -334,6 +334,8 @@ style quick_button_text:
 ##
 ## 该界面包含在标题菜单和游戏菜单中，并提供导航到其他菜单，以及启动游戏。
 
+define Transition_time = 0.3
+
 screen navigation():
 
     vbox:
@@ -350,7 +352,7 @@ screen navigation():
             imagebutton:
                 idle "gui/button/main_menu/settings_idle.png"
                 hover "gui/button/main_menu/settings_hover.png"
-                action ShowMenu("preferences")
+                action ShowMenu("preferences", _transition=Dissolve(Transition_time))
                 at transparent
 
             imagebutton:
@@ -362,7 +364,7 @@ screen navigation():
             imagebutton:
                 idle "gui/button/main_menu/saves_idle.png"
                 hover "gui/button/main_menu/saves_hover.png"
-                action ShowMenu("load")
+                action ShowMenu("load", _transition=Dissolve(Transition_time))
                 at main_menu_move_button
 
             imagebutton:
@@ -376,26 +378,25 @@ screen navigation():
             imagebutton:
                 idle "gui/button/main_menu/settings_idle.png"
                 hover "gui/button/main_menu/settings_hover.png"
-                action ShowMenu("preferences")
+                action ShowMenu("preferences", _transition=Dissolve(Transition_time))
                 at main_menu_move_button
 
             imagebutton:
                 idle "gui/button/main_menu/gallery_idle.png"
                 hover "gui/button/main_menu/gallery_hover.png"
-                action ShowMenu("gallery")
+                action ShowMenu("gallery", _transition=Dissolve(Transition_time))
                 at main_menu_move_button
 
             imagebutton:
                 idle "gui/button/main_menu/saves_idle.png"
                 hover "gui/button/main_menu/saves_hover.png"
-                action ShowMenu("load")
+                action ShowMenu("load", _transition=Dissolve(Transition_time))
                 at main_menu_move_button
 
             imagebutton:
 
                 idle "gui/button/main_menu/new_idle.png"
                 hover "gui/button/main_menu/new_hover.png"
-                # action [Function(renpy.start_interaction, "start", transition=dissolve)]
                 action Start()
                 at main_menu_move_button
 
