@@ -1,13 +1,4 @@
-﻿################################################################################
-## 初始化
-################################################################################
-
-init offset = -1
-
-
-################################################################################
-## 样式
-################################################################################
+﻿init offset = -1
 
 style default:
     properties gui.text_properties()
@@ -334,7 +325,7 @@ style quick_button_text:
 ##
 ## 该界面包含在标题菜单和游戏菜单中，并提供导航到其他菜单，以及启动游戏。
 
-define Transition_time = 0.3
+define Transition_time = 0.2
 
 # init python:
 #     renpy.transition(dissolve)
@@ -351,7 +342,6 @@ screen navigation():
 
 
         if not main_menu:
-        
             imagebutton:
                 idle "gui/button/main_menu/settings_idle.png"
                 hover "gui/button/main_menu/settings_hover.png"
@@ -968,7 +958,7 @@ screen preferences():
             null height (4 * gui.pref_spacing)
 
             $ active_ffk = ffk_active if config.allow_skipping else ffk_inactive
-            $ active_ffk_text = "使用Ctrl快进游戏(开)" if config.allow_skipping else "使用Ctrl快进游戏(关)"
+            $ active_ffk_text = "允许快进游戏 开启" if config.allow_skipping else "允许快进游戏 关闭"
 
             hbox:
                 style_prefix "slider"

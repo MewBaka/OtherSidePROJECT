@@ -1,6 +1,6 @@
 ﻿define config.name = _("侧面Project")
+define config.version = "v0.1.66"
 define gui.show_name = False
-define config.version = "V0.1.0"
 define gui.about = _p("""
 您可以通过 添加QQ:1480357968 或 发送邮件到:team@mewbaka.top 来联系我们
 
