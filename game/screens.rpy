@@ -922,7 +922,7 @@ style slot_button_text:
 
 screen click_to_return():
     button:
-        action Return()
+        action [Return()]
         style "default"
         xysize (config.screen_width, config.screen_height)
         background None
