@@ -22,7 +22,7 @@ label pre_start():
     return
 
 label start:
-    $ renpy.call("pre_start")
+    # $ renpy.call("pre_start")
 
     $ renpy.notify("Game start")
 

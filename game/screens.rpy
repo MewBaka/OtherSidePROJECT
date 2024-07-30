@@ -395,7 +395,8 @@ screen navigation():
 
                 idle "gui/button/main_menu/new_idle.png"
                 hover "gui/button/main_menu/new_hover.png"
-                action [Start(), renpy.transition(dissolve)]
+                # action [Function(renpy.start_interaction, "start", transition=dissolve)]
+                action Start()
                 at main_menu_move_button
 
         # else:
@@ -800,41 +801,40 @@ screen load():
 
     use file_slots(_("读取存档"))
 
-
 screen file_slots(title):
 
-    default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
+    # default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
 
     use game_menu(title):
 
         fixed:
 
             ## 此代码确保输入控件在任意按钮执行前可以获取 enter 事件。
-            order_reverse True
+            # order_reverse True
 
             ## 页面名称，可以通过单击按钮进行编辑。
-            button:
-                style "page_label"
+            # button:
+            #     style "page_label"
 
-                key_events True
-                xalign 0.5
-                action page_name_value.Toggle()
+            #     key_events True
+            #     xalign 0.5
+            #     action page_name_value.Toggle()
 
-                input:
-                    style "page_label_text"
-                    value page_name_value
+            #     input:
+            #         style "page_label_text"
+            #         value page_name_value
 
             ## 存档位列表。
             viewport:
                 style_prefix "slot"
-                xalign 0.5
-                yalign 0.5
+                xalign 0.0
+                yalign 0.2
                 mousewheel True
                 draggable True
                 scrollbars "vertical"
-                ysize 600  # 调整高度
+                ysize 700  # 调整高度
                 yoffset 0
-                xoffset 200
+                xoffset 100
 
                 vbox:
                     spacing gui.slot_spacing
@@ -842,42 +842,41 @@ screen file_slots(title):
                     for row in range(gui.file_slot_rows):
                         hbox:
                             spacing gui.slot_spacing
-                            for col in range(2):  # 两列
+                            for col in range(3):
                                 $ slot = row * 2 + col + 1
 
                                 if slot <= gui.file_slot_cols * gui.file_slot_rows:
                                     button:
                                         action FileAction(slot)
 
-                                        has hbox
+                                        has vbox
 
                                         add FileScreenshot(slot) xalign 0.5
 
-                                        vbox:
-                                            text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
-                                                style "slot_time_text"
+                                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
+                                            style "slot_time_text"
 
-                                            text FileSaveName(slot):
-                                                style "slot_name_text"
+                                        text FileSaveName(slot):
+                                            style "slot_name_text"
 
                                         key "save_delete" action FileDelete(slot)
 
             ## 用于访问其他页面的按钮。
-            hbox:
-                style_prefix "page"
+            # hbox:
+            #     style_prefix "page"
 
-                xalign 0.5
-                yalign 0.94
+            #     xalign 0.5
+            #     yalign 0.94
 
-                spacing gui.page_spacing
+            #     spacing gui.page_spacing
 
-                textbutton _("<") action FilePagePrevious()
+            #     textbutton _("<") action FilePagePrevious()
 
-                ## range(1, 10) 给出 1 到 9 之间的数字。
-                for page in range(1, 10):
-                    textbutton "[page]" action FilePage(page)
+            #     ## range(1, 10) 给出 1 到 9 之间的数字。
+            #     for page in range(1, 10):
+            #         textbutton "[page]" action FilePage(page)
 
-                textbutton _(">") action FilePageNext()
+            #     textbutton _(">") action FilePageNext()
 
 style page_label is gui_label
 style page_label_text is gui_label_text
