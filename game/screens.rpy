@@ -158,6 +158,8 @@ style say_dialogue:
     ypos gui.dialogue_ypos
 
     adjust_spacing False
+    slow_cps 16
+    slow_abortable True
 
 ## 输入界面 ########################################################################
 ##
@@ -924,12 +926,10 @@ screen click_to_return():
 
 init python:
     def toggle_ffk():
-        if config.keymap["skip"].count("K_LCTRL") == 0:
-            config.keymap["skip"].append("K_LCTRL")
-            config.keymap["skip"].append("K_RCTRL")
+        if config.allow_skipping:
+            config.allow_skipping = False
         else:
-            config.keymap["skip"].remove("K_LCTRL")
-            config.keymap["skip"].remove("K_RCTRL")
+            config.allow_skipping = True
 
 screen preferences():
 
@@ -964,8 +964,8 @@ screen preferences():
 
             null height (4 * gui.pref_spacing)
 
-            $ active_ffk = ffk_active if "K_LCTRL" in config.keymap["skip"] else ffk_inactive
-            $ active_ffk_text = "使用Ctrl快进游戏(开)" if "K_LCTRL" in config.keymap["skip"] else "使用Ctrl快进游戏(关)"
+            $ active_ffk = ffk_active if config.allow_skipping else ffk_inactive
+            $ active_ffk_text = "使用Ctrl快进游戏(开)" if config.allow_skipping else "使用Ctrl快进游戏(关)"
 
             hbox:
                 style_prefix "slider"
