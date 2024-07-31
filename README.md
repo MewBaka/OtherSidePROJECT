@@ -19,10 +19,6 @@ https://afdian.net/a/OtherSideProject
 
 预计明年八月份正式发布
 
-## 📚 典
-
-<img width="713" alt="image" src="https://github.com/MewBaka/OtherSideProject/assets/131328257/ddb8d477-3ae0-4a29-85ee-52ba2e5626fc">
-
 ## 💻 平台考虑
 
 **MacOS，Linux，Windows，Android** 免费游玩

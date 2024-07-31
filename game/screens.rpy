@@ -1,6 +1,5 @@
 ﻿init offset = -1
 default persistent.firstplay=True
-$ firstplay = 0
 
 style default:
     properties gui.text_properties()
@@ -1014,33 +1013,36 @@ screen preferences():
 
 image pure_black = "#000"
 image pure_white =  "#ffffff"
-image oslogo= im.Scale( "oslogo.png" , 596, 324.6)
-image logowarn= im.Scale( "logowarn.png" , 1745.4, 981.8)
+image logo= im.Scale( "logos/logo.png", 1920, 1080)
+image oslogo= im.Scale( "logos/oslogo.png" , 596, 324.6)
+image logowarn= im.Scale( "logos/logowarn.png" , 1745.4, 981.8)
 label splashscreen():
-    if persistent.firstplay:
-        "本游戏含有大量女性向LGBT(女同性恋)内容,所描述的内容可能不符合部分人对于LGBT群体的认知。我们尊重您对LGBT群体的看法↓"
-        "若您对LGBT元素持反对态度或对LGBT元素感到不适,请立即退出游戏。↓"
-        "若您能够接受女性向LGBT内容,请点击“我接受这些内容“按钮继续游戏。↓"
-        menu:
-            "在选择接受后,侧面Project制作团队将不会为您阅读剧情后的所有负面表现与行为(包括但不限于心理感到不适，恋爱观模糊等)负责。最后,我们推荐您保持正确的恋爱观以及性取向,正确面对两性关系。这个提示仅在第一次启动时显示。"
-            "我接受这些内容":
-                with fade
-                $ persistent.firstplay=False
-    show pure_white
-    $ renpy.pause(1, hard=True)
-    show logo at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide logo with Dissolve(1)
-    show logowarn at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide logowarn with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    show oslogo at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide oslogo with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide pure_white
-    with fade
+    $ skiplogo = False # 跳过LOGO,发布正式版时请改为 False
+    if skiplogo:
+        if persistent.firstplay:
+            "本游戏含有大量女性向LGBT(女同性恋)内容,所描述的内容可能不符合部分人对于LGBT群体的认知。我们尊重您对LGBT群体的看法↓"
+            "若您对LGBT元素持反对态度或对LGBT元素感到不适,请立即退出游戏。↓"
+            "若您能够接受女性向LGBT内容,请点击“我接受这些内容“按钮继续游戏。↓"
+            menu:
+                "在选择接受后,侧面Project制作团队将不会为您阅读剧情后的所有负面表现与行为(包括但不限于心理感到不适，恋爱观模糊等)负责。最后,我们推荐您保持正确的恋爱观以及性取向,正确面对两性关系。这个提示仅在第一次启动时显示。"
+                "我接受这些内容":
+                    with fade
+                    $ persistent.firstplay=False
+        show pure_white
+        $ renpy.pause(1, hard=True)
+        show logo at truecenter with Dissolve(1)
+        $ renpy.pause(1, hard=True)
+        hide logo with Dissolve(1)
+        show logowarn at truecenter with Dissolve(1)
+        $ renpy.pause(1, hard=True)
+        hide logowarn with Dissolve(1)
+        $ renpy.pause(1, hard=True)
+        show oslogo at truecenter with Dissolve(1)
+        $ renpy.pause(1, hard=True)
+        hide oslogo with Dissolve(1)
+        $ renpy.pause(1, hard=True)
+        hide pure_white
+        with fade
     $ Return()
 
 
