@@ -5,6 +5,7 @@ traceback.txt
 */log.txt
 saves
 cache
+*.rpymc
 cache/*
 *.pyc
 *.rpyc

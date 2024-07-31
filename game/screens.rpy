@@ -1010,7 +1010,14 @@ screen preferences():
                             action Preference("all mute", "toggle")
                             style "mute_all_button"
 
-    
+label splashscreen():
+    scene bg splashscreen_background
+
+    menu:
+        "叠甲"
+
+        "我同意":
+            $ Return()
 
 
 style pref_label is gui_label
