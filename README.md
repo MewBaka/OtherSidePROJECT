@@ -57,7 +57,7 @@ https://afdian.net/a/OtherSideProject
 
 ## 😘 衍生项目：OtherSideProject-Electron
 
-由**Nomina**制作的移植版，基于Electron制作，也算是一个全新的尝试，剧情与Ren'Py版本同步
+由**Nomen**制作的移植版，基于Electron制作，也算是一个全新的尝试，剧情与Ren'Py版本同步
 
 点击链接前往：https://github.com/helloyork/OtherSideProject-Electron
 
