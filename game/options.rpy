@@ -1,5 +1,5 @@
 ﻿define config.name = _("侧面Project")
-define config.version = "v0.1.66"
+define config.version = "0.1.76"
 define gui.show_name = False
 define gui.about = _p("""
 您可以通过 添加QQ:1480357968 或 发送邮件到:team@mewbaka.top 来联系我们
@@ -10,28 +10,6 @@ define build.name = "OtherSideGame"
 define config.has_sound = True
 define config.has_music = True
 define config.has_voice = True
-
-
-## 为了让用户在音效或语音轨道上播放测试音频，请取消对下面一行的注释并设置播放的
-## 样本声音。
-
-# define config.sample_sound = "sample-sound.ogg"
-# define config.sample_voice = "sample-voice.ogg"
-
-
-## 将以下语句取消注释就可以设置标题界面播放的背景音乐文件。此文件将在整个游戏中
-## 持续播放，直至音乐停止或其他文件开始播放。
-
-# define config.main_menu_music = "main-menu-theme.ogg"
-
-
-## 转场 ##########################################################################
-##
-## 这些变量用来控制某些事件发生时的转场。每一个变量都应设置成一个转场，或者是
-## None 来表示无转场。
-
-## 进入或退出游戏菜单。
-
 define config.enter_transition = dissolve
 define config.exit_transition = dissolve
 

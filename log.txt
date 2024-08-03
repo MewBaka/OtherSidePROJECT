@@ -1,282 +1,47 @@
-2024-07-31 03:05:39 UTC
-Windows-10-10.0.19045
-Ren'Py 8.2.3.24061702
+Wed Jul 31 16:40:12 2024
+macOS-10.16-x86_64-i386-64bit
+Ren'Py 8.0.3.22090809
+ 
 
-Early init took 0.07s
-Loading error handling took 0.13s
-Loading script took 0.31s
-Loading save slot metadata took 0.30s
+Bootstrap to the start of init.init took 0.07s
+Early init took 0.00s
+Loader init took 0.01s
+Loading error handling took 0.04s
+Loading script took 0.21s
+Loading save slot metadata. took 0.06s
 Loading persistent took 0.00s
-
-File "game/screens.rpy", line 1018: expected statement.
-    action Return()    
-                 ^
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Interface start took 1.00s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-Resetting cache.
-Early init took 53.56s
-Loading error handling took 0.01s
-Loading script took 0.22s
-Loading save slot metadata took 0.02s
-Loading persistent took 0.00s
-Running init code took 0.09s
+Faled to initialize steam: OSError("dlopen(/Users/mac/Documents/renpy-8.0.3-sdk/lib/py3-mac-x86_64/libsteam_api.dylib, 0x0006): tried: '/Users/mac/Documents/renpy-8.0.3-sdk/lib/py3-mac-x86_64/libsteam_api.dylib' (no such file)")
+Running init code took 0.11s
 Loading analysis data took 0.02s
 Analyze and compile ATL took 0.00s
-Reloading save slot metadata took 0.15s
 Index archives took 0.00s
-Backing up script files to 'C:\\Users\\hello\\AppData\\Roaming/RenPy/backups\\OtherSideProject':
-Dump and make backups took 0.04s
+Backing up script files to '/Users/mac/Library/RenPy/backups/OtherSideProject':
+Dump and make backups. took 0.05s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
-Initial gc took 0.05s
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Creating interface object took 0.33s
+Initial gc. took 0.04s
+DPI scale factor: 1.000000
+Creating interface object took 0.00s
 Cleaning stores took 0.00s
-Init translation took 0.05s
-Build styles took 0.00s
-Load screen analysis took 0.01s
-Analyze screens took 0.02s
-Save screen analysis took 0.02s
-Prepare screens took 0.08s
-Save pyanalysis. took 0.02s
-Save bytecode. took 0.02s
-Running _start took 0.00s
-Interface start took 0.23s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-Resetting cache.
-Early init took 71.17s
-Loading error handling took 0.02s
-Loading script took 0.18s
-Loading save slot metadata took 0.02s
-Loading persistent took 0.00s
-Running init code took 0.02s
-Loading analysis data took 0.01s
-Analyze and compile ATL took 0.00s
-Reloading save slot metadata took 0.02s
-Index archives took 0.00s
-Backing up script files to 'C:\\Users\\hello\\AppData\\Roaming/RenPy/backups\\OtherSideProject':
-Dump and make backups took 0.04s
-Cleaning cache took 0.00s
-Making clean stores took 0.00s
-Initial gc took 0.06s
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Creating interface object took 0.25s
-Cleaning stores took 0.00s
-Init translation took 0.03s
-Build styles took 0.00s
+Init translation took 0.08s
+Build styles took 0.01s
 Load screen analysis took 0.00s
-Analyze screens took 0.01s
-Save screen analysis took 0.01s
-Prepare screens took 0.05s
-Save pyanalysis. took 0.01s
-Save bytecode. took 0.01s
-Running _start took 0.00s
-Interface start took 0.14s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-
-Full traceback:
-  File "renpy/common/00start.rpy", line 241, in script call
-    call _splashscreen from _call_splashscreen_1
-  File "game/screens.rpy", line 1014, in script
-    add "gui/splashscreen.png"
-  File "D:\Program\renpy\renpy-8.2.3-sdk\renpy\ast.py", line 2560, in execute
-    Say.execute(self)
-  File "D:\Program\renpy\renpy-8.2.3-sdk\renpy\ast.py", line 575, in execute
-    who = eval_who(self.who, self.who_fast)
-  File "D:\Program\renpy\renpy-8.2.3-sdk\renpy\ast.py", line 464, in eval_who
-    raise Exception("Sayer '%s' is not defined." % who)
-Exception: Sayer 'add' is not defined.
-
-While running game code:
-  File "renpy/common/00start.rpy", line 241, in script call
-    call _splashscreen from _call_splashscreen_1
-  File "game/screens.rpy", line 1014, in script
-    add "gui/splashscreen.png"
-Exception: Sayer 'add' is not defined.
-Resetting cache.
-Early init took 97.03s
-Loading error handling took 0.02s
-Loading script took 0.21s
-Loading save slot metadata took 0.02s
-Loading persistent took 0.00s
-Running init code took 0.03s
-Loading analysis data took 0.01s
-Analyze and compile ATL took 0.00s
-Reloading save slot metadata took 0.02s
-Index archives took 0.00s
-Backing up script files to 'C:\\Users\\hello\\AppData\\Roaming/RenPy/backups\\OtherSideProject':
-Dump and make backups took 0.05s
-Cleaning cache took 0.00s
-Making clean stores took 0.00s
-Initial gc took 0.07s
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Creating interface object took 0.31s
-Cleaning stores took 0.00s
-Init translation took 0.03s
-Build styles took 0.00s
-Load screen analysis took 0.00s
-Analyze screens took 0.01s
-Save screen analysis took 0.02s
-Prepare screens took 0.05s
-Save pyanalysis. took 0.02s
-Save bytecode. took 0.02s
-Running _start took 0.00s
-Interface start took 0.18s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-Resetting cache.
-Early init took 109.30s
-Loading error handling took 0.02s
-Loading script took 0.13s
-Loading save slot metadata took 0.02s
-Loading persistent took 0.00s
-
-File "game/screens.rpy", line 548: 'splashscreen' is not a keyword argument or valid child of the screen statement.
-    screen glabel splashscreen():
-                              ^
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Interface start took 0.49s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-Resetting cache.
-Early init took 121.50s
-Loading error handling took 0.02s
-Loading script took 0.11s
-Loading save slot metadata took 0.03s
-Loading persistent took 0.00s
-Running init code took 0.06s
-Loading analysis data took 0.03s
-Analyze and compile ATL took 0.01s
-Reloading save slot metadata took 0.03s
-Index archives took 0.00s
-Dump and make backups took 0.04s
-Cleaning cache took 0.00s
-Making clean stores took 0.00s
-Initial gc took 0.10s
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Creating interface object took 0.32s
-Cleaning stores took 0.00s
-Init translation took 0.04s
-Build styles took 0.00s
-Load screen analysis took 0.03s
-Analyze screens took 0.00s
-Save screen analysis took 0.00s
-Prepare screens took 0.05s
+Analyze screens took 0.03s
+Save screen analysis took 0.03s
+Prepare screens took 0.12s
 Save pyanalysis. took 0.00s
-Save bytecode. took 0.02s
+Save bytecode. took 0.05s
 Running _start took 0.00s
-Interface start took 0.15s
+Performance test:
+Interface start took 0.39s
 
 Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
+primary display bounds: (0, 0, 1680, 1050)
+swap interval: 1 frames
 Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
+Vendor: "b'ATI Technologies Inc.'"
+Renderer: b'AMD Radeon Pro 455 OpenGL Engine'
+Version: b'2.1 ATI-4.8.101'
 Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
-Maximum texture size: 4096x4096
-Resetting cache.
-Early init took 126.22s
-Loading error handling took 0.02s
-Loading script took 0.18s
-Loading save slot metadata took 0.03s
-Loading persistent took 0.00s
-Running init code took 0.02s
-Loading analysis data took 0.01s
-Analyze and compile ATL took 0.00s
-Reloading save slot metadata took 0.02s
-Index archives took 0.00s
-Backing up script files to 'C:\\Users\\hello\\AppData\\Roaming/RenPy/backups\\OtherSideProject':
-Dump and make backups took 0.05s
-Cleaning cache took 0.00s
-Making clean stores took 0.00s
-Initial gc took 0.07s
-DPI scale factor: 1.250000
-nvdrs: Loaded, about to disable thread optimizations.
-nvdrs: Disabled thread optimizations.
-Creating interface object took 0.25s
-Cleaning stores took 0.00s
-Init translation took 0.03s
-Build styles took 0.00s
-Load screen analysis took 0.00s
-Analyze screens took 0.01s
-Save screen analysis took 0.01s
-Prepare screens took 0.05s
-Save pyanalysis. took 0.01s
-Save bytecode. took 0.01s
-Running _start took 0.00s
-Interface start took 0.14s
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 2 frames
-Windowed mode.
-Vendor: "b'NVIDIA Corporation'"
-Renderer: b'NVIDIA GeForce RTX 3050 Ti Laptop GPU/PCIe/SSE2'
-Version: b'4.6.0 NVIDIA 546.17'
-Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1429, 804) drawable=(1429, 804)
+Screen sizes: virtual=(1920, 1080) physical=(1351, 760) drawable=(2702, 1520)
 Maximum texture size: 4096x4096
