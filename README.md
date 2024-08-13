@@ -10,7 +10,7 @@
 
 ## 🌩 欢迎来到我们的爱发电
 
-https://afdian.net/a/OtherSideProject
+https://afdian.com/a/OtherSideProject
 
 我们已入驻爱发电，部分开发日志将会发布于此，您也可以自由捐赠，助力更好的侧面
 
