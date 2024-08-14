@@ -92,7 +92,7 @@ Python
 
 ### 7.1 OtherSideProject-Electron（E版）
 
-由**Nomina**制作的移植版，基于Electron制作，也算是一个全新的尝试，剧情与Ren'Py版本同步
+由**Nomen**制作的移植版，基于Electron制作，也算是一个全新的尝试，剧情与Ren'Py版本同步
 
 E版是从头到尾地设计 ~~（造轮子）~~ 的，所以还是很牛逼的
 
