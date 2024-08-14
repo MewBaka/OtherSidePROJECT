@@ -1,6 +1,8 @@
-# 侧面Project 开发规范
+**# 侧面Project 开发规范
 
 为了方便您更好地理解我们的代码并做出贡献，故编写出此开发规范
+
+版本：2024.8.12
 
 ## 模块化
 
@@ -122,3 +124,202 @@ label GameEnd:
 部分功能实现后，**beta**分支将会向**main**分支合并，完成正式版发布
 
 **doc**分支以及**script**分支不定期合并到**beta**分支
+
+## 衍生项目开发指南
+
+首先，感谢您愿意为我们开发衍生项目！
+
+目前，我们已经拥有 **Electron版本（E版）** 以及 **WebGAL版本（W版）**
+
+请注意，此处内容**仅适用于移植，并不适用于二次创作**
+
+### 版本命名规则
+
+以Electron版本为例，名字为：**OtherSideProject-Electron**
+
+命名规则为：`OtherSideProject-{VersionName}`
+
+### 分发以及许可证
+
+请遵守本仓库的许可证，本仓库的开源许可证为 **Mozilla Public License  2.0** 许可证（下文统称为：Mozilla许可证）
+
+1. 必须开放源代码
+
+   根据Mozllia许可证规定，在您制作衍生项目之后，您必须将源代码进行公开而非闭源
+
+   您可以选择自己的许可证用于衍生项目
+
+2. 提供代码修改说明
+
+   根据Mozllia许可证规定，您必须提供此版本的修改说明，例如：**移植到了XXXX引擎，XXXX位置有所变动**等。请确保用户可读懂
+
+3. 版权信息
+
+   根据Mozllia许可证规定，您不能删除或篡改原始版权声明，但是您可以在下方下方填写属于您的版权声明
+
+### UI Design
+
+为了保证衍生项目的一致性，请务必使用我们所设计的组件
+
+#### 字体
+
+我们使用**阿里巴巴普惠体3.0**做为全局字体，使用**75-SemiBold**以及**85-Bold**字重
+
+TextBox等非重要位置，请使用**75-SemiBold**字重
+
+NameBox等重要位置，请使用**85-Bold**字重
+
+#### 尺寸
+
+本游戏全局使用1080P分辨率（1920 X 1080），不设置自适应（拉伸黑边填充）
+
+#### 动画
+
+##### 按钮动画
+
+按钮动画均使用引擎原生实现，请自行探索并写入到您的衍生版本中
+
+##### 场景动画
+
+场景动画指：**转场过渡（例如将立绘从头到脚展示），滤镜**等
+动画均存储在 `game/movie/scenes` 文件夹之中，通过英文标注，您可以自行探索
+
+##### CG
+
+CG的动画位于 `game/movie/cgs` 之下，提供的图片形式CG位于 `game/images/cgs_novideo` 之下
+
+#### LOGO展示
+
+LOGO展示位于游戏最前方，视频文件位于`game/movie/logo.webm`，与主界面直接连接
+
+> 在正式版发布前，LOGO视频均会保留版本信息，请您务必使用最新版的视频
+>
+> 版本信息位于LOGO展示视频第一屏左下角，类似于：20240810 LOGO_VIDEO 60FPS
+
+#### 主界面UI
+
+##### 设计图
+
+![](https://s3.bmp.ovh/imgs/2024/08/10/a9e395fb47ad8d72.png)
+
+页面边距为 **110PX**。当按钮覆盖时（hover），按钮透明度为**90%**。未覆盖时（idle），按钮透明度为**80%**
+
+##### 组件
+
+1. 开始新游戏
+
+   idle `game/gui/button/main_menu/new_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/new_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **446** Height **201**
+
+2. 读取存档
+
+   idle `game/gui/button/main_menu/saves_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/saves_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **327** Height **178**
+
+3. 画廊
+
+   idle `game/gui/button/main_menu/gallery_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/gallery_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **220** Height **168**
+
+4. 设置
+
+   idle `game/gui/button/main_menu/settings_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/settings_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **119** Height **155**
+
+5. GitHub
+
+   idle `game/gui/button/main_menu/github_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/github_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **427** Height **165**
+
+6. 爱发电
+
+   idle `game/gui/button/main_menu/afdian_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/afdian_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **328** Height **165**
+
+7. 关于
+
+   idle `game/gui/button/main_menu/about_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/about_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **224** Height **165**
+
+8. 背景图片
+
+   `game/gui/game_menu.png`
+
+   图片尺寸：Width **1920** Height **1080**
+
+#### 中场暂停UI
+
+##### 设计图
+
+![](https://s3.bmp.ovh/imgs/2024/08/10/3ade9c85e0caa0cf.png)
+
+页面边距为 **110PX**。当按钮覆盖时（hover），按钮透明度为**90%**。未覆盖时（idle），按钮透明度为**80%**
+
+页面与 **主界面UI** 大致一致
+
+##### 组件
+
+1. 继续
+
+   idle `game/gui/button/main_menu/continue_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/continue_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **220** Height **168**
+
+2. 读取存档
+
+   idle `game/gui/button/main_menu/saves_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/saves_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **327** Height **178**
+
+3. 返回主界面
+
+   idle `game/gui/button/main_menu/return_idle.png` **Opacity:80%**
+
+   hover `game/gui/button/main_menu/return_hover.png` **Opacity:90%**
+
+   图片尺寸：Width **446** Height **201**
+
+4. 右方Window
+
+   `game/gui/button/Window.png` **Opacity:90%**
+
+   图片尺寸：Width **1721** Height **890**
+
+##### 注释
+
+1. 设计图所展示的设置并不是一个巨大的按钮，是一个窗口
+
+## 二次制作
+
+如果您会操作Ren‘Py，并对于自己的文笔/绘画天赋有足够的信息，那您就可以开始自己的二次创作了
+
+### 基于游戏之上的二次创作
+
+首先，我们更推荐您制作**补丁**，不推荐再制作一个本体
+
+您可以直接在`script.rpy`之上进行创作，然后将所使用的图片，说明书，以及rpy文件本体进行分发**
