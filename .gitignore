@@ -1,9 +1,13 @@
-log.txt
+cachelog.txt
 .DS_Store
 errors.txt
 traceback.txt
+*/log.txt
 saves
 cache
+*.rpymc
 cache/*
 *.pyc
 *.rpyc
+*/*.rpyc
+*/*.rpymc

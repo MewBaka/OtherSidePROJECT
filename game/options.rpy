@@ -1,72 +1,15 @@
-﻿## 此文件包含有可自定义您游戏的设置。
-##
-## 以“##”开头的语句是注释，您不应该对其取消注释。以“#”开头的语句是注释掉的代码，
-## 在适用的时候您可能需要对其取消注释。
-
-
-## 基础 ##########################################################################
-
-## 用户可读的游戏名称。此命令用来设置默认窗口标题，并且会在界面和错误报告中出
-## 现。
-##
-## 带有 _() 的字符串表示其可被翻译。
-
-define config.name = _("侧面 OtherSide")
-
-
-## 决定上面给出的标题是否显示在标题界面屏幕。设置为 False 来隐藏标题。
-
-define gui.show_name = True
-
-
-## 游戏版本号。
-
-define config.version = "1.0"
-
-
-## 放置在游戏内“关于”屏幕上的文本。将文本放在三个引号之间，并在段落之间留出空
-## 行。
-
+﻿define config.name = _("侧面Project")
+define config.version = "0.1.76"
+define gui.show_name = False
 define gui.about = _p("""
+您可以通过 添加QQ:1480357968 或 发送邮件到:team@mewbaka.top 来联系我们
+
+Copyright © 2024 MewBaka&OtherSideProject, All Rights Reserved.
 """)
-
-
-## 在构建的发布版中，可执行文件和目录所使用的短名称。此处仅限使用 ASCII 字符，并
-## 且不能包含空格、冒号或分号。
-
-define build.name = "OtherSide"
-
-
-## 音效和音乐 #######################################################################
-
-## 这三个变量控制哪些内置的混音器会默认显示给用户。将其中一个设置为 False 将隐藏
-## 对应的混音器。
-
+define build.name = "OtherSideGame"
 define config.has_sound = True
 define config.has_music = True
 define config.has_voice = True
-
-
-## 为了让用户在音效或语音轨道上播放测试音频，请取消对下面一行的注释并设置播放的
-## 样本声音。
-
-# define config.sample_sound = "sample-sound.ogg"
-# define config.sample_voice = "sample-voice.ogg"
-
-
-## 将以下语句取消注释就可以设置标题界面播放的背景音乐文件。此文件将在整个游戏中
-## 持续播放，直至音乐停止或其他文件开始播放。
-
-# define config.main_menu_music = "main-menu-theme.ogg"
-
-
-## 转场 ##########################################################################
-##
-## 这些变量用来控制某些事件发生时的转场。每一个变量都应设置成一个转场，或者是
-## None 来表示无转场。
-
-## 进入或退出游戏菜单。
-
 define config.enter_transition = dissolve
 define config.exit_transition = dissolve
 

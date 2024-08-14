@@ -1,13 +1,6 @@
-﻿################################################################################
-## 初始化
-################################################################################
-
-init offset = -1
-
-
-################################################################################
-## 样式
-################################################################################
+﻿init offset = -1
+default persistent.firstplay=True
+$ firstplay = 0
 
 style default:
     properties gui.text_properties()
@@ -158,6 +151,8 @@ style say_dialogue:
     ypos gui.dialogue_ypos
 
     adjust_spacing False
+    slow_cps 16
+    slow_abortable True
 
 ## 输入界面 ########################################################################
 ##
@@ -253,6 +248,9 @@ transform main_menu_move_button:
     on idle:
         easein_cubic 0.3 xoffset 0
 
+transform transparent:
+    alpha 0.0
+
 transform main_menu_move_button_reverse:
     yoffset -20
     zoom 1.2
@@ -329,6 +327,11 @@ style quick_button_text:
 ##
 ## 该界面包含在标题菜单和游戏菜单中，并提供导航到其他菜单，以及启动游戏。
 
+define Transition_time = 0.2
+
+# init python:
+#     renpy.transition(dissolve)
+
 screen navigation():
 
     vbox:
@@ -339,47 +342,72 @@ screen navigation():
 
         spacing -10
 
-        
-        imagebutton:
-            idle "gui/button/main_menu/settings_idle.png"
-            hover "gui/button/main_menu/settings_hover.png"
-            action ShowMenu("preferences")
-            at main_menu_move_button
 
-        imagebutton:
-            idle "gui/button/main_menu/gallery_idle.png"
-            hover "gui/button/main_menu/gallery_hover.png"
-            action ShowMenu("gallery")
-            at main_menu_move_button
+        if not main_menu:
+            imagebutton:
+                idle "gui/button/main_menu/settings_idle.png"
+                hover "gui/button/main_menu/settings_hover.png"
+                action ShowMenu("preferences", _transition=Dissolve(Transition_time))
+                at transparent
 
-        imagebutton:
-            idle "gui/button/main_menu/saves_idle.png"
-            hover "gui/button/main_menu/saves_hover.png"
-            action ShowMenu("load")
-            at main_menu_move_button
+            imagebutton:
+                idle "gui/button/main_menu/continue_idle.png"
+                hover "gui/button/main_menu/continue_hover.png"
+                action Return()
+                at main_menu_move_button
 
-        if main_menu:
+            imagebutton:
+                idle "gui/button/main_menu/saves_idle.png"
+                hover "gui/button/main_menu/saves_hover.png"
+                action ShowMenu("load", _transition=Dissolve(Transition_time))
+                at main_menu_move_button
+
+            imagebutton:
+
+                idle "gui/button/main_menu/return_idle.png"
+                hover "gui/button/main_menu/return_hover.png"
+                action MainMenu()
+                at main_menu_move_button
+
+        else:
+            imagebutton:
+                idle "gui/button/main_menu/settings_idle.png"
+                hover "gui/button/main_menu/settings_hover.png"
+                action ShowMenu("preferences", _transition=Dissolve(Transition_time))
+                at main_menu_move_button
+
+            imagebutton:
+                idle "gui/button/main_menu/gallery_idle.png"
+                hover "gui/button/main_menu/gallery_hover.png"
+                action ShowMenu("gallery", _transition=Dissolve(Transition_time))
+                at main_menu_move_button
+
+            imagebutton:
+                idle "gui/button/main_menu/saves_idle.png"
+                hover "gui/button/main_menu/saves_hover.png"
+                action ShowMenu("load", _transition=Dissolve(Transition_time))
+                at main_menu_move_button
 
             imagebutton:
 
                 idle "gui/button/main_menu/new_idle.png"
                 hover "gui/button/main_menu/new_hover.png"
-                action Start()
+                action [Start(), renpy.transition(Dissolve(Transition_time))]
                 at main_menu_move_button
 
-        else:
+        # else:
 
-            textbutton _("历史") action ShowMenu("history")
+            # textbutton _("历史") action ShowMenu("history")
 
-            textbutton _("保存") action ShowMenu("save")
+            # textbutton _("保存") action ShowMenu("save")
 
-        if _in_replay:
+        # if _in_replay:
 
-            textbutton _("结束回放") action EndReplay(confirm=True)
+        #     textbutton _("结束回放") action EndReplay(confirm=True)
 
-        elif not main_menu:
+        # elif not main_menu:
 
-            textbutton _("标题界面") action MainMenu()
+        #     textbutton _("标题界面") action MainMenu()
 
         # textbutton _("关于") action ShowMenu("about")
 
@@ -395,6 +423,16 @@ screen navigation():
             # textbutton _("退出") action Quit(confirm=not main_menu)
             pass
 
+
+screen panel():
+    hbox:
+        style "main_menu_hbox"
+        spacing 40
+
+        vbox:
+            style "main_menu_vbox"
+
+        add im.Scale("gui/Window.png", 1850, 970) alpha 0.8
 
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
@@ -467,6 +505,13 @@ screen main_menu():
             at main_menu_move_button_reverse
             xalign 1.0
 
+        imagebutton:
+            idle "gui/button/main_menu/about_idle.png"
+            hover "gui/button/main_menu/about_hover.png"
+            action ShowMenu("about")
+            at main_menu_move_button_reverse
+            xalign 1.0
+
 
     if gui.show_name:
 
@@ -484,71 +529,20 @@ init python:
     # 步骤1，创建Gallery对象。
     g = Gallery()
 
-    # 步骤2，在画廊中添加按钮和图像。
-
-    # 一个图像一直解锁状态的按钮。
-    g.button("title")
-    g.image("title")
-
-    # 添加一个包含自动解锁图像的按钮。
-    g.button("dawn")
-    g.image("dawn1")
-    g.unlock("dawn1")
-
-    # 该按钮有多个关联图像。
-    # 我们使用unlock_image函数，这样就不需要同时调用“.image”和“.unlock”了。
-    # 我们也在第一张图像上添加了一个变换效果。
-    g.button("dark")
-    g.unlock_image("bigbeach1")
-    # g.transform(slowpan)
-    g.unlock_image("beach1 mary")
-    g.unlock_image("beach2")
-    g.unlock_image("beach3")
-
     # 该按钮有一个关联的条件，允许游戏选择是否解锁图片。
-    g.button("end1")
+    g.button("dark")
     g.condition("persistent.unlock_1")
-    g.image("transfer")
-    g.image("moonpic")
+    g.image("dawn")
+    g.image("dark")
     g.image("girlpic")
     g.image("nogirlpic")
     g.image("bad_ending")
 
-    g.button("end2")
+    g.button("dawn")
     g.condition("persistent.unlock_2")
     g.image("library")
     g.image("beach1 nomoon")
     g.image("bad_ending")
-
-    # 该按钮的最后一张图像有一个关联条件，只有只有达到两种结局才会解锁。
-    g.button("end3")
-    g.condition("persistent.unlock_3")
-    g.image("littlemary2")
-    g.image("littlemary")
-    g.image("good_ending")
-    g.condition("persistent.unlock_3 and persistent.unlock_4")
-
-    g.button("end4")
-    g.condition("persistent.unlock_4")
-    g.image("hospital1")
-    g.image("hospital2")
-    g.image("hospital3")
-    g.image("heaven")
-    g.image("white")
-    g.image("good_ending")
-    g.condition("persistent.unlock_3 and persistent.unlock_4")
-
-    # 后面两个按钮包含会同时显示的多个图片。
-    # 这可能会用于在背景上显示人物立绘。
-    g.button("dawn mary")
-    g.unlock_image("dawn1", "mary dawn wistful")
-    g.unlock_image("dawn1", "mary dawn smiling")
-    g.unlock_image("dawn1", "mary dawn vhappy")
-
-    g.button("dark mary")
-    g.unlock_image("beach2", "mary dark wistful")
-    g.unlock_image("beach2", "mary dark smiling")
-    g.unlock_image("beach2", "mary dark vhappy")
 
     # 用于图像切换使用的转场(transition)。
     g.transition = dissolve
@@ -557,6 +551,8 @@ screen gallery:
 
     # 确保画廊界面替换主菜单。
     tag menu
+
+    use click_to_return
 
     use game_menu(_("画廊"), scroll=None):
 
@@ -569,14 +565,6 @@ screen gallery:
             # 调用make_button显示具体的按钮。
             add g.make_button("dark", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
             add g.make_button("dawn", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end1", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-
-            add g.make_button("end2", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end3", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("end4", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-
-            add g.make_button("dark mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
-            add g.make_button("dawn mary", im.Scale("example.jpg", gui.gallery_image_width, gui.gallery_image_height), xalign=0.5, yalign=0.5)
             # add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
 
             # 用于响应后返回主菜单的界面。
@@ -629,8 +617,10 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     if main_menu:
         add gui.main_menu_background
+        use panel
     else:
         add gui.game_menu_background
+        use panel
 
     frame:
         style "game_menu_outer_frame"
@@ -679,16 +669,19 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     use navigation
 
-    textbutton _("返回"):
-        style "return_button"
+    # textbutton _("返回"):
+    #     style "return_button"
 
-        action Return()
+    #     action Return()
 
-    label title
+    label title at preference_title
 
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
 
+transform preference_title:
+    xoffset 150
+    yoffset 75
 
 style game_menu_outer_frame is empty
 style game_menu_navigation_frame is empty
@@ -791,6 +784,8 @@ screen save():
 
     tag menu
 
+    use click_to_return
+
     use file_slots(_("保存"))
 
 
@@ -798,83 +793,86 @@ screen load():
 
     tag menu
 
-    use file_slots(_("读取游戏"))
+    use click_to_return
 
+    use file_slots(_("读取存档"))
 
 screen file_slots(title):
 
-    default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
+    # default page_name_value = FilePageNameInputValue(pattern=_("第 {} 页"), auto=_("自动存档"), quick=_("快速存档"))
 
     use game_menu(title):
 
         fixed:
 
             ## 此代码确保输入控件在任意按钮执行前可以获取 enter 事件。
-            order_reverse True
+            # order_reverse True
 
             ## 页面名称，可以通过单击按钮进行编辑。
-            button:
-                style "page_label"
+            # button:
+            #     style "page_label"
 
-                key_events True
-                xalign 0.5
-                action page_name_value.Toggle()
+            #     key_events True
+            #     xalign 0.5
+            #     action page_name_value.Toggle()
 
-                input:
-                    style "page_label_text"
-                    value page_name_value
+            #     input:
+            #         style "page_label_text"
+            #         value page_name_value
 
-            ## 存档位网格。
-            grid gui.file_slot_cols gui.file_slot_rows:
+            ## 存档位列表。
+            viewport:
                 style_prefix "slot"
+                xalign 0.0
+                yalign 0.2
+                mousewheel True
+                draggable True
+                scrollbars "vertical"
+                ysize 700  # 调整高度
+                yoffset 0
+                xoffset 100
 
-                xalign 0.5
-                yalign 0.5
+                vbox:
+                    spacing gui.slot_spacing
 
-                spacing gui.slot_spacing
+                    for row in range(gui.file_slot_rows):
+                        hbox:
+                            spacing gui.slot_spacing
+                            for col in range(3):
+                                $ slot = row * 2 + col + 1
 
-                for i in range(gui.file_slot_cols * gui.file_slot_rows):
+                                if slot <= gui.file_slot_cols * gui.file_slot_rows:
+                                    button:
+                                        action FileAction(slot)
 
-                    $ slot = i + 1
+                                        has vbox
 
-                    button:
-                        action FileAction(slot)
+                                        add FileScreenshot(slot) xalign 0.5
 
-                        has vbox
+                                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
+                                            style "slot_time_text"
 
-                        add FileScreenshot(slot) xalign 0.5
+                                        text FileSaveName(slot):
+                                            style "slot_name_text"
 
-                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
-                            style "slot_time_text"
-
-                        text FileSaveName(slot):
-                            style "slot_name_text"
-
-                        key "save_delete" action FileDelete(slot)
+                                        key "save_delete" action FileDelete(slot)
 
             ## 用于访问其他页面的按钮。
-            hbox:
-                style_prefix "page"
+            # hbox:
+            #     style_prefix "page"
 
-                xalign 0.5
-                yalign 1.0
+            #     xalign 0.5
+            #     yalign 0.94
 
-                spacing gui.page_spacing
+            #     spacing gui.page_spacing
 
-                textbutton _("<") action FilePagePrevious()
+            #     textbutton _("<") action FilePagePrevious()
 
-                if config.has_autosave:
-                    textbutton _("{#auto_page}A") action FilePage("auto")
+            #     ## range(1, 10) 给出 1 到 9 之间的数字。
+            #     for page in range(1, 10):
+            #         textbutton "[page]" action FilePage(page)
 
-                if config.has_quicksave:
-                    textbutton _("{#quick_page}Q") action FilePage("quick")
-
-                ## range(1, 10) 给出 1 到 9 之间的数字。
-                for page in range(1, 10):
-                    textbutton "[page]" action FilePage(page)
-
-                textbutton _(">") action FilePageNext()
-
+            #     textbutton _(">") action FilePageNext()
 
 style page_label is gui_label
 style page_label_text is gui_label_text
@@ -914,9 +912,25 @@ style slot_button_text:
 ##
 ## https://www.renpy.cn/doc/screen_special.html#preferences
 
+screen click_to_return():
+    button:
+        action [Return()]
+        style "default"
+        xysize (config.screen_width, config.screen_height)
+        background None
+
+init python:
+    def toggle_ffk():
+        if config.allow_skipping:
+            config.allow_skipping = False
+        else:
+            config.allow_skipping = True
+
 screen preferences():
 
     tag menu
+
+    use click_to_return
 
     use game_menu(_("设置"), scroll="viewport"):
 
@@ -925,32 +939,34 @@ screen preferences():
             hbox:
                 box_wrap True
 
-                if renpy.variant("pc") or renpy.variant("web"):
+                # if renpy.variant("pc") or renpy.variant("web"):
 
-                    vbox:
-                        style_prefix "radio"
-                        label _("显示")
-                        textbutton _("窗口") action Preference("display", "window")
-                        textbutton _("") action Preference("display", "fullscreen")
+                #     vbox:
+                #         style_prefix "radio"
+                #         label _("显示")
+                #         textbutton _("窗口") action Preference("display", "window")
+                #         textbutton _("") action Preference("display", "fullscreen")
 
-                vbox:
-                    style_prefix "check"
-                    label _("快进")
-                    textbutton _("未读文本") action Preference("skip", "toggle")
-                    textbutton _("选项后继续") action Preference("after choices", "toggle")
-                    textbutton _("忽略转场") action InvertSelected(Preference("transitions", "toggle"))
+                # vbox:
+                #     style_prefix "check"
+                #     label _("快进")
+                #     textbutton _("未读文本") action Preference("skip", "toggle")
+                #     textbutton _("选项后继续") action Preference("after choices", "toggle")
+                #     textbutton _("忽略转场") action InvertSelected(Preference("transitions", "toggle"))
 
                 ## 可在此处添加 radio_pref 或 check_pref 类型的额外 vbox，以添加
                 ## 额外的创建者定义的偏好设置。
 
             null height (4 * gui.pref_spacing)
 
+            $ active_ffk = ffk_active if config.allow_skipping else ffk_inactive
+            $ active_ffk_text = "允许快进游戏 开启" if config.allow_skipping else "允许快进游戏 关闭"
+
             hbox:
                 style_prefix "slider"
                 box_wrap True
 
                 vbox:
-
                     label _("文字速度")
 
                     bar value Preference("text speed")
@@ -958,6 +974,8 @@ screen preferences():
                     label _("自动前进时间")
 
                     bar value Preference("auto-forward time")
+
+                    textbutton _(active_ffk_text) action Function(toggle_ffk) at active_ffk
 
                 vbox:
 
@@ -994,6 +1012,37 @@ screen preferences():
                             action Preference("all mute", "toggle")
                             style "mute_all_button"
 
+image pure_black = "#000"
+image pure_white =  "#ffffff"
+image oslogo= im.Scale( "oslogo.png" , 596, 324.6)
+image logowarn= im.Scale( "logowarn.png" , 1745.4, 981.8)
+label splashscreen():
+    if persistent.firstplay:
+        "本游戏含有大量女性向LGBT(女同性恋)内容,所描述的内容可能不符合部分人对于LGBT群体的认知。我们尊重您对LGBT群体的看法↓"
+        "若您对LGBT元素持反对态度或对LGBT元素感到不适,请立即退出游戏。↓"
+        "若您能够接受女性向LGBT内容,请点击“我接受这些内容“按钮继续游戏。↓"
+        menu:
+            "在选择接受后,侧面Project制作团队将不会为您阅读剧情后的所有负面表现与行为(包括但不限于心理感到不适，恋爱观模糊等)负责。最后,我们推荐您保持正确的恋爱观以及性取向,正确面对两性关系。这个提示仅在第一次启动时显示。"
+            "我接受这些内容":
+                with fade
+                $ persistent.firstplay=False
+    show pure_white
+    $ renpy.pause(1, hard=True)
+    show logo at truecenter with Dissolve(1)
+    $ renpy.pause(1, hard=True)
+    hide logo with Dissolve(1)
+    show logowarn at truecenter with Dissolve(1)
+    $ renpy.pause(1, hard=True)
+    hide logowarn with Dissolve(1)
+    $ renpy.pause(1, hard=True)
+    show oslogo at truecenter with Dissolve(1)
+    $ renpy.pause(1, hard=True)
+    hide oslogo with Dissolve(1)
+    $ renpy.pause(1, hard=True)
+    hide pure_white
+    with fade
+    $ Return()
+
 
 style pref_label is gui_label
 style pref_label_text is gui_label_text
@@ -1020,6 +1069,12 @@ style slider_pref_vbox is pref_vbox
 
 style mute_all_button is check_button
 style mute_all_button_text is check_button_text
+
+transform ffk_active:
+    alpha 1.0
+
+transform ffk_inactive:
+    alpha 0.5
 
 style pref_label:
     top_margin gui.pref_spacing
@@ -1353,14 +1408,14 @@ screen confirm(message, yes_action=None, no_action=None, yes_title=None, no_titl
 
             label _(message):
                 style "confirm_prompt"
-                xalign 0.5
+                xalign 0.63
                 yoffset -255
 
 
             hbox:
                 xalign 0.5
                 yoffset -230
-                spacing 20
+                spacing 0
 
                 $ y_action = [Return()] if yes_action is None else [yes_action, Return()]
                 $ n_action = [Return()] if no_action is None else [no_action, Return()]
@@ -1385,8 +1440,8 @@ style confirm_button_text is gui_medium_button_text
 style confirm_frame:
     # background Frame("gui/overlay/confirm.png", 10, 10, tile=gui.frame_tile)
     padding (200, 110, 200, 110)
-    xalign .5
-    yalign .5
+    xalign 0.5
+    yalign 0.5
 
 style confirm_prompt_text:
     text_align 0.5
@@ -1492,7 +1547,7 @@ style notify_frame:
 style notify_text:
     properties gui.text_properties("notify")
     xoffset 20
-    yoffset -25
+    yoffset -29
 
 
 ## NVL 模式界面 ####################################################################
