@@ -96,6 +96,8 @@ Python
 
 E版是从头到尾地设计 ~~（造轮子）~~ 的，所以还是很牛逼的
 
+E版是从头到尾地设计 ~~（造轮子）~~ 的，所以还是很牛逼的
+
 点击链接前往：https://github.com/helloyork/OtherSideProject-Electron
 
 ### 7.2 OtherSideProject-WebGAL（W版）
