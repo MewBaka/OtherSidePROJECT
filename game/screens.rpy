@@ -196,6 +196,8 @@ style input:
 screen choice(items):
     style_prefix "choice"
 
+    add Solid("#00000080")
+
     vbox:
         for i in items:
             textbutton i.caption action i.action
@@ -206,8 +208,8 @@ style choice_button is button
 style choice_button_text is button_text
 
 style choice_vbox:
-    xalign 0.9
-    ypos 750
+    xalign 0.5
+    yalign 0.5
     yanchor 0.0
 
     spacing gui.choice_spacing
@@ -1527,11 +1529,12 @@ screen notify(message):
 
 
 transform notify_appear:
-    xalign -1.0
+    xalign 0.5
+    alpha 0.0
     on show:
-        ease_cubic 0.6 xalign 0.0
+        ease_cubic 0.6 alpha 1.0 
     on hide:
-        ease_cubic 0.6 xalign -1.0
+        ease_cubic 0.6 alpha 0.0
 
 transform resize_notify_bg:
     size (460, 155)
