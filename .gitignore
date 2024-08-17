@@ -11,3 +11,4 @@ cache/*
 *.rpyc
 */*.rpyc
 */*.rpymc
+log.txt
