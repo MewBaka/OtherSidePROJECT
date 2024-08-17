@@ -1,24 +1,24 @@
 ﻿$ script_version = v1
 
-define e = Character("艾琳",who_color="#ffffff")
+define e = Character("Sensei?",who_color="#ffffff")
 
 label start:
-    # $ renpy.call("pre_start")
 
-    $ renpy.notify("Game start")
+    $ renpy.notify("头抬起,您是最新的")
 
     scene bg room
 
-    show eileen happy
+    show debug at top
 
-    e "您已创建一个新的 Ren'Py 游戏。"
+    e "海内存知己,天涯若比邻"
 
-    menu:
-        "您想要做什么？"
-        
-        "什么也不干":
-            "好的"
+    e "我们™正在为您升级到Ren'Py11版本"
 
-    e "当您完善了故事、图片和音乐之后，您就可以向全世界发布了！"
+    menu :
+        e "回滚吗"
+        "不回滚":
+            e "太棒了,感谢您使用Ren'Py11"
+        "不滚":
+            e "太棒了,感谢您使用Ren'Py11"
 
     return
