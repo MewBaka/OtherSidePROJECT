@@ -209,9 +209,8 @@ style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5
-    yalign 0.5
-    yanchor 0.0
-
+    ypos 0
+    yalign -1.1
     spacing gui.choice_spacing
 
 style choice_button is default:
@@ -228,18 +227,18 @@ init python:
 transform move_button:
     on hover:
         linear 0.1 yoffset 5
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
     on idle:
         linear 0.1 yoffset 0
-        linear 0.1 alpha 0.5
+        # linear 0.1 alpha 0.5
 
 transform afm_move_button:
     on hover:
         linear 0.1 yoffset 5
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
     on idle:
         linear 0.1 yoffset 0
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
 
 transform main_menu_move_button:
     yoffset -20
@@ -270,37 +269,38 @@ transform main_menu_move_in:
 screen quick_menu():
     zorder 100
 
-    $ afm_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable.png"
-    $ afm_hover = afm_image
+    $ afm_image = "gui/quick_menu_button/auto_idle.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable_idle.png"
+    $ afm_hover = "gui/quick_menu_button/auto_hover.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable_hover.png"
     $ afm_button_transform = move_button if not preferences.afm_enable else afm_move_button
     imagebutton:
                 idle afm_image
-                hover afm_image
+                hover afm_hover
                 action [Preference("auto-forward", "toggle"), Function(show_afm_notification)]
                 at afm_button_transform
     imagebutton:
-                idle "gui/quick_menu_button/history.png"
-                hover "gui/quick_menu_button/history_hover.png"
-                action ShowMenu('history')
-                xalign 0.09
-                at move_button
-    imagebutton:
-                idle "gui/quick_menu_button/save.png"
+                idle "gui/quick_menu_button/save_idle.png"
                 hover "gui/quick_menu_button/save_hover.png"
                 action ShowMenu('save')
-                xalign 0.13
+                xalign 0.18
                 at move_button
     imagebutton:
-                idle "gui/quick_menu_button/fsave.png"
+                idle "gui/quick_menu_button/history_idle.png"
+                hover "gui/quick_menu_button/history_hover.png"
+                action ShowMenu('history')
+                xalign 0.32
+                at move_button
+    imagebutton:
+                idle "gui/quick_menu_button/fsave_idle.png"
                 hover "gui/quick_menu_button/fsave_hover.png"
                 action QuickSave() 
-                xalign 0.17
+                xalign 0.38
+                xoffset -8
                 at move_button
     imagebutton:
-                idle "gui/quick_menu_button/fread.png"
+                idle "gui/quick_menu_button/fread_idle.png"
                 hover "gui/quick_menu_button/fread_hover.png"
                 action QuickLoad()
-                xalign 0.21
+                xalign 0.43
                 at move_button
 
 
@@ -1510,10 +1510,10 @@ screen notify(message):
     timer 3.25 action Hide('notify')
 
 transform notify_appear:
-    xalign 0.5
     alpha 0.0
+    xalign 0.5
     on show:
-        ease_cubic 0.6 alpha 1.0 
+        ease_cubic 0.6 alpha 1.0
     on hide:
         ease_cubic 0.6 alpha 0.0
 
@@ -1533,8 +1533,8 @@ style notify_frame:
 style notify_text:
     color "FFFFFF"
     properties gui.text_properties("notify")
-    xoffset 160
-    yoffset 20
+    xoffset 30
+    yoffset -55
 
 ## NVL 模式界面 ####################################################################
 ##
