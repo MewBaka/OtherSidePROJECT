@@ -1,6 +1,6 @@
 ﻿init offset = -1
 default persistent.firstplay=True
-$ firstplay = 0
+image menu_bg_black = "#000"
 
 style default:
     properties gui.text_properties()
@@ -197,20 +197,20 @@ style input:
 screen choice(items):
     style_prefix "choice"
 
+    add Solid("#00000080")
+
     vbox:
         for i in items:
             textbutton i.caption action i.action
-
 
 style choice_vbox is vbox
 style choice_button is button
 style choice_button_text is button_text
 
 style choice_vbox:
-    xalign 0.9
-    ypos 750
-    yanchor 0.0
-
+    xalign 0.5
+    ypos 0
+    yalign -1.1
     spacing gui.choice_spacing
 
 style choice_button is default:
@@ -227,18 +227,18 @@ init python:
 transform move_button:
     on hover:
         linear 0.1 yoffset 5
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
     on idle:
         linear 0.1 yoffset 0
-        linear 0.1 alpha 0.5
+        # linear 0.1 alpha 0.5
 
 transform afm_move_button:
     on hover:
         linear 0.1 yoffset 5
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
     on idle:
         linear 0.1 yoffset 0
-        linear 0.1 alpha 1.0
+        # linear 0.1 alpha 1.0
 
 transform main_menu_move_button:
     yoffset -20
@@ -269,37 +269,38 @@ transform main_menu_move_in:
 screen quick_menu():
     zorder 100
 
-    $ afm_image = "gui/quick_menu_button/auto.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable.png"
-    $ afm_hover = afm_image
+    $ afm_image = "gui/quick_menu_button/auto_idle.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable_idle.png"
+    $ afm_hover = "gui/quick_menu_button/auto_hover.png" if not preferences.afm_enable else "gui/quick_menu_button/auto_enable_hover.png"
     $ afm_button_transform = move_button if not preferences.afm_enable else afm_move_button
     imagebutton:
                 idle afm_image
-                hover afm_image
+                hover afm_hover
                 action [Preference("auto-forward", "toggle"), Function(show_afm_notification)]
                 at afm_button_transform
     imagebutton:
-                idle "gui/quick_menu_button/history.png"
-                hover "gui/quick_menu_button/history_hover.png"
-                action ShowMenu('history')
-                xalign 0.09
-                at move_button
-    imagebutton:
-                idle "gui/quick_menu_button/save.png"
+                idle "gui/quick_menu_button/save_idle.png"
                 hover "gui/quick_menu_button/save_hover.png"
                 action ShowMenu('save')
-                xalign 0.13
+                xalign 0.18
                 at move_button
     imagebutton:
-                idle "gui/quick_menu_button/fsave.png"
+                idle "gui/quick_menu_button/history_idle.png"
+                hover "gui/quick_menu_button/history_hover.png"
+                action ShowMenu('history')
+                xalign 0.32
+                at move_button
+    imagebutton:
+                idle "gui/quick_menu_button/fsave_idle.png"
                 hover "gui/quick_menu_button/fsave_hover.png"
                 action QuickSave() 
-                xalign 0.17
+                xalign 0.38
+                xoffset -8
                 at move_button
     imagebutton:
-                idle "gui/quick_menu_button/fread.png"
+                idle "gui/quick_menu_button/fread_idle.png"
                 hover "gui/quick_menu_button/fread_hover.png"
                 action QuickLoad()
-                xalign 0.21
+                xalign 0.43
                 at move_button
 
 
@@ -1014,33 +1015,18 @@ screen preferences():
 
 image pure_black = "#000"
 image pure_white =  "#ffffff"
-image oslogo= im.Scale( "oslogo.png" , 596, 324.6)
-image logowarn= im.Scale( "logowarn.png" , 1745.4, 981.8)
 label splashscreen():
-    if persistent.firstplay:
-        "本游戏含有大量女性向LGBT(女同性恋)内容,所描述的内容可能不符合部分人对于LGBT群体的认知。我们尊重您对LGBT群体的看法↓"
-        "若您对LGBT元素持反对态度或对LGBT元素感到不适,请立即退出游戏。↓"
-        "若您能够接受女性向LGBT内容,请点击“我接受这些内容“按钮继续游戏。↓"
-        menu:
-            "在选择接受后,侧面Project制作团队将不会为您阅读剧情后的所有负面表现与行为(包括但不限于心理感到不适，恋爱观模糊等)负责。最后,我们推荐您保持正确的恋爱观以及性取向,正确面对两性关系。这个提示仅在第一次启动时显示。"
-            "我接受这些内容":
-                with fade
-                $ persistent.firstplay=False
-    show pure_white
-    $ renpy.pause(1, hard=True)
-    show logo at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide logo with Dissolve(1)
-    show logowarn at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide logowarn with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    show oslogo at truecenter with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide oslogo with Dissolve(1)
-    $ renpy.pause(1, hard=True)
-    hide pure_white
-    with fade
+    $ skiplogo = False # 跳过LOGO,发布正式版时请改为 False
+    if skiplogo:
+        if persistent.firstplay:
+            "本游戏拥有女性向LGBT内容,我们尊重您的想法"
+            "若您对LGBT元素持反对态度或对LGBT元素感到不适,请立即退出游戏。"
+            "若您能够接受女性向LGBT内容,请点击“我接受这些内容“按钮继续游戏。"
+            "这条提示仅在第一次游玩显示,您可以前往 https://bit.ly/4dmyWob 查看更多提示。"
+            menu:
+                "我接受这些内容":
+                    with fade
+                    $ persistent.firstplay=False
     $ Return()
 
 
@@ -1523,16 +1509,16 @@ screen notify(message):
 
     timer 3.25 action Hide('notify')
 
-
 transform notify_appear:
-    xalign -1.0
+    alpha 0.0
+    xalign 0.5
     on show:
-        ease_cubic 0.6 xalign 0.0
+        ease_cubic 0.6 alpha 1.0
     on hide:
-        ease_cubic 0.6 xalign -1.0
+        ease_cubic 0.6 alpha 0.0
 
 transform resize_notify_bg:
-    size (460, 155)
+    size (525, 108.33)
     ypos gui.notify_background_ypos
 
 style notify_frame is empty
@@ -1545,10 +1531,10 @@ style notify_frame:
     padding gui.notify_frame_borders.padding
 
 style notify_text:
+    color "FFFFFF"
     properties gui.text_properties("notify")
-    xoffset 20
-    yoffset -29
-
+    xoffset 30
+    yoffset -55
 
 ## NVL 模式界面 ####################################################################
 ##
