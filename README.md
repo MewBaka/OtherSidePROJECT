@@ -1,24 +1,17 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
 
-2024.8.20：Ren'Py版本可能要废弃了，重心可能会放到Electron版本之上
+> [!WARNING]  
+> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'Py版本的源代码仍然保留于原仓库的分支之中，但之后不再维护。Nomen制作的Electron版本(NarraLeaf)将作为侧面Project的主要版本。
+> 
+> Ren'Py版本无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
 
 # OtherSideProject 「侧面Project」
 
 全新异世冒险百合类视觉小说《侧面Project》
 
-> 正在招美工！（UI设计，海报设计），如果你会那种异世界（？）的UI，欢迎加入我们（低偿，后期肯定有福利）
->
-> QQ号：1480357968 | 团队平时在飞书活动
-
 ## 1. 开发
 
-### 1.1 导入到 Ren'Py 之中
-
-游戏本体在 `/game/` 文件夹,在导入到Ren'Py程序时,请将目录设置为克隆目录的上一级目录下  (如克隆到Desktop/OtherSideProject,那么就选择Desktop作为Ren'Py的工作目录)
-
-### 1.2 开发规范/衍生项目开发/二次创作
-
-请阅读`/doc/DevDoc.md`
+目前不提供
 
 ## 2. 文档以及设定
 
@@ -28,10 +21,10 @@
 
 |    /     |                            GitHub                            |                             飞书                             |
 | :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|  世界观  | https://github.com/MewBaka/OtherSideProject/blob/beta/doc/World.md | https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd |
+|  世界观  | https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md | https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd |
 | 人物设定 |                             ---                              |                             ---                              |
 |  策划案  |                             ---                              | https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh |
-| 开发文档 | https://github.com/MewBaka/OtherSideProject/blob/beta/doc/DevDoc.md |                             ---                              |
+| ~~开发文档~~ | https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc.md |                             ---                              |
 
 ## 3. 捐赠
 
@@ -51,15 +44,23 @@
 
 ## 5. 适用平台以及分发平台
 
-支持 **Windows（10+），macOS（10.11+），Linux** 三平台
+- Windows 10: 计划兼容
+- Windows 11: 计划兼容
+- MacOS: 可能兼容
+- Ubuntu: 计划兼容
+- Debian: 计划兼容
+- 其他Linux发行版: 等待测试
 
 游戏将在：**GitHub**，**Gitee（镜像）**，**本家网站**，**Steam** 分发
 
 技术栈：
 
 ```
-Python
-	->Ren'Py 8
+Nextron
+  Electron
+  Next.js
+    React
+    TypeScript
 ```
 
 ## 6. 制作人员
@@ -92,15 +93,9 @@ Python
 
 ## 7. 衍生项目
 
-### 7.1 OtherSideProject-Electron（E版）
+### 7.1 OtherSideProject-RenPy (R版)
 
-由**Nomen**制作的移植版，基于Electron制作，也算是一个全新的尝试，剧情与Ren'Py版本同步
-
-E版是从头到尾地设计 ~~（造轮子）~~ 的，所以还是很牛逼的
-
-E版是从头到尾地设计 ~~（造轮子）~~ 的，所以还是很牛逼的
-
-点击链接前往：https://github.com/helloyork/OtherSideProject-Electron
+已废弃
 
 ### 7.2 OtherSideProject-WebGAL（W版）
 

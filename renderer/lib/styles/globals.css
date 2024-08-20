@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#root, .root, .Provider {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+main {
+  flex-grow: 1;
+  overflow: auto; /* Prevents overflow */
+}
+
+* {
+  user-select: none;
+}
+
+img {
+  pointer-events: none;
+}
+
+:focus {
+  outline: 2px solid white;
+}
