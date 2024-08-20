@@ -1,5 +1,7 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
 
+2024.8.20：Ren'Py版本可能要废弃了，重心可能会放到Electron版本之上
+
 # OtherSideProject 「侧面Project」
 
 全新异世冒险百合类视觉小说《侧面Project》
