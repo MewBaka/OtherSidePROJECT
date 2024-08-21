@@ -22,6 +22,8 @@ export const image1 = new Image("i1", {
     },
     scale: 0.7,
 });
+export const image1_2 = image1.copy();
+export const image1_3 = image1.copy();
 export const image2 = new Image("i2", {
     src: ImageSpeechless,
     position: {
@@ -32,6 +34,8 @@ export const image2 = new Image("i2", {
     scale: 0.1,
     cache: true
 });
+export const image2_2 = image2.copy();
+export const image2_3 = image2.copy();
 export const character1 = new Character("还没有名字");
 export const character2 = new Character("我");
 export const sound1 = new Sound({

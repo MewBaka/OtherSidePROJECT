@@ -6,6 +6,9 @@ import {Scene} from "@lib/game/game/elements/scene";
 import Isolated from "@lib/ui/elements/isolated";
 import Background from "@lib/ui/elements/Background";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
+import {GameState} from "@lib/ui/components/player/gameState";
+import {StaticImageData} from "@lib/game/game/show";
+import {Image} from "@lib/game/game/elements/image";
 
 
 export type DissolveElementProps = {
@@ -24,12 +27,12 @@ export class Dissolve extends Base<Record<string, any>> implements ITransition<D
     private state: DissolveElementProps = {
         opacity: 0,
     };
-    private src: string;
+    private readonly src: string;
 
-    constructor(src: string, duration: number = 1000) {
+    constructor(src: string | StaticImageData, duration: number = 1000) {
         super();
         this.duration = duration;
-        this.src = src;
+        this.src = typeof src === "string"? src : Image.staticImageDataToSrc(src);
     }
 
     public start(onComplete?: () => void): void {
@@ -72,14 +75,26 @@ export class Dissolve extends Base<Record<string, any>> implements ITransition<D
         }
     }
 
-    public toElements(scene: Scene, props: Record<string, any> = {}): React.ReactElement {
+    public toElements(scene: Scene, props: Record<string, any> = {}, {state}: {state:GameState}): React.ReactElement {
+        const loaded = [];
+        let onLoaded = () => {
+            loaded.push(null);
+            if (loaded.length === 2) {
+                this.events.emit(TransitionEventTypes.ready, null);
+            }
+        }
         return (
             <>
                 <Background>
-                    <img {...props} {...(this.toElementProps()[0] as any)} alt={"image"}/>
+                    <img {...props} {...(this.toElementProps()[0] as any)} alt={"image"} onLoad={onLoaded}/>
                 </Background>
                 <Background>
-                    <img {...props} {...(this.toElementProps()[1] as any)} src={this.src} alt={"image"}/>
+                    <img {...props}
+                         {...(this.toElementProps()[1] as any)}
+                         src={SrcManager.cacheablize(this.src, state.clientGame.clientAPI.window.location.origin)}
+                         alt={"image"}
+                         onLoad={onLoaded}
+                    />
                 </Background>
             </>
         )

@@ -186,6 +186,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             { scope: TransformDefinitions.FramerAnimationScope<T>, animate: TransformDefinitions.FramerAnimate },
         state: GameState
     ) {
+        console.debug("Animating", this);// @debug
         return new Promise<void>(async (resolve) => {
             // @todo: ？增加动画跳过和打断
             if (!this.sequenceOptions.sync) {
@@ -251,6 +252,9 @@ export class Transform<T extends TransformDefinitions.Types> {
     }
 
     propToTransformCSS(state: GameState, prop: DeepPartial<T>): string {
+        if (!state.getLastScene()) {
+            throw new Error("No scene found in state, make sure you called \"scene.activate()\" before this method.");
+        }
         const {invertY, invertX} = state.getLastScene().config || {};
         const Transforms = [
             `translate(${invertX ? "" : "-"}50%, ${invertY ? "" : "-"}50%)`,

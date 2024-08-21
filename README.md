@@ -1,9 +1,9 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
 
 > [!WARNING]  
-> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'Py版本的源代码仍然保留于原仓库的分支之中，但之后不再维护。Nomen制作的Electron版本(NarraLeaf)将作为侧面Project的主要版本。
+> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)仓库之中，但之后不再维护。Nomen制作的Electron版本(NarraLeaf)将作为侧面Project的主要版本。
 > 
-> Ren'Py版本无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
+> Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
 
 # OtherSideProject 「侧面Project」
 

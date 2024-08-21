@@ -21,6 +21,7 @@ export default function Image({
     const {ratio} = useAspectRatio();
     const [scope, animate] = useAnimate();
     const {preloaded} = usePreloaded();
+    const [backgroundLoaded, setBackgroundLoaded] = useState(false);
 
     const preloadedImage = preloaded.get<"image">(GameImage.staticImageDataToSrc(image.state.src));
     image.setScope(scope);
@@ -47,6 +48,7 @@ export default function Image({
     }, [scope, image.state.width, image.state.height, image.state.src, preloadedImage]);
 
     useEffect(() => {
+        image.events.emit(GameImage.EventTypes["event:image.mount"]);
 
         const initTransform = image.toTransform();
         Object.assign(scope.current, initTransform.propToCSS(state, initTransform.state));
@@ -96,8 +98,8 @@ export default function Image({
                 position: 'relative'
             }}>
                 {cloned || (
-                    <img alt={"image"} src={GameImage.staticImageDataToSrc(image.state.src)} width={image.state.width}
-                         height={image.state.height} style={{position: 'absolute'}} ref={scope}/>
+                    <img className={"relative"} alt={"image"} src={GameImage.staticImageDataToSrc(image.state.src)} width={image.state.width}
+                         height={image.state.height} style={{position: 'absolute'}} ref={scope} onLoad={() => setBackgroundLoaded(true)}/>
                 )}
             </div>
         </div>

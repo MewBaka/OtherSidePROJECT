@@ -10,20 +10,18 @@ export class Constructable<
     CAction extends LogicAction.Actions = LogicAction.Actions
 > {
     static targetAction: any = Action;
-    actions: TAction[];
+    private readonly actions: TAction[];
 
     constructor() {
         this.actions = [];
     }
 
     /**
-     * Wrap the actions in a new action
+     * 将动作添加到当前指定上下文实例中
      */
-    action(actions: (callee: this) => (TAction | TAction[])[]): CAction;
-
-    action(actions: (TAction | TAction[])[]): CAction;
-
-    action(actions: (TAction | TAction[])[] | ((callee: this) => (TAction | TAction[])[])): CAction {
+    public action(actions: (callee: this) => (TAction | TAction[])[]): CAction;
+    public action(actions: (TAction | TAction[])[]): CAction;
+    public action(actions: (TAction | TAction[])[] | ((callee: this) => (TAction | TAction[])[])): CAction {
         if (typeof actions === "function") {
             actions = actions(this);
         }
@@ -63,6 +61,10 @@ export class Constructable<
             }
         }
         return (!!this.actions.length) ? this.actions[0].contentNode : null;
+    }
+
+    getActions() {
+        return this.actions;
     }
 }
 
