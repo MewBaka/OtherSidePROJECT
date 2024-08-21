@@ -11,10 +11,10 @@ import {Img} from "@lib/ui/elements/player/Img";
 
 export function Preload({
                             state,
-                            scene
+                            srcManager
                         }: Readonly<{
     state: GameState;
-    scene: GameScene;
+    srcManager: SrcManager;
 }>) {
     const {preloaded} = usePreloaded();
 
@@ -25,13 +25,13 @@ export function Preload({
         }
 
         const src = {
-            image: new Set([scene?.srcManager.src, ...state.state.srcManagers.map(srcManager => srcManager.src)].flat().filter(
+            image: new Set([srcManager.src].flat().filter(
                 src => src.type === SrcManager.SrcTypes.image
             ).map(src => src.src)),
-            audio: new Set([scene?.srcManager.src, ...state.state.srcManagers.map(srcManager => srcManager.src)].flat().filter(
+            audio: new Set([srcManager.src].flat().filter(
                 src => src.type === SrcManager.SrcTypes.audio
             ).map(src => src.src)),
-            video: new Set([scene?.srcManager.src, ...state.state.srcManagers.map(srcManager => srcManager.src)].flat().filter(
+            video: new Set([srcManager.src].flat().filter(
                 src => src.type === SrcManager.SrcTypes.video
             ).map(src => src.src)),
         } as const;
@@ -87,7 +87,7 @@ export function Preload({
                 img.onload = null;
             });
         };
-    }, [state, scene]);
+    }, [state]);
 
     return null;
 }

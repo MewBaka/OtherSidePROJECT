@@ -5,8 +5,9 @@ import {Scene as GameScene, SceneEventTypes} from "../../elements/scene";
 import {ITransition, TransitionEventTypes} from "./type";
 import {EventListener} from "@lib/util/data";
 import Background from "@lib/ui/elements/Background";
+import {GameState} from "@lib/ui/components/player/gameState";
 
-export default function Transition({scene, props}: { scene: GameScene, props: Record<string, any> }) {
+export default function Transition({scene, props, state}: { scene: GameScene, props: Record<string, any>, state: GameState }) {
     const [transition, setTransition] =
         useState<null | ITransition>(null);
     const [transitionProps, setTransitionProps] =
@@ -44,6 +45,12 @@ export default function Transition({scene, props}: { scene: GameScene, props: Re
                 type: TransitionEventTypes.end,
                 handler: transition?.events.on(TransitionEventTypes.end, () => {
                 })
+            },
+            {
+                type: TransitionEventTypes.ready,
+                handler: transition?.events.on(TransitionEventTypes.ready, () => {
+                    scene.events.emit(GameScene.EventTypes["event:scene.imageLoaded"]);
+                })
             }
         ];
 
@@ -57,12 +64,16 @@ export default function Transition({scene, props}: { scene: GameScene, props: Re
         };
     }, [transition, scene]);
 
+    function handleImageOnload() {
+        scene.events.emit(GameScene.EventTypes["event:scene.imageLoaded"]);
+    }
+
     return (
         <>
             {
-                transition ? transition.toElements(scene, props) : (
+                transition ? transition.toElements(scene, props, {state}) : (
                     <Background>
-                        <img {...props}/>
+                        <img {...props} onLoad={handleImageOnload}/>
                     </Background>
                 )
             }

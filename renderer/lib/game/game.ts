@@ -17,7 +17,7 @@ type ClientGamePreferenceHelper = {
     getPreference: <K extends keyof ClientGamePreference>(key: keyof ClientGamePreference) => ClientGamePreference[K];
 }
 
-class BaseGame {};
+class BaseGame {}
 export class ClientGame extends BaseGame {
     static defaultConfig: ClientGameConfig = {};
     static defaultPreference: ClientGamePreference = {

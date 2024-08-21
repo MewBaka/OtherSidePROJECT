@@ -34,7 +34,7 @@ export class Story extends Constructable<
             id: this.id,
             name: this.name,
             config: this.config,
-            actions: this.actions.map(action => action.toData())
+            actions: this.getActions().map(action => action.toData())
         }
     }
 }

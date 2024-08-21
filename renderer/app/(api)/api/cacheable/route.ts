@@ -1,8 +1,10 @@
 import {Constants} from "@lib/api/config";
 
-const GET = (async (req, res) => {
-    const url = new URL(`${req.url}`, `http://${process.env.HOST ?? 'localhost'}:${process.env.PORT ?? 8888}`);
-    const targetUrl = url.searchParams.get(Constants.app.request.cacheableRouteParam);
+
+const GET = (async (req: Request) => {
+    const searchParams = new URL(req.url).searchParams;
+    console.log(new URL(req.url), req.url)
+    const targetUrl = searchParams.get(Constants.app.request.cacheableRouteParam);
     if (!targetUrl) {
         return new Response(null, {
             status: 400
@@ -23,8 +25,6 @@ const GET = (async (req, res) => {
         headers
     });
 });
-
-export const dynamic = 'force-static';
 
 export {
     GET,

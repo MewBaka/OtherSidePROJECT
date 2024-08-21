@@ -157,6 +157,10 @@ export class LiveGame {
         };
     }
 
+    getStorable() {
+        return this.storable;
+    }
+
     /* Store */
     initNamespaces() {
         this.storable.addNamespace(new Namespace<StorableData>(LiveGame.GameSpacesKey.game, LiveGame.DefaultNamespaces.game));
@@ -173,7 +177,7 @@ export class LiveGame {
         this.initNamespaces();
 
         this.currentSceneNumber = 0;
-        this.currentAction = this.story?.actions[this.currentSceneNumber];
+        this.currentAction = this.story?.getActions()[this.currentSceneNumber];
 
         const newGame = this.getDefaultSavedGame();
         newGame.name = "NewGame-" + Date.now();
@@ -199,7 +203,7 @@ export class LiveGame {
             return next;
         }
 
-        this.currentAction = this.currentAction || this.story.actions[++this.currentSceneNumber];
+        this.currentAction = this.currentAction || this.story.getActions()[++this.currentSceneNumber];
         if (!this.currentAction) {
             console.log("No current action"); // Congrats, you've reached the end of the story
             return null;

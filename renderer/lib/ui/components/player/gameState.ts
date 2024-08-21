@@ -13,21 +13,24 @@ type Clickable<T, U = undefined> = {
     action: T;
     onClick: U extends undefined ? () => void : (arg0: U) => void;
 };
-export type PlayerState = {
-    history: CalledActionResult[];
-    sounds: Sound[];
-    scenes: Scene[];
-    texts: Map<Scene, Clickable<{
+
+type PlayerStateElement = {
+    texts: Clickable<{
         character: Character;
         sentence: Sentence;
         id: string;
-    }>[]>;
-    menus: Map<Scene, Clickable<{
+    }>[];
+    menus: Clickable<{
         prompt: Sentence;
         choices: Choice[];
-    }, Choice>[]>;
-    images: Map<Scene, Image[]>;
+    }, Choice>[];
+    images: Image[];
+};
+export type PlayerState = {
+    history: CalledActionResult[];
+    sounds: Sound[];
     srcManagers: SrcManager[];
+    elements: { scene: Scene, ele: PlayerStateElement }[];
 };
 export type PlayerAction = CalledActionResult;
 
@@ -45,21 +48,12 @@ export class GameState {
     static EventTypes: { [K in keyof GameStateEvents]: K } = {
         "event:state.imageLoaded": "event:state.imageLoaded",
     };
+    static SrcManager = SrcManager;
     state: PlayerState = {
         history: [],
         sounds: [],
-        scenes: [],
-        texts: new Map<Scene, Clickable<{
-            character: Character;
-            sentence: Sentence;
-            id: string;
-        }>[]>(),
-        menus: new Map<Scene, Clickable<{
-            prompt: Sentence;
-            choices: Choice[];
-        }, Choice>[]>(),
-        images: new Map<Scene, Image[]>(),
         srcManagers: [],
+        elements: [],
     };
     currentHandling: CalledActionResult | null = null;
     stage: StageUtils;
@@ -72,54 +66,42 @@ export class GameState {
         this.events = new EventDispatcher();
     }
 
+    public findElementByScene(scene: Scene): { scene: Scene, ele: PlayerStateElement } | null {
+        return this.state.elements.find(e => e.scene === scene) || null;
+    }
+
     public addScene(scene: Scene): this {
-        this.state.scenes.push(scene);
-        this.setElements(scene);
+        if (this.sceneExists(scene)) return this;
+        this.state.elements.push({
+            scene,
+            ele: this.getElementMap()
+        });
         return this;
     }
 
     public popScene(): this {
-        const scene = this.state.scenes.pop();
+        const scene = this.state.elements.pop();
         if (!scene) return this;
+        this.removeElements(scene.scene);
+        return this;
+    }
+
+    public removeScene(scene: Scene): this {
         this.removeElements(scene);
         return this;
     }
 
-    private getElementMap() {
-        return {
-            "texts": this.state.texts,
-            "menus": this.state.menus,
-            "images": this.state.images,
-        };
-    }
-
-    private setElements(scene: Scene): this {
-        const elements = this.getElementMap();
-        for (const [key, value] of Object.entries(elements)) {
-            if (!value.has(scene)) {
-                value.set(scene, []);
-            }
-        }
-        return this;
-    }
-
-    private removeElements(scene: Scene): this {
-        const elements = this.getElementMap();
-        for (const [key, value] of Object.entries(elements)) {
-            if (value.has(scene)) {
-                value.delete(scene);
-            }
-        }
-        return this;
+    public getSceneElements() {
+        return this.state.elements;
     }
 
     public getLastScene(): Scene | null {
-        return this.state.scenes[this.state.scenes.length - 1] || null;
+        return this.state.elements[this.state.elements.length - 1]?.scene || null;
     }
 
     public sceneExists(scene?: Scene): boolean {
         if (!scene) return !!this.getLastScene();
-        return this.state.scenes.includes(scene);
+        return this.state.elements.some(s => s.scene === scene);
     }
 
     handle(action: PlayerAction): this {
@@ -136,7 +118,7 @@ export class GameState {
     }
 
     public createText(id: string, sentence: Sentence, afterClick?: () => void, scene?: Scene) {
-        return this.createWaitableAction(this.state.texts.get(this._getLastSceneIfNot(scene)), {
+        return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
             character: sentence.character,
             sentence,
             id
@@ -144,21 +126,27 @@ export class GameState {
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
-        return this.createWaitableAction(this.state.menus.get(this._getLastSceneIfNot(scene)), menu, afterChoose);
+        return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.menus, menu, afterChoose);
     }
 
     public createImage(image: Image, scene?: Scene) {
-        this.state.images.get(this._getLastSceneIfNot(scene)).push(image);
+        const targetScene = this._getLastSceneIfNot(scene);
+        const targetElement = this.findElementByScene(targetScene);
+        if (!targetElement) return this;
+        targetElement.ele.images.push(image);
+        return this;
     }
 
-    private _getLastSceneIfNot(scene: Scene) {
-        const targetScene = scene || this.getLastScene();
-        if (!targetScene) {
-            throw new Error("Scene not found, please call \"scene.active()\" first.");
+    public disposeImage(image: Image, scene?: Scene) {
+        const targetScene = this._getLastSceneIfNot(scene);
+        const images = this.findElementByScene(targetScene)?.ele.images;
+        const index = images.indexOf(image);
+        if (index === -1) {
+            throw new Error("Image not found");
         }
-        return targetScene;
+        images.splice(index, 1);
+        return this;
     }
-
     playSound(howl: Howler.Howl, onEnd?: () => void) {
         howl.play();
         const events = [
@@ -191,6 +179,29 @@ export class GameState {
     public offSrcManager(srcManager: SrcManager) {
         this.state.srcManagers = this.state.srcManagers.filter(s => s !== srcManager);
         return this
+    }
+
+    private getElementMap() {
+        return {
+            texts: [],
+            menus: [],
+            images: []
+        };
+    }
+
+    private removeElements(scene: Scene): this {
+        const index = this.state.elements.findIndex(s => s.scene === scene);
+        if (index === -1) return this;
+        this.state.elements.splice(index, 1);
+        return this;
+    }
+
+    private _getLastSceneIfNot(scene: Scene | null | void) {
+        const targetScene = scene || this.getLastScene();
+        if (!targetScene || !this.sceneExists(targetScene)) {
+            throw new Error("Scene not found, please call \"scene.activate()\" first.");
+        }
+        return targetScene;
     }
 
     private anyEvent(type: any, target: any, onEnd: () => void, ...args: any[]) {

@@ -12,7 +12,7 @@ export class Base<T extends Record<string, any>> implements ITransition<T> {
         return {} as T;
     }
 
-    public toElements(scene: any, props: any) {
+    public toElements(...args: any[]) {
         return null;
     }
 }
