@@ -1,9 +1,12 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
 
 > [!WARNING]  
-> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)仓库之中，但之后不再维护。Nomen制作的Electron版本(NarraLeaf)将作为侧面Project的主要版本。
-> 
-> Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
+> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
+> Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)
+> 仓库之中，但之后不再维护。Nomen制作的Electron版本(基于NarraLeaf)将作为侧面Project的主要版本。
+>
+> Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'
+> Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
 
 # OtherSideProject 「侧面Project」
 
@@ -19,20 +22,18 @@
 
 打开飞书链接时，可能要求您登录，点击右上角的叉号即可
 
-|    /     |                            GitHub                            |                             飞书                             |
-| :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|  世界观  | https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md | https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd |
-| 人物设定 |                             ---                              |                             ---                              |
-|  策划案  |                             ---                              | https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh |
-| ~~开发文档~~ | https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc.md |                             ---                              |
+|    /     |                               GitHub                                |                               飞书                                |
+|:--------:|:-------------------------------------------------------------------:|:---------------------------------------------------------------:|
+|   世界观    | https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md  | https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd |
+|   人物设定   |                                 ---                                 |                               ---                               |
+|   策划案    |                                 ---                                 | https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh |
+| ~~开发文档~~ | https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc.md |                               ---                               |
 
 ## 3. 捐赠
 
 本游戏使用捐赠作为主要收入来源，您可以前往我们的爱发电来支持我们
 
-![](https://s3.bmp.ovh/imgs/2024/08/12/dca0f4aab812e8e9.jpeg)
-
-[或者点击此处前往](https://afdian.com/a/OtherSideProject)
+[点击此处前往](https://afdian.com/a/OtherSideProject)
 
 ## 4. 开发周期
 
@@ -105,7 +106,7 @@ Nextron
 
 ### 7.3 提示
 
-衍生项目均不由我们官方维护，我们仅维护 Ren’Py 版本（R版），请到对应的仓库之下提出Issues
+衍生项目均不由我们官方维护，我们仅维护 Electron 版本（E版），请到对应的仓库之下提出Issues
 
 ## 8. 提示与警告
 
@@ -133,7 +134,8 @@ https://otherside.mewbaka.top/warn/lgbt/
 
 <summary>内容较长，点击显示</summary>
 
-本游戏包含大量的女性向 LGBT（女同性恋）内容，可能包含与传统性别观念和性取向认知有所不同的描述和情节。我们理解和尊重每个人对 LGBT 群体的看法和感受，并充分理解这类内容可能不适合所有玩家。如果您对 LGBT 元素持反对态度，或对其内容感到不适，我们强烈建议您立即停止游戏体验，以免产生不必要的困扰。
+本游戏包含大量的女性向 LGBT（女同性恋）内容，可能包含与传统性别观念和性取向认知有所不同的描述和情节。我们理解和尊重每个人对
+LGBT 群体的看法和感受，并充分理解这类内容可能不适合所有玩家。如果您对 LGBT 元素持反对态度，或对其内容感到不适，我们强烈建议您立即停止游戏体验，以免产生不必要的困扰。
 
 请注意，如果您选择继续阅读或参与游戏内容，我们将视作您已经知悉并接受这些元素的存在。侧面Project制作团队将不会对因此引发的任何不适、困惑或其他负面感受（包括但不限于心理不适、恋爱观混淆等）承担责任。
 
@@ -153,7 +155,8 @@ https://otherside.mewbaka.top/warn/lgbt/
 
 本游戏的部分内容使用了互联网公开的免费商用型音效库/图标库/背景图像库，具体信息请在 **8.6 所使用的公开素材展示** 区域查看
 
-其他内容均为 **侧面Project制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用 非商用（需署名）** 范围，不允许 **商用**
+其他内容均为 **侧面Project制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用 非商用（需署名）** 范围，不允许
+**商用**
 
 根据Mozllia许可证规定，您不能删除或篡改原始版权声明，但是您可以在文件下方填写属于您的版权声明
 
