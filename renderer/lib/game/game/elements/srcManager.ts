@@ -28,7 +28,10 @@ export class SrcManager {
     src: Src[] = [];
 
     static cacheablize(url: string, base: string): string {
-        if (url.startsWith(Constants.app.request.cacheableRoute)) return url;
+        if (
+            url.startsWith(Constants.app.request.cacheableRoute)
+            || !Constants.app.request.useCacheableRoute
+        ) return url;
         if (!url.startsWith("/")) {
             const u = new URL(Constants.app.request.cacheableRoute);
             u.searchParams.append(Constants.app.request.cacheableRouteParam, url);

@@ -6,6 +6,7 @@ export class Actionable<
     Types extends TransactionType<TransactionEnum> = TransactionType<TransactionEnum>,
     StateData extends Record<string, any> = Record<string, any>
 > {
+    /**@deprecated */
     transaction: Transaction<TransactionEnum>;
     protected actions: LogicAction.Actions[] = [];
 

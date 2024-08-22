@@ -1,17 +1,27 @@
 import {Constants} from "@lib/api/config";
+import {NextRequest} from "next/server";
 
 
-const GET = (async (req: Request) => {
-    const searchParams = new URL(req.url).searchParams;
-    console.log(new URL(req.url), req.url)
+const GET = (async (req: NextRequest) => {
+    if (!Constants.app.request.useCacheableRoute) {
+        return new Response(null, {
+            status: 404
+        });
+    }
+
+    return await get(req);
+});
+
+async function get(req: NextRequest) {
+    const searchParams = req.nextUrl.searchParams;
     const targetUrl = searchParams.get(Constants.app.request.cacheableRouteParam);
     if (!targetUrl) {
         return new Response(null, {
             status: 400
-        })
+        });
     }
 
-    console.log(`[cacheable] ${targetUrl}`, targetUrl)
+    console.log(`[cacheable] ${targetUrl}`, targetUrl);
 
     // 转发资源并且设置缓存
     const aliveTime = Constants.app.request.maxAlive;
@@ -24,7 +34,7 @@ const GET = (async (req: Request) => {
         status: response.status,
         headers
     });
-});
+}
 
 export {
     GET,
