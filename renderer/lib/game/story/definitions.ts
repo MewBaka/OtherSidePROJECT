@@ -5,8 +5,9 @@ import {Character} from "@lib/game/game/elements/text";
 import {Sound} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
 import ImageSpeechless from "@/public/static/images/test_speechless.png";
-import {Utils} from "@lib/game/game/common/Utils";
-import {SrcManager} from "@lib/game/game/elements/srcManager";
+import {Control} from "@lib/game/game/elements/control";
+import {Transform} from "@lib/game/game/elements/transform/transform";
+import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 
 export const scene1 = new Scene("scene1", {
     background: mainMenuBackground,
@@ -22,8 +23,6 @@ export const image1 = new Image("i1", {
     },
     scale: 0.7,
 });
-export const image1_2 = image1.copy();
-export const image1_3 = image1.copy();
 export const image2 = new Image("i2", {
     src: ImageSpeechless,
     position: {
@@ -34,14 +33,65 @@ export const image2 = new Image("i2", {
     scale: 0.1,
     cache: true
 });
-export const image2_2 = image2.copy();
-export const image2_3 = image2.copy();
 export const character1 = new Character("还没有名字");
 export const character2 = new Character("我");
 export const sound1 = new Sound({
-    src: "/static/sounds/SE_Write_01.wav",
+    src: "/static/sounds/SE_Appear_01b.wav.mp3",
     sync: false
 });
+
+
+export function speechless(scene: Scene, image: Image) {
+    return Control.do([
+        image.show(new Transform<TransformDefinitions.ImageTransformProps>([{
+            props: {
+                opacity: 1,
+                position: {
+                    yoffset: -10
+                }
+            },
+            options: {
+                duration: 0.5,
+                ease: "easeOut",
+            }
+        }], {
+            sync: false
+        })).toActions(),
+        scene.sleep(3000).toActions(),
+        image.hide({
+            duration: 0.5,
+        }).toActions(),
+    ]).toActions()
+}
+
+export function shake(image: Image) {
+    return image.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+        {
+            props: {
+                position: {
+                    xoffset: 5,
+                }
+            },
+            options: {
+                duration: 0.1,
+                ease: "easeOut",
+            }
+        },
+        {
+            props: {
+                position: {
+                    xoffset: -5,
+                }
+            },
+            options: {
+                duration: 0.1,
+                ease: "easeOut",
+            }
+        },
+    ], {
+        sync: true
+    }).repeat(2)).toActions()
+}
 
 export {
     mainMenuBackground,

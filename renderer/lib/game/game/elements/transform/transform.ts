@@ -12,6 +12,10 @@ export class Transform<T extends TransformDefinitions.Types> {
     static defaultSequenceOptions: Partial<TransformDefinitions.CommonSequenceProps> = {
         sync: true,
         repeat: 1,
+    };
+    static defaultOptions: Partial<TransformDefinitions.CommonTransformProps> = {
+        duration: 0,
+        ease: "linear",
     }
     private readonly sequenceOptions: Partial<TransformDefinitions.CommonSequenceProps>;
     private sequences: TransformDefinitions.Sequence<T>[] = [];
@@ -37,7 +41,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             this.sequenceOptions = Object.assign({}, Transform.defaultSequenceOptions, arg1 || {});
         } else {
             const [props, options] =
-                [arg0, arg1 || {}];
+                [arg0, arg1 || Transform.defaultOptions];
             this.sequences.push({props, options: options || {}});
             this.sequenceOptions = Object.assign({}, Transform.defaultSequenceOptions);
         }

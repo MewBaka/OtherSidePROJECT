@@ -225,20 +225,18 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
 
     public executeAction(state: GameState): CalledActionResult | Awaitable<CalledActionResult, any> {
         if (this.type === ImageActionTypes.init) {
+            const lastScene = state.findElementByImage(this.callee);
+            if (lastScene) {
+                state.disposeImage(this.callee, lastScene.scene);
+            }
+
             const scene = (this.contentNode as ContentNode<ImageActionContentType["image:init"]>).getContent()[0];
             if (this.callee.id === null) {
                 this.callee.setId(state.clientGame.game.getLiveGame().idManager.getStringId());
-                state.createImage(this.callee, scene);
-                state.stage.forceUpdate();
             }
-            // else {
-            //     const lastScene = state.findImage(this.callee);
-            //     if (lastScene) {
-            //         state.disposeImage(this.callee, lastScene);
-            //     }
-            //     state.createImage(this.callee, scene);
-            //     state.stage.forceUpdate();
-            // }
+            state.createImage(this.callee, scene);
+            state.stage.forceUpdate();
+
             if (this.callee.initiated) {
                 return super.executeAction(state);
             }
@@ -370,7 +368,7 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
     extends TypedAction<MenuActionContentType, T, Menu> {
     static ActionTypes = MenuActionTypes;
 
-    public executeAction(state: GameState): Awaitable<CalledActionResult, any> {
+    public executeAction(state: GameState) {
         const awaitable = new Awaitable<CalledActionResult, CalledActionResult>(v => v);
         const menu = this.contentNode.getContent() as MenuData;
 
@@ -450,6 +448,7 @@ export const ControlActionTypes = {
     any: "control:any",
     all: "control:all",
     allAsync: "control:allAsync",
+    repeat: "control:repeat",
 } as const;
 export type ControlActionContentType = {
     [K in typeof ControlActionTypes[keyof typeof ControlActionTypes]]:
@@ -458,6 +457,8 @@ export type ControlActionContentType = {
             K extends "control:any" ? [LogicAction.Actions[]] :
                 K extends "control:all" ? [LogicAction.Actions[]] :
                     K extends "control:parallel" ? [LogicAction.Actions[]] :
+                        K extends "control:allAsync" ? [LogicAction.Actions[]] :
+                            K extends "control:repeat" ? [number, LogicAction.Actions[]] :
                         any;
 }
 
@@ -531,6 +532,17 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
             (async () => {
                 const promises = content.map(action => this.executeAllActions(state, action));
                 await Promise.all(promises);
+            })();
+            return super.executeAction(state);
+        } else if (this.type === ControlActionTypes.repeat) { // @todo: test this
+            const [times, actions] =
+                (this.contentNode as ContentNode<ControlActionContentType["control:repeat"]>).getContent();
+            (async () => {
+                for (let i = 0; i < times; i++) {
+                    for (const action of actions) {
+                        await this.executeAllActions(state, action);
+                    }
+                }
             })();
             return super.executeAction(state);
         }
