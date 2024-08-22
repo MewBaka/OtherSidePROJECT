@@ -7,8 +7,8 @@ import {ServerConstants} from "./config";
 
 const WIDTH = 1920 * 0.75;
 const HEIGHT = 1080 * 0.75;
-const isPrePublish = ServerConstants.app.prepublish;
-const isProd = (process.env.NODE_ENV === 'production') && isPrePublish;
+const isDevMode = ServerConstants.app.devMode;
+const isProd = (process.env.NODE_ENV === 'production');
 
 if (isProd) {
     serve({directory: 'app'})
@@ -45,7 +45,6 @@ const debouncedZoom = debounce(zoom, 280);
         useContentSize: true,
     });
     mainWindow.setMenu(null);
-    // mainWindow.setAspectRatio(aspectRatio);
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
         mainWindow.setMinimumSize(WIDTH / 3, HEIGHT / 3);
@@ -57,7 +56,7 @@ const debouncedZoom = debounce(zoom, 280);
 
     RemoteHandler.getInstance().register(ipcMain, mainWindow);
 
-    if (!isProd) {
+    if (!isProd || isDevMode) {
         mainWindow.webContents.on('before-input-event', (_, input) => {
             if (input.key === 'F12') {
                 mainWindow.webContents.openDevTools();

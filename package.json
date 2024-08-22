@@ -46,7 +46,7 @@
   "build": {
     "appId": "com.mewbaka.othersideproject",
     "win": {
-      "target": "portable"
+      "target": "dir"
     }
   }
 }

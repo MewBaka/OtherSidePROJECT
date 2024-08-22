@@ -4,7 +4,7 @@ export const ServerConstants = {
         appDataPrefix: "othersideproject",
         settingFile: "settings",
         saveFileSuffix: "save",
-        prepublish: false,
+        devMode: true,
     },
     info: {
         version: "0.0.1",

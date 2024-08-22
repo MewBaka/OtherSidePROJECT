@@ -36,7 +36,8 @@ const Constants = {
         request: {
             maxAlive: 36000,
             cacheableRoute: "/api/cacheable",
-            cacheableRouteParam: "request_url"
+            cacheableRouteParam: "request_url",
+            useCacheableRoute: false,
         }
     }
 };
