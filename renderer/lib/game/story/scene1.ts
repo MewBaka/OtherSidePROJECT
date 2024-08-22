@@ -58,31 +58,17 @@ const scene3 = new Scene("scene3", {
 const scene3actions = scene3.action([
     // scene3.activate().toActions(),
     image1_3.init().toActions(),
-    // image1_3.show({
-    //     ease: "circOut",
-    //     duration: 0.5,
-    //     sync: true
-    // }).toActions(),
+    image1_3.show({
+        ease: "circOut",
+        duration: 0.5,
+        sync: true
+    }).toActions(),
 
-    image1_3.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
-        {
-            props: {
-                display: true
-            },
-            options: {
-                duration: 0,
-                ease: "easeOut",
-            }
-        },
-    ], {
-        sync: true,
-    })).toActions(),
     image1_3.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
                 position: "right",
                 opacity: 1,
-                display: true
             },
             options: {
                 duration: 2,
@@ -94,6 +80,10 @@ const scene3actions = scene3.action([
         ease: "easeOut",
         duration: 2
     })).toActions(),
+    image1_3.hide({
+        ease: "linear",
+        duration: 2,
+    }).toActions(),
     new Character(null)
         .say("hello")
         .say("world")
@@ -109,18 +99,14 @@ const scene2 = new Scene("scene2", {
 const scene2actions = scene2.action([
     // scene2.activate().toActions(),
     image1_2.init().toActions(),
-    image1_2.show({
-        ease: "circOut",
-        duration: 2,
-        sync: true
-    }).toActions(),
     new Character(null)
         .say("hello")
         .toActions(),
-    image1_2.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+    image1_2.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: "right"
+                position: "right",
+                opacity: 1,
             },
             options: {
                 duration: 2,
@@ -134,10 +120,27 @@ const scene2actions = scene2.action([
     new Character(null)
         .say("world")
         .toActions(),
-    image1_2.hide().toActions(),
+    // image1_2.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+    //     {
+    //         props: {
+    //             position: "right"
+    //         },
+    //         options: {
+    //             duration: 2,
+    //             ease: "easeOut",
+    //         }
+    //     },
+    // ], {
+    //     sync: true,
+    //     ease: "easeOut",
+    // })).toActions(),
+    image1_2.hide({
+        ease: "linear",
+        duration: 2,
+    }).toActions(),
 
     scene2.jumpTo(scene3actions, {
-        transition: new Dissolve(Image.staticImageDataToSrc(mainMenuBackground), 2000)
+        transition: new Dissolve(mainMenuBackground, 2000)
     }).toActions(),
 ]);
 
@@ -185,7 +188,6 @@ const scene1Actions = scene1.action([
         Control.do([
             image2.show(new Transform<TransformDefinitions.ImageTransformProps>([{
                 props: {
-                    display: true,
                     opacity: 1,
                     position: {
                         yoffset: -10

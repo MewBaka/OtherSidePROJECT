@@ -87,7 +87,7 @@ export type SceneActionContentType = {
                         K extends typeof SceneActionTypes["init"] ? [] :
                             K extends typeof SceneActionTypes["exit"] ? [] :
                                 K extends typeof SceneActionTypes["jumpTo"] ? [Actions[]] :
-                        any;
+                                    any;
 }
 
 export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneActionTypes]>
@@ -216,7 +216,7 @@ export type ImageActionContentType = {
                     K extends "image:applyTransform" ? [void, Transform<TransformDefinitions.ImageTransformProps>, string] :
                         K extends "image:init" ? [Scene?] :
                             K extends "image:dispose" ? [] :
-                        any;
+                                any;
 }
 
 export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageActionTypes]>
@@ -280,9 +280,17 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
         ].includes(this.type)) {
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
             const transform = (this.contentNode as ContentNode<ImageActionContentType["image:show"]>).getContent()[1];
+
+            if (this.type === ImageActionTypes.show) {
+                this.callee.state.display = true;
+            }
+
             state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
                 transform
             ], () => {
+                if (this.type === ImageActionTypes.hide) {
+                    this.callee.state.display = false;
+                }
                 awaitable.resolve({
                     type: this.type,
                     node: this.contentNode?.child || null,
