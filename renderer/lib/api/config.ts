@@ -38,7 +38,7 @@ const Constants = {
             cacheableRoute: "/api/cacheable",
             cacheableRouteParam: "request_url",
             useCacheableRoute: false,
-        }
+        },
     }
 };
 

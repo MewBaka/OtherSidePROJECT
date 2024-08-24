@@ -130,6 +130,8 @@ export class LiveGame {
     lockedAwaiting: Awaitable<CalledActionResult, any> | null = null;
     idManager: GameIdManager;
 
+    _lockedCount = 0;
+
     /**
      * Possible future nodes
      */
@@ -195,6 +197,15 @@ export class LiveGame {
         if (this.lockedAwaiting) {
             if (!this.lockedAwaiting.solved) {
                 console.log("Locked awaiting");
+                this._lockedCount++;
+
+                if (this._lockedCount > 1000) {
+                    // sometimes react will make it stuck and enter a dead cycle
+                    // that's not cool, so we need to throw an error to break it
+                    // my computer froze for 5 minutes because of this
+                    throw new Error("Locked awaiting");
+                }
+
                 return this.lockedAwaiting;
             }
             const next = this.lockedAwaiting.result;
@@ -214,6 +225,8 @@ export class LiveGame {
             this.lockedAwaiting = nextAction;
             return nextAction;
         }
+
+        this._lockedCount = 0;
 
         this.currentAction = nextAction.node.child?.callee;
         return nextAction;

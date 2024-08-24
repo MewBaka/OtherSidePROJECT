@@ -2,7 +2,7 @@ import {Scene} from "@lib/game/game/elements/scene";
 import mainMenuBackground from "@/public/static/images/main-menu-background.webp";
 import mainMenuBackground2 from "@/public/static/images/main-menu-background2.jpg";
 import {Character} from "@lib/game/game/elements/text";
-import {Sound} from "@lib/game/game/elements/sound";
+import {Sound, SoundType} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
 import ImageSpeechless from "@/public/static/images/test_speechless.png";
 import {Control} from "@lib/game/game/elements/control";
@@ -37,7 +37,8 @@ export const character1 = new Character("还没有名字");
 export const character2 = new Character("我");
 export const sound1 = new Sound({
     src: "/static/sounds/SE_Appear_01b.wav.mp3",
-    sync: false
+    sync: false,
+    streaming: true,
 });
 
 
@@ -92,6 +93,13 @@ export function shake(image: Image) {
         sync: true
     }).repeat(2)).toActions()
 }
+
+export const scene2Bgm = new Sound({
+    src: "/static/sounds/Matisse & Sadko _ Hanne Mjøen - Into You.ogg",
+    type: SoundType.backgroundMusic,
+    loop: true,
+    streaming: true,
+});
 
 export {
     mainMenuBackground,

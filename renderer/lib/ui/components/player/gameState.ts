@@ -154,8 +154,8 @@ export class GameState {
         images.splice(index, 1);
         return this;
     }
-    playSound(howl: Howler.Howl, onEnd?: () => void) {
-        howl.play();
+    playSound(howl: Howler.Howl, onEnd?: () => void): any {
+        const token = howl.play();
         const events = [
             howl.once("end", end.bind(this)),
             howl.once("stop", end.bind(this))
@@ -168,6 +168,8 @@ export class GameState {
             events.forEach(e => e.off());
             this.stage.next();
         }
+
+        return token;
     }
 
     getHowl(): typeof Howler.Howl {

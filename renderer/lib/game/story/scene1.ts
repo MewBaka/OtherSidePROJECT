@@ -8,6 +8,7 @@ import {
     Scene,
     Script,
     Sentence,
+    Sound,
     Story,
     Transform,
     Word
@@ -22,13 +23,13 @@ import {
     image2,
     mainMenuBackground,
     mainMenuBackground2,
-    scene1,
+    scene1, scene2Bgm,
     shake,
     sound1,
     speechless
 } from "@lib/game/story/definitions";
-import {Fade} from "@lib/game/game/elements/transition/fade";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
+import {SoundType} from "@lib/game/game/elements/sound";
 
 const story = new Story("test");
 
@@ -44,12 +45,6 @@ const checkNumber = (n: number) => new Condition()
     ).Else(character2.say("很遗憾，你猜错了").toActions())
     .toActions();
 
-const fadeOutTransition = new Fade(2000, "out");
-const fadeInTransition = new Fade(2000, "in");
-
-// @todo: 包装一下转场
-// @fixme: 在其他场景中使用变换会导致图片行为不符合预期
-
 const scene3 = new Scene("scene3", {
     background: mainMenuBackground,
     invertY: true,
@@ -57,7 +52,8 @@ const scene3 = new Scene("scene3", {
 
 const scene3actions = scene3.action([
     // scene3.activate().toActions(),
-    image1.init().toActions(),
+    // scene3.deactivate().toActions(),
+    image1.init(scene3).toActions(),
     image1.show({
         ease: "circOut",
         duration: 0.5,
@@ -94,13 +90,15 @@ const scene3actions = scene3.action([
 const scene2 = new Scene("scene2", {
     background: mainMenuBackground2,
     invertY: true,
+    backgroundMusic: scene2Bgm,
+    backgroundMusicFade: 1000,
 });
 
 const scene2actions = scene2.action([
     image1.init().toActions(),
-    new Character(null)
-        .say("hello")
-        .toActions(),
+    // new Character(null)
+    //     .say("hello")
+    //     .toActions(),
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
@@ -123,6 +121,8 @@ const scene2actions = scene2.action([
         ease: "linear",
         duration: 2,
     }).toActions(),
+
+    // scene2.setBackgroundMusic(scene2Bgm).toActions(),
 
     scene2.jumpTo(scene3actions, {
         transition: new Dissolve(mainMenuBackground, 2000)
@@ -153,7 +153,7 @@ const scene1Actions = scene1.action([
     image1.show({
         ease: "circOut",
         duration: 0.5,
-        sync: true
+        sync: true,
     }).toActions(),
     character1
         .say("你好！")

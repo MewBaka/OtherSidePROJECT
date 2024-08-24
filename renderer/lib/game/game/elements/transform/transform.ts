@@ -199,7 +199,13 @@ export class Transform<T extends TransformDefinitions.Types> {
             for (let i = 0; i < this.sequenceOptions.repeat; i++) {
                 for (const {props, options} of this.sequences) {
                     this.state = deepMerge(this.state, props);
+
+                    if (!scope.current) {
+                        throw new Error("No scope found when animating.");
+                    }
+
                     const animation = animate(scope.current, this.propToCSS(state, this.state), options);
+
                     if (options?.sync !== false) {
                         await animation;
                         Object.assign(scope.current, this.propToCSS(state, this.state));

@@ -6,14 +6,16 @@ import {ContentNode} from "../save/rollback";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {SceneAction} from "@lib/game/game/actions";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {ITransition} from "@lib/game/game/elements/transition/type";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
+import {Sound} from "@lib/game/game/elements/sound";
 import Actions = LogicAction.Actions;
 
 export type SceneConfig = {
     invertY?: boolean;
     invertX?: boolean;
+    backgroundMusic?: Sound | null;
+    backgroundMusicFade?: number;
 } & Background;
 export type SceneState = {};
 export type JumpConfig = {
@@ -30,7 +32,9 @@ export type SceneEventTypes = {
     "event:scene.unload": [],
     "event:scene.mount": [],
     "event:scene.unmount": [],
+    "event:scene.preUnmount": [],
     "event:scene.imageLoaded": [],
+    "event:scene.setBackgroundMusic": [Sound | null, number];
 };
 
 // @todo: 将只读配置和动态状态分开
@@ -48,11 +52,15 @@ export class Scene extends Constructable<
         "event:scene.unload": "event:scene.unload",
         "event:scene.mount": "event:scene.mount",
         "event:scene.unmount": "event:scene.unmount",
+        "event:scene.preUnmount": "event:scene.preUnmount",
         "event:scene.imageLoaded": "event:scene.imageLoaded",
+        "event:scene.setBackgroundMusic": "event:scene.setBackgroundMusic",
     }
     static defaultConfig: SceneConfig = {
         background: null,
         invertY: false,
+        backgroundMusic: null,
+        backgroundMusicFade: 0,
     };
     static defaultState: SceneState = {};
     static targetAction = SceneAction;
@@ -107,6 +115,14 @@ export class Scene extends Constructable<
     public jumpTo(actions: SceneAction<"scene:action">[] | SceneAction<"scene:action">, config?: JumpConfig): this;
     public jumpTo(scene: Scene, config?: JumpConfig): this;
     public jumpTo(arg0: SceneAction<"scene:action">[] | SceneAction<"scene:action"> | Scene, config?: JumpConfig): this {
+        this._actions.push(new SceneAction(
+            this,
+            "scene:preUnmount",
+            new ContentNode(
+                Game.getIdManager().getStringId(),
+            ).setContent([])
+        ));
+
         const jumpConfig: Partial<JumpConfig> = config || {};
         if (arg0 instanceof Scene) {
             const actions = arg0.getSceneActions();
@@ -127,12 +143,12 @@ export class Scene extends Constructable<
         return this;
     }
 
+    /**
+     * 等待一段时间，参数可以是毫秒数、Promise、或者一个未解析的{@link Awaitable}
+     */
     public sleep(ms: number): this;
-
     public sleep(promise: Promise<any>): this;
-
     public sleep(awaitable: Awaitable<any, any>): this;
-
     public sleep(content: number | Promise<any> | Awaitable<any, any>): this {
         this._actions.push(new SceneAction(
             this,
@@ -140,6 +156,22 @@ export class Scene extends Constructable<
             new ContentNode(
                 Game.getIdManager().getStringId(),
             ).setContent(content)
+        ));
+        return this;
+    }
+
+    /**
+     * 设置背景音乐
+     * @param sound 目标音乐
+     * @param fade 毫秒数，如果设置，则会将渐出效果应用于上一首音乐，将渐入效果应用于当前音乐，时长为 {@link fade} 毫秒
+     */
+    public setBackgroundMusic(sound: Sound, fade?: number): this {
+        this._actions.push(new SceneAction(
+            this,
+            "scene:setBackgroundMusic",
+            new ContentNode(
+                Game.getIdManager().getStringId(),
+            ).setContent([sound, fade])
         ));
         return this;
     }
@@ -226,6 +258,10 @@ export class Scene extends Constructable<
             ).setContent([])
         ));
         return this;
+    }
+
+    $getBackgroundMusic() {
+        return this.state.backgroundMusic;
     }
 }
 
