@@ -1,14 +1,16 @@
 import {Actionable} from "@lib/game/game/actionable";
 import {deepMerge, DeepPartial} from "@lib/util/data";
-import {SoundAction} from "@lib/game/game/actions";
+import {SoundAction, SoundActionContentType} from "@lib/game/game/actions";
 import {Game} from "@lib/game/game/game";
 import {ContentNode} from "@lib/game/game/save/rollback";
 import * as Howler from "howler";
+import {HowlOptions} from "howler";
 
 export enum SoundType {
     soundEffect = "soundEffect",
     music = "music",
     voice = "voice",
+    backgroundMusic = "backgroundMusic",
 }
 
 export type SoundConfig = {
@@ -19,6 +21,7 @@ export type SoundConfig = {
      * - **soundEffect**：音效
      * - **music**：音乐
      * - **voice**：语音
+     * - **backgroundMusic**：背景音乐
      */
     type?: SoundType;
     src: string;
@@ -31,6 +34,7 @@ export type SoundConfig = {
      */
     loop?: boolean;
     volume?: number;
+    streaming?: boolean;
 };
 
 export class Sound extends Actionable {
@@ -43,8 +47,10 @@ export class Sound extends Actionable {
     config: SoundConfig;
     state: {
         playing: null | Howler.Howl;
+        token: any;
     } = {
         playing: null,
+        token: null,
     };
 
     constructor(config: DeepPartial<SoundConfig> = {}) {
@@ -53,31 +59,68 @@ export class Sound extends Actionable {
     }
 
     public play(): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be played directly");
+        }
+        return this.pushAction<SoundActionContentType["sound:play"]>(SoundAction.ActionTypes.play, [void 0]);
+    }
+
+    public stop(): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be stopped directly");
+        }
+        return this.pushAction<SoundActionContentType["sound:stop"]>(SoundAction.ActionTypes.stop, [void 0]);
+    }
+
+    public fade(start: number, end: number, duration: number): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be faded directly");
+        }
+        return this.pushAction<SoundActionContentType["sound:fade"]>(SoundAction.ActionTypes.fade, [{
+            start, end, duration
+        }]);
+    }
+
+    public setVolume(volume: number): this {
+        return this.pushAction<SoundActionContentType["sound:setVolume"]>(SoundAction.ActionTypes.setVolume, [volume]);
+    }
+
+    public setRate(rate: number): this {
+        return this.pushAction<SoundActionContentType["sound:setRate"]>(SoundAction.ActionTypes.setRate, [rate]);
+    }
+
+    private pushAction<T>(type: string, content: T): this {
         const action = new SoundAction(
             this,
-            SoundAction.ActionTypes.play,
-            new ContentNode<[void]>(
+            type,
+            new ContentNode<T>(
                 Game.getIdManager().getStringId()
-            ).setContent([void 0])
+            ).setContent(content)
         );
         this.actions.push(action);
         return this;
     }
 
-    public stop(): this {
-        const action = new SoundAction(
-            this,
-            SoundAction.ActionTypes.stop,
-            new ContentNode<[void]>(
-                Game.getIdManager().getStringId()
-            ).setContent([void 0])
-        );
-        this.actions.push(action);
-        return this;
+    getHowlOptions(): HowlOptions {
+        return {
+            src: this.config.src,
+            loop: this.config.loop,
+            volume: this.config.volume,
+            html5: this.config.streaming,
+            autoplay: false,
+        }
     }
 
     getSrc() {
         return this.config.src;
+    }
+
+    $setToken(token: any) {
+        this.state.token = token;
+    }
+
+    $getToken() {
+        return this.state.token;
     }
 
     $setHowl(howl: Howler.Howl) {
@@ -86,5 +129,10 @@ export class Sound extends Actionable {
 
     $getHowl() {
         return this.state.playing;
+    }
+
+    $stop() {
+        this.$setToken(null);
+        this.$setHowl(null);
     }
 }

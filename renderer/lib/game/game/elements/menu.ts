@@ -44,13 +44,18 @@ export class Menu extends Actionable {
     public choose(choice: MenuChoice): this;
     public choose(prompt: Sentence, action: (Actions | Actions[])[]): this;
     public choose(prompt: UnSentencePrompt, action: (Actions | Actions[])[]): this;
-    public choose(choice: Sentence | MenuChoice | UnSentencePrompt, action?: (Actions | Actions[])[]): this {
-        if (Sentence.isSentence(choice) && action) {
-            this.choices.push({prompt: Sentence.toSentence(choice), action: action.flat(2)});
-        } else if ((Word.isWord(choice) || Array.isArray(choice)) && action) {
-            this.choices.push({prompt: Sentence.toSentence(choice), action: action.flat(2)});
-        } else if (typeof choice === "object" && "prompt" in choice && "action" in choice) {
-            this.choices.push({prompt: Sentence.toSentence(choice.prompt), action: choice.action.flat(2)});
+    public choose(arg0: Sentence | MenuChoice | UnSentencePrompt, arg1?: (Actions | Actions[])[]): this {
+        if (Sentence.isSentence(arg0) && arg1) {
+            this.choices.push({prompt: Sentence.toSentence(arg0), action: arg1.flat(2)});
+        } else if ((Word.isWord(arg0) || Array.isArray(arg0) || typeof arg0 === "string") && arg1) {
+            this.choices.push({prompt: Sentence.toSentence(arg0), action: arg1.flat(2)});
+        } else if (typeof arg0 === "object" && "prompt" in arg0 && "action" in arg0) {
+            this.choices.push({prompt: Sentence.toSentence(arg0.prompt), action: arg0.action.flat(2)});
+        } else {
+            console.warn("No valid choice added to menu, ", {
+                arg0,
+                arg1
+            });
         }
         return this;
     }

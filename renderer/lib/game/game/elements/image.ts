@@ -10,6 +10,7 @@ import type {TransformDefinitions} from "@lib/game/game/elements/transform/type"
 import {Utils} from "@lib/game/game/common/Utils";
 import React from "react";
 import {Scene} from "@lib/game/game/elements/scene";
+import {AnimationScope} from "framer-motion";
 
 export type ImageConfig = {
     src: string | StaticImageData;
@@ -36,6 +37,9 @@ export type ImageEventTypes = {
     "event:image.hide": [Transform<TransformDefinitions.ImageTransformProps>];
     "event:image.applyTransform": [Transform<TransformDefinitions.ImageTransformProps>];
     "event:image.mount": [];
+    "event:image.unmount": [];
+    "event:image.ready": [AnimationScope];
+    "event:image.elementLoaded": [];
 };
 
 export class Image extends Actionable<typeof ImageTransactionTypes> {
@@ -44,6 +48,9 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         "event:image.hide": "event:image.hide",
         "event:image.applyTransform": "event:image.applyTransform",
         "event:image.mount": "event:image.mount",
+        "event:image.unmount": "event:image.unmount",
+        "event:image.ready": "event:image.ready",
+        "event:image.elementLoaded": "event:image.elementLoaded",
     }
     static defaultConfig: ImageConfig = {
         src: "",
@@ -60,8 +67,8 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     declare actions: ImageAction<any>[];
     id: null | number | string;
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
-    initiated: boolean = false;
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
+    initiated: boolean;
 
     constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
         super();

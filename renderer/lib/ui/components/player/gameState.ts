@@ -70,6 +70,10 @@ export class GameState {
         return this.state.elements.find(e => e.scene === scene) || null;
     }
 
+    public findElementByImage(image: Image): { scene: Scene, ele: PlayerStateElement } | null {
+        return this.state.elements.find(e => e.ele.images.includes(image)) || null;
+    }
+
     public addScene(scene: Scene): this {
         if (this.sceneExists(scene)) return this;
         this.state.elements.push({
@@ -126,6 +130,9 @@ export class GameState {
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
+        if (!menu.choices.length) {
+            throw new Error("Menu must have at least one choice");
+        }
         return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.menus, menu, afterChoose);
     }
 
@@ -147,8 +154,8 @@ export class GameState {
         images.splice(index, 1);
         return this;
     }
-    playSound(howl: Howler.Howl, onEnd?: () => void) {
-        howl.play();
+    playSound(howl: Howler.Howl, onEnd?: () => void): any {
+        const token = howl.play();
         const events = [
             howl.once("end", end.bind(this)),
             howl.once("stop", end.bind(this))
@@ -161,6 +168,8 @@ export class GameState {
             events.forEach(e => e.off());
             this.stage.next();
         }
+
+        return token;
     }
 
     getHowl(): typeof Howler.Howl {
@@ -205,7 +214,7 @@ export class GameState {
     }
 
     private anyEvent(type: any, target: any, onEnd: () => void, ...args: any[]) {
-        target.events.any(
+        (target.events as EventDispatcher<any>).any(
             type,
             ...args
         ).then(onEnd).then(() => {

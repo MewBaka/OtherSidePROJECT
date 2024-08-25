@@ -1,7 +1,7 @@
 import {Align, Background, color, CommonImage, CommonImagePosition, Coord2D, Offset, StaticImageData} from "../../show";
-import type {DOMKeyframesDefinition} from "framer-motion";
+import type {AnimationPlaybackControls, DOMKeyframesDefinition} from "framer-motion";
 import {ImagePosition} from "../image";
-import {deepMerge, DeepPartial, toHex} from "@lib/util/data";
+import {deepMerge, DeepPartial, sleep, toHex} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
@@ -12,10 +12,15 @@ export class Transform<T extends TransformDefinitions.Types> {
     static defaultSequenceOptions: Partial<TransformDefinitions.CommonSequenceProps> = {
         sync: true,
         repeat: 1,
+    };
+    static defaultOptions: Partial<TransformDefinitions.CommonTransformProps> = {
+        duration: 0,
+        ease: "linear",
     }
+    state: SequenceProps<T> = {};
     private readonly sequenceOptions: Partial<TransformDefinitions.CommonSequenceProps>;
     private sequences: TransformDefinitions.Sequence<T>[] = [];
-    state: SequenceProps<T> = {};
+    private control: AnimationPlaybackControls | null = null;
 
     /**
      * @example
@@ -37,7 +42,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             this.sequenceOptions = Object.assign({}, Transform.defaultSequenceOptions, arg1 || {});
         } else {
             const [props, options] =
-                [arg0, arg1 || {}];
+                [arg0, arg1 || Transform.defaultOptions];
             this.sequences.push({props, options: options || {}});
             this.sequenceOptions = Object.assign({}, Transform.defaultSequenceOptions);
         }
@@ -184,28 +189,41 @@ export class Transform<T extends TransformDefinitions.Types> {
     public async animate<T extends Element = any>(
         {scope, animate}:
             { scope: TransformDefinitions.FramerAnimationScope<T>, animate: TransformDefinitions.FramerAnimate },
-        state: GameState
+        state: GameState,
     ) {
-        console.debug("Animating", this);// @debug
+        console.debug("Animating", this); // @debug
         return new Promise<void>(async (resolve) => {
-            // @todo: ？增加动画跳过和打断
             if (!this.sequenceOptions.sync) {
                 resolve();
             }
             for (let i = 0; i < this.sequenceOptions.repeat; i++) {
                 for (const {props, options} of this.sequences) {
                     this.state = deepMerge(this.state, props);
+
+                    if (!scope.current) {
+                        throw new Error("No scope found when animating.");
+                    }
+
                     const animation = animate(scope.current, this.propToCSS(state, this.state), options);
+                    this.setControl(animation);
+
                     if (options?.sync !== false) {
-                        await animation;
+                        await new Promise<void>(r => animation.then(() => r()));
                         Object.assign(scope.current, this.propToCSS(state, this.state));
+                        this.setControl(null);
                     } else {
                         animation.then(() => {
                             Object.assign(scope.current, this.propToCSS(state, this.state));
+                            this.setControl(null);
                         });
                     }
                 }
             }
+
+            // I don't understand
+            // but if we don't wait for a while, something will go wrong
+            await sleep(2);
+
             if (this.sequenceOptions.sync) {
                 resolve();
             }
@@ -267,6 +285,15 @@ export class Transform<T extends TransformDefinitions.Types> {
     assignState(state: SequenceProps<T>) {
         this.state = deepMerge(state, this.state);
         return this;
+    }
+
+    private setControl(control: AnimationPlaybackControls) {
+        this.control = control;
+        return this;
+    }
+
+    getControl() {
+        return this.control;
     }
 }
 

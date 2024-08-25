@@ -8,6 +8,7 @@ import {
     Scene,
     Script,
     Sentence,
+    Sound,
     Story,
     Transform,
     Word
@@ -18,17 +19,17 @@ import type {TransformDefinitions} from "@lib/game/game/common/types";
 import {
     character1,
     character2,
-    image1,
-    image1_2,
-    image1_3,
+    image1, image1_2,
     image2,
     mainMenuBackground,
     mainMenuBackground2,
-    scene1,
-    sound1
+    scene1, scene2Bgm,
+    shake,
+    sound1,
+    speechless
 } from "@lib/game/story/definitions";
-import {Fade} from "@lib/game/game/elements/transition/fade";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
+import {SoundType} from "@lib/game/game/elements/sound";
 
 const story = new Story("test");
 
@@ -44,12 +45,6 @@ const checkNumber = (n: number) => new Condition()
     ).Else(character2.say("很遗憾，你猜错了").toActions())
     .toActions();
 
-const fadeOutTransition = new Fade(2000, "out");
-const fadeInTransition = new Fade(2000, "in");
-
-// @todo: 包装一下转场
-// @fixme: 在其他场景中使用变换会导致图片行为不符合预期
-
 const scene3 = new Scene("scene3", {
     background: mainMenuBackground,
     invertY: true,
@@ -57,14 +52,25 @@ const scene3 = new Scene("scene3", {
 
 const scene3actions = scene3.action([
     // scene3.activate().toActions(),
-    image1_3.init().toActions(),
-    image1_3.show({
-        ease: "circOut",
-        duration: 0.5,
-        sync: true
-    }).toActions(),
+    // scene3.deactivate().toActions(),
+    image1.init(scene3).toActions(),
+    image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
+        {
+            props: {
+                position: "left",
+                opacity: 1,
+            },
+            options: {
+                duration: 2,
+                ease: "easeOut",
+            }
+        },
+    ], {
+        sync: true,
+        ease: "easeOut",
+    })).toActions(),
 
-    image1_3.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+    image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
                 position: "right",
@@ -80,7 +86,7 @@ const scene3actions = scene3.action([
         ease: "easeOut",
         duration: 2
     })).toActions(),
-    image1_3.hide({
+    image1.hide({
         ease: "linear",
         duration: 2,
     }).toActions(),
@@ -94,15 +100,20 @@ const scene3actions = scene3.action([
 const scene2 = new Scene("scene2", {
     background: mainMenuBackground2,
     invertY: true,
+    backgroundMusic: scene2Bgm,
+    backgroundMusicFade: 1000,
 });
 
 const scene2actions = scene2.action([
-    // scene2.activate().toActions(),
-    image1_2.init().toActions(),
-    new Character(null)
-        .say("hello")
-        .toActions(),
-    image1_2.show(new Transform<TransformDefinitions.ImageTransformProps>([
+    image1.init().toActions(),
+    // new Character(null)
+    //     .say("hello")
+    //     .toActions(),
+    // scene2.sleep(1000).toActions(),
+    // image1_2.show({
+    //     duration: 0.5,
+    // }).toActions(),
+    image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
                 position: "right",
@@ -120,29 +131,32 @@ const scene2actions = scene2.action([
     new Character(null)
         .say("world")
         .toActions(),
-    // image1_2.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
-    //     {
-    //         props: {
-    //             position: "right"
-    //         },
-    //         options: {
-    //             duration: 2,
-    //             ease: "easeOut",
-    //         }
-    //     },
-    // ], {
-    //     sync: true,
-    //     ease: "easeOut",
-    // })).toActions(),
-    image1_2.hide({
+    image1.hide({
         ease: "linear",
         duration: 2,
     }).toActions(),
+
+    // scene2.setBackgroundMusic(scene2Bgm).toActions(),
 
     scene2.jumpTo(scene3actions, {
         transition: new Dissolve(mainMenuBackground, 2000)
     }).toActions(),
 ]);
+
+// 兼容性最高的旧版写法
+/*
+scene1.applyTransition(fadeOutTransition)
+    .setSceneBackground(mainMenuBackground2)
+    .applyTransition(fadeInTransition).toActions(),
+scene1.applyTransition(new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
+    .setSceneBackground(mainMenuBackground2).toActions(),
+*/
+
+// 新版写法
+/*
+scene1.transitionSceneBackground(scene2, new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
+    .toActions(),
+*/
 
 const scene1Actions = scene1.action([
     scene1.activate().toActions(),
@@ -153,109 +167,44 @@ const scene1Actions = scene1.action([
     image1.show({
         ease: "circOut",
         duration: 0.5,
-        sync: true
+        sync: true,
     }).toActions(),
-    new Character(null)
-        .say("简体中文，繁體中文, 日本語, 한국어, ไทย, Tiếng Việt, हिन्दी, বাংলা, తెలుగు, मराठी, 1234567890!@#$%^&*()QWERTYUIOPASDFGHJKLZCVN{}|:\"<>?~`, A quick brown fox jumps over the lazy dog.")
+    character1
+        .say("你好！")
         .toActions(),
     Control.allAsync([
-        image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
-            {
-                props: {
-                    position: {
-                        xoffset: 5,
-                    }
-                },
-                options: {
-                    duration: 0.1,
-                    ease: "easeOut",
-                }
-            },
-            {
-                props: {
-                    position: {
-                        xoffset: -5,
-                    }
-                },
-                options: {
-                    duration: 0.1,
-                    ease: "easeOut",
-                }
-            },
-        ], {
-            sync: true
-        }).repeat(2)).toActions(),
-        Control.do([
-            image2.show(new Transform<TransformDefinitions.ImageTransformProps>([{
-                props: {
-                    opacity: 1,
-                    position: {
-                        yoffset: -10
-                    }
-                },
-                options: {
-                    duration: 0.5,
-                    ease: "easeOut",
-                }
-            }], {
-                sync: false
-            })).toActions(),
-            scene1.sleep(3000).toActions(),
-            image2.hide().toActions(),
-        ]).toActions(),
+        shake(image1), // 通过自定义的函数返回操作
+        speechless(scene1, image2),
+        sound1.play().toActions()
     ]).toActions(),
 
-    sound1.play().toActions(),
-
-    character1
-        .say("你好！").toActions(),
-
-    // 兼容性最高的旧版写法
-    /*
-    scene1.applyTransition(fadeOutTransition)
-        .setSceneBackground(mainMenuBackground2)
-        .applyTransition(fadeInTransition).toActions(),
-    scene1.applyTransition(new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
-        .setSceneBackground(mainMenuBackground2).toActions(),
-    */
-
-    // 新版写法
-    /*
-    scene1.transitionSceneBackground(scene2, new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
-        .toActions(),
-    */
 
     character1.say("你最近过的怎么样？")
         .toActions(),
 
 
     new Menu("我最近过的怎么样？")
-        .choose({
-            action:
-                character2.say("是吗？")
-                    .say("那真的是太棒了")
-                    .toActions()
-            ,
-            prompt: "我过的很好"
-        })
-        .choose({
-            action:
-                character2.say("我也一样")
-                    .say("过的还不错")
-                    .toActions()
-            ,
-            prompt: "还不错吧"
-        })
+        .choose("我过的很好", [
+            character2.say("是吗？")
+                .say("那真的是太棒了")
+                .toActions()
+        ])
+        .choose("还不错吧", [
+            character2.say("我也一样")
+                .say("过的还不错")
+                .toActions(),
+
+            image1.hide().toActions(),
+
+            scene1.jumpTo(
+                scene2actions,
+                {
+                    transition: new Dissolve(mainMenuBackground2, 2000)
+                }
+            ).toActions(),
+        ])
         .toActions(),
 
-    image1.hide().toActions(),
-
-    scene1.jumpTo(
-        scene2actions,
-        {
-            transition: new Dissolve(mainMenuBackground2, 2000)
-        }
-    ).toActions(),
 
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
@@ -324,17 +273,8 @@ const scene1Actions = scene1.action([
     // 在释放之后调用其任何方法都是不合法并且不安全的
     image2.dispose().toActions(),
 
-    // 兼容性最高的旧版写法
-    // scene1
-    //     .applyTransition(new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
-    //     .toActions(),
-    // scene2.activate().toActions(),
-    // scene1
-    //     .deactivate().toActions(),
-    // scene1._transitionToScene(scene2, new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000)).toActions(),
-    // scene2actions
-
-    // 新版写法
+    // 直接通过jumpTo方法跳转到下一个场景
+    // 该方法会卸载当前场景，这意味着该方法之后的所有操作都不会被执行
     scene1.jumpTo(
         scene2actions,
         {
@@ -343,6 +283,7 @@ const scene1Actions = scene1.action([
     ).toActions(),
 ]);
 
+// @todo: 自动注册资源
 scene1.srcManager.register(sound1)
     .register(new Image("_", {
         src: mainMenuBackground
@@ -357,13 +298,13 @@ scene2.srcManager.register(image1)
     .register(new Image("_", {
         src: mainMenuBackground2
     }))
-    .register(image1_2)
+    .register(image1)
 
 scene3.srcManager.register(image1)
     .register(new Image("_", {
         src: mainMenuBackground
     }))
-    .register(image1_3)
+    .register(image1)
 
 function isNumberCorrect(gameState: GameState, number: number) {
     const namespace =

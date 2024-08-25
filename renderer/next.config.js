@@ -12,7 +12,7 @@ module.exports = {
     async headers() {
         return [
             {
-                source: '/_next/(.*)',
+                source: '/_next/static/media/(.*)', // _next/static/media
                 headers: [
                     {
                         key: 'Cache-Control',
@@ -20,6 +20,15 @@ module.exports = {
                     },
                 ],
             },
+            {
+                source: '/static/sounds/(.*)',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable',
+                    },
+                ],
+            }
         ]
     }
 }

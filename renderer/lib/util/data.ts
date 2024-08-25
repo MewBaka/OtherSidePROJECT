@@ -11,6 +11,9 @@ export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, ob
     const mergeValue = (key: string, value1: any, value2: any) => {
         if (typeof value1 === 'object' && value1 !== null && !Array.isArray(value1) &&
             typeof value2 === 'object' && value2 !== null && !Array.isArray(value2)) {
+            if (value1.constructor !== Object || value2.constructor !== Object) {
+                return value1 || value2;
+            }
             return deepMerge(value1, value2);
         } else if (Array.isArray(value1) && Array.isArray(value2)) {
             return value1.map((item, index) => {
@@ -34,7 +37,11 @@ export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, ob
         if (hasOwnProperty(obj2, key) && !hasOwnProperty(result, key)) {
             // If the value in obj2 is an object, perform a deep copy
             if (typeof obj2[key] === 'object' && obj2[key] !== null) {
-                result[key] = deepMerge({}, obj2[key]);
+                if (obj2[key].constructor !== Object) {
+                    result[key] = obj2[key];
+                } else {
+                    result[key] = deepMerge({}, obj2[key]);
+                }
             } else {
                 result[key] = obj2[key];
             }
@@ -207,4 +214,8 @@ export function getCallStack(): string {
         return "";
     }
     return stack;
+}
+
+export function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -6,6 +6,7 @@ import {useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {deepMerge} from "@lib/util/data";
 import {usePreloaded} from "@lib/ui/providers/preloaded";
+import {Transform} from "@lib/game/game/elements/transform/transform";
 
 // @todo: 增加无障碍支持
 
@@ -22,9 +23,10 @@ export default function Image({
     const [scope, animate] = useAnimate();
     const {preloaded} = usePreloaded();
     const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+    const [processingTransform, setProcessingTransform] =
+        useState<Transform<any> | null>(null);
 
     const preloadedImage = preloaded.get<"image">(GameImage.staticImageDataToSrc(image.state.src));
-    image.setScope(scope);
 
     const cloned = useMemo(() => {
         const srcUrl = GameImage.staticImageDataToSrc(image.state.src);
@@ -48,10 +50,9 @@ export default function Image({
     }, [scope, image.state.width, image.state.height, image.state.src, preloadedImage]);
 
     useEffect(() => {
-        image.events.emit(GameImage.EventTypes["event:image.mount"]);
+        image.setScope(scope);
 
-        const initTransform = image.toTransform();
-        Object.assign(scope.current, initTransform.propToCSS(state, initTransform.state));
+        image.events.emit(GameImage.EventTypes["event:image.mount"]);
 
         const listening = [
             GameImage.EventTypes["event:image.show"],
@@ -59,26 +60,37 @@ export default function Image({
             GameImage.EventTypes["event:image.applyTransform"]
         ];
 
-        const fc = listening.map((type) => {
+        const fc = [...listening.map((type) => {
             return {
                 fc: image.events.on(type, async (transform) => {
+                    if (processingTransform && processingTransform.getControl()) {
+                        processingTransform.getControl().complete();
+                    }
+
                     transform.assignState(image.state);
 
+                    setProcessingTransform(transform);
                     await transform.animate({scope, animate}, state);
                     image.state = deepMerge({}, transform.state);
 
                     if (onAnimationEnd) {
                         onAnimationEnd();
                     }
+
+                    setProcessingTransform(null);
                     return true;
                 }),
                 type,
             };
-        });
+        })];
+
+        image.events.emit(GameImage.EventTypes["event:image.ready"], scope);
+
         return () => {
             fc.forEach((fc) => {
                 image.events.off(fc.type, fc.fc);
             });
+            image.events.emit(GameImage.EventTypes["event:image.unmount"]);
         };
     }, []);
 
@@ -97,10 +109,10 @@ export default function Image({
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {cloned || (
+                {(cloned || (
                     <img className={"relative"} alt={"image"} src={GameImage.staticImageDataToSrc(image.state.src)} width={image.state.width}
                          height={image.state.height} style={{position: 'absolute'}} ref={scope} onLoad={() => setBackgroundLoaded(true)}/>
-                )}
+                ))}
             </div>
         </div>
     );

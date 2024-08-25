@@ -2,18 +2,18 @@ import {ContentNode} from "@lib/game/game/save/rollback";
 import {Awaitable} from "@lib/util/data";
 import {Background, CommonImage} from "@lib/game/game/show";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {Image} from "@lib/game/game/elements/image";
+import {Image as GameImage, Image} from "@lib/game/game/elements/image";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {Action} from "@lib/game/game/action";
 import type {Character, Sentence} from "@lib/game/game/elements/text";
 import type {Scene} from "@lib/game/game/elements/scene";
 import type {Story} from "@lib/game/game/elements/story";
 import type {Script} from "@lib/game/game/elements/script";
-import {Menu, MenuData} from "@lib/game/game/elements/menu";
+import type {Menu, MenuData} from "@lib/game/game/elements/menu";
 import type {Condition, ConditionData} from "@lib/game/game/elements/condition";
 import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {Sound} from "@lib/game/game/elements/sound";
+import type {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {ITransition} from "@lib/game/game/elements/transition/type";
@@ -76,6 +76,8 @@ export const SceneActionTypes = {
     init: "scene:init",
     exit: "scene:exit",
     jumpTo: "scene:jumpTo",
+    setBackgroundMusic: "scene:setBackgroundMusic",
+    preUnmount: "scene:preUnmount",
 } as const;
 export type SceneActionContentType = {
     [K in typeof SceneActionTypes[keyof typeof SceneActionTypes]]:
@@ -87,7 +89,9 @@ export type SceneActionContentType = {
                         K extends typeof SceneActionTypes["init"] ? [] :
                             K extends typeof SceneActionTypes["exit"] ? [] :
                                 K extends typeof SceneActionTypes["jumpTo"] ? [Actions[]] :
-                                    any;
+                                    K extends typeof SceneActionTypes["setBackgroundMusic"] ? [Sound, number?] :
+                                        K extends typeof SceneActionTypes["preUnmount"] ? [] :
+                                        any;
 }
 
 export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneActionTypes]>
@@ -145,6 +149,20 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
                 .registerSrcManager(this.callee.srcManager)
                 .addScene(this.callee);
 
+            this.callee.events.once("event:scene.unmount", () => {
+                state.offSrcManager(this.callee.srcManager);
+            });
+
+            this.callee.events.once("event:scene.mount", () => {
+                if (this.callee.state.backgroundMusic) {
+                    SoundAction.initSound(state, this.callee.state.backgroundMusic);
+                    this.callee.events.emit("event:scene.setBackgroundMusic",
+                        this.callee.state.backgroundMusic,
+                        this.callee.config.backgroundMusicFade
+                    );
+                }
+            });
+
             this.callee.events.once("event:scene.imageLoaded", () => {
                 awaitable.resolve({
                     type: this.type,
@@ -174,6 +192,15 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             const future = actions[0]?.contentNode;
             current.addChild(future);
 
+            return super.executeAction(state);
+        } else if (this.type === SceneActionTypes.setBackgroundMusic) { // @todo: test this
+            const [sound, fade] = (this.contentNode as ContentNode<SceneActionContentType["scene:setBackgroundMusic"]>).getContent();
+
+            this.callee.events.emit("event:scene.setBackgroundMusic", sound, fade);
+
+            return super.executeAction(state);
+        } else if (this.type === SceneActionTypes.preUnmount) {
+            this.callee.events.emit("event:scene.preUnmount");
             return super.executeAction(state);
         }
 
@@ -225,27 +252,26 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
 
     public executeAction(state: GameState): CalledActionResult | Awaitable<CalledActionResult, any> {
         if (this.type === ImageActionTypes.init) {
+            const lastScene = state.findElementByImage(this.callee);
+            if (lastScene) {
+                state.disposeImage(this.callee, lastScene.scene);
+            }
+
             const scene = (this.contentNode as ContentNode<ImageActionContentType["image:init"]>).getContent()[0];
             if (this.callee.id === null) {
                 this.callee.setId(state.clientGame.game.getLiveGame().idManager.getStringId());
-                state.createImage(this.callee, scene);
-                state.stage.forceUpdate();
             }
-            // else {
-            //     const lastScene = state.findImage(this.callee);
-            //     if (lastScene) {
-            //         state.disposeImage(this.callee, lastScene);
-            //     }
-            //     state.createImage(this.callee, scene);
-            //     state.stage.forceUpdate();
+            state.createImage(this.callee, scene);
+
+            // if (this.callee.initiated) {
+            //     return super.executeAction(state);
             // }
-            if (this.callee.initiated) {
-                return super.executeAction(state);
-            }
-            this.callee.initiated = true;
+            // this.callee.initiated = true;
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
             const transform = new Transform<ImageTransformProps>([{
-                props: this.callee.state,
+                props: {
+                    ...this.callee.state,
+                },
                 options: {
                     duration: 0,
                 }
@@ -253,7 +279,10 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                 sync: true
             });
 
-            this.callee.events.once("event:image.mount", () => {
+            this.callee.events.once("event:image.mount", async () => {
+                if (!this.callee.getScope().current) {
+                    await this.callee.events.any(GameImage.EventTypes["event:image.elementLoaded"]);
+                }
                 state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
                     transform
                 ], () => {
@@ -261,7 +290,16 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                         type: this.type,
                         node: this.contentNode?.child || null,
                     });
+                    state.stage.next();
                 });
+
+                // const style = transform.propToCSS(state, this.callee.state);
+                // Object.assign(scope.current.style, style);
+                // awaitable.resolve({
+                //     type: this.type,
+                //     node: this.contentNode?.child || null,
+                // });
+                // state.stage.next();
             });
             return awaitable;
         }
@@ -283,6 +321,7 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
 
             if (this.type === ImageActionTypes.show) {
                 this.callee.state.display = true;
+                state.stage.forceUpdate();
             }
 
             state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
@@ -370,7 +409,7 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
     extends TypedAction<MenuActionContentType, T, Menu> {
     static ActionTypes = MenuActionTypes;
 
-    public executeAction(state: GameState): Awaitable<CalledActionResult, any> {
+    public executeAction(state: GameState) {
         const awaitable = new Awaitable<CalledActionResult, CalledActionResult>(v => v);
         const menu = this.contentNode.getContent() as MenuData;
 
@@ -392,51 +431,83 @@ export const SoundActionTypes = {
     action: "sound:action",
     play: "sound:play",
     stop: "sound:stop", // @todo: add pause and resume
+    fade: "sound:fade",
+    setVolume: "sound:setVolume",
+    setRate: "sound:setRate",
 } as const;
 export type SoundActionContentType = {
     [K in typeof SoundActionTypes[keyof typeof SoundActionTypes]]:
     K extends "sound:play" ? [void] :
         K extends "sound:stop" ? [void] :
-            any;
+            K extends "sound:fade" ? [{
+                    start: number;
+                    end: number;
+                    duration: number;
+                }] :
+                K extends "sound:setVolume" ? [number] :
+                    K extends "sound:setRate" ? [number] :
+                        any;
 }
 
 export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundActionTypes]>
     extends TypedAction<SoundActionContentType, T, Sound> {
     static ActionTypes = SoundActionTypes;
 
+    static initSound(state: GameState, sound: Sound) {
+        if (!sound.$getHowl()) {
+            sound.$setHowl(
+                new (state.getHowl())(sound.getHowlOptions())
+            )
+        }
+    }
+
     public executeAction(state: GameState): CalledActionResult | Awaitable<CalledActionResult, any> {
         if (this.type === SoundActionTypes.play) {
-            if (!this.callee.$getHowl()) {
-                this.callee.$setHowl(
-                    new (state.getHowl())({
-                        src: this.callee.config.src,
-                        loop: this.callee.config.loop,
-                        volume: this.callee.config.volume,
-                        autoplay: false,
-                    })
-                )
-            }
+            SoundAction.initSound(state, this.callee);
             if (this.callee.config.sync && !this.callee.config.loop) {
                 const awaitable = new Awaitable<CalledActionResult, any>(v => v);
-                state.playSound(this.callee.$getHowl(), () => {
-                    this.callee.$setHowl(null);
-                    console.log("sound end, ", this.contentNode);
+                const token = state.playSound(this.callee.$getHowl(), () => {
+                    this.callee.$stop();
                     awaitable.resolve({
                         type: this.type as any,
                         node: this.contentNode?.child || null
                     });
-                })
+                });
+                this.callee.$setToken(token);
                 return awaitable;
             } else {
-                state.playSound(this.callee.$getHowl(), () => {
-                    this.callee.$setHowl(null);
+                const token = state.playSound(this.callee.$getHowl(), () => {
+                    this.callee.$stop();
                 });
+                this.callee.$setToken(token);
                 return super.executeAction(state);
             }
         } else if (this.type === SoundActionTypes.stop) {
             if (this.callee.$getHowl()) {
                 this.callee.$getHowl().stop();
-                this.callee.$setHowl(null);
+                this.callee.$stop();
+            }
+            return super.executeAction(state);
+        } else if (this.type === SoundActionTypes.fade) {
+            const [{
+                start,
+                end,
+                duration
+            }] = (this.contentNode as ContentNode<SoundActionContentType["sound:fade"]>).getContent();
+            if (this.callee.$getHowl()) {
+                this.callee.$getHowl().fade(start, end, duration, this.callee.$getToken());
+            }
+            return super.executeAction(state);
+        } else if (this.type === SoundActionTypes.setVolume) {
+            const [volume] = (this.contentNode as ContentNode<SoundActionContentType["sound:setVolume"]>).getContent();
+            if (this.callee.$getHowl()) {
+                this.callee.$getHowl().volume(volume, this.callee.$getToken());
+            }
+            return super.executeAction(state);
+        } else if (this.type === SoundActionTypes.setRate) {
+            const [rate] = (this.contentNode as ContentNode<SoundActionContentType["sound:setRate"]>).getContent();
+            if (this.callee.$getHowl()) {
+                this.callee.$getHowl().rate(rate, this.callee.$getToken());
             }
             return super.executeAction(state);
         }
@@ -450,6 +521,7 @@ export const ControlActionTypes = {
     any: "control:any",
     all: "control:all",
     allAsync: "control:allAsync",
+    repeat: "control:repeat",
 } as const;
 export type ControlActionContentType = {
     [K in typeof ControlActionTypes[keyof typeof ControlActionTypes]]:
@@ -458,7 +530,9 @@ export type ControlActionContentType = {
             K extends "control:any" ? [LogicAction.Actions[]] :
                 K extends "control:all" ? [LogicAction.Actions[]] :
                     K extends "control:parallel" ? [LogicAction.Actions[]] :
-                        any;
+                        K extends "control:allAsync" ? [LogicAction.Actions[]] :
+                            K extends "control:repeat" ? [number, LogicAction.Actions[]] :
+                                any;
 }
 
 export class ControlAction<T extends typeof ControlActionTypes[keyof typeof ControlActionTypes]>
@@ -531,6 +605,17 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
             (async () => {
                 const promises = content.map(action => this.executeAllActions(state, action));
                 await Promise.all(promises);
+            })();
+            return super.executeAction(state);
+        } else if (this.type === ControlActionTypes.repeat) { // @todo: test this
+            const [times, actions] =
+                (this.contentNode as ContentNode<ControlActionContentType["control:repeat"]>).getContent();
+            (async () => {
+                for (let i = 0; i < times; i++) {
+                    for (const action of actions) {
+                        await this.executeAllActions(state, action);
+                    }
+                }
             })();
             return super.executeAction(state);
         }
