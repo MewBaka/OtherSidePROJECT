@@ -1,9 +1,14 @@
+"use client";
+
 import {Sentence} from "@/lib/game/game/elements/text";
 import Isolated from "@/lib/ui/elements/isolated";
 import TypingEffect from "@/lib/ui/elements/player/typeing-effect";
 import {toHex} from "@/lib/util/data";
 import clsx from "clsx";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {Constants} from "@lib/api/config";
+
+// @todo: 增加其他模式的say支持
 
 export default function Say({
                                 action,
@@ -37,6 +42,27 @@ export default function Say({
         }
     }
 
+    useEffect(() => {
+        if (!window) {
+            console.warn("Failed to add event listener, window is not available\nat Say.tsx: onElementClick")
+            return;
+        }
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (Constants.app.game.elementBehavior.say.skipKeys.includes(e.key)) {
+                if (isFinished) {
+                    if (onClick) onClick();
+                } else {
+                    setIsFinished(true);
+                }
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        }
+    }, [isFinished]);
+
     return (
         <Isolated>
             {sentence.state.display &&
@@ -65,7 +91,7 @@ export default function Say({
                         useTypeEffect ?
                             <TypingEffect text={word.text}
                                           onComplete={index === currentWordIndex ? handleComplete : undefined}
-                                          speed={50}/> :
+                                          speed={Constants.app.game.elementBehavior.say.textCps}/> :
                             word.text
                     }
                   </span>

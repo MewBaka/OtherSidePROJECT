@@ -214,7 +214,7 @@ export class GameState {
     }
 
     private anyEvent(type: any, target: any, onEnd: () => void, ...args: any[]) {
-        target.events.any(
+        (target.events as EventDispatcher<any>).any(
             type,
             ...args
         ).then(onEnd).then(() => {

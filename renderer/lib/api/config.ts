@@ -39,6 +39,14 @@ const Constants = {
             cacheableRouteParam: "request_url",
             useCacheableRoute: false,
         },
+        game: {
+            elementBehavior: {
+                say: {
+                    skipKeys: [" "],
+                    textCps: 50,
+                }
+            }
+        },
     }
 };
 

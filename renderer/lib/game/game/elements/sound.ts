@@ -59,14 +59,23 @@ export class Sound extends Actionable {
     }
 
     public play(): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be played directly");
+        }
         return this.pushAction<SoundActionContentType["sound:play"]>(SoundAction.ActionTypes.play, [void 0]);
     }
 
     public stop(): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be stopped directly");
+        }
         return this.pushAction<SoundActionContentType["sound:stop"]>(SoundAction.ActionTypes.stop, [void 0]);
     }
 
     public fade(start: number, end: number, duration: number): this {
+        if (this.config.type === SoundType.backgroundMusic) {
+            throw new Error("Background music cannot be faded directly");
+        }
         return this.pushAction<SoundActionContentType["sound:fade"]>(SoundAction.ActionTypes.fade, [{
             start, end, duration
         }]);

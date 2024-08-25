@@ -1,7 +1,7 @@
 import {LogicAction} from "@lib/game/game/logicAction";
 import {ContentNode} from "@lib/game/game/save/rollback";
 import type {CalledActionResult} from "@lib/game/game/gameTypes";
-import {Awaitable} from "@lib/util/data";
+import {Awaitable, getCallStack} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
 
 export class Action<ContentNodeType = any> {
@@ -11,11 +11,13 @@ export class Action<ContentNodeType = any> {
     callee: LogicAction.GameElement;
     type: ContentNodeType;
     contentNode: ContentNode<ContentNodeType>;
+    private readonly __stack: string;
 
     constructor(callee: LogicAction.GameElement, type: ContentNodeType, contentNode: ContentNode<ContentNodeType>) {
         this.callee = callee;
         this.type = type;
         this.contentNode = contentNode;
+        this.__stack = getCallStack();
     }
 
     static isAction(action: any): action is Action {

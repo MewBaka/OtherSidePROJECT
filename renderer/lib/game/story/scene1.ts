@@ -19,7 +19,7 @@ import type {TransformDefinitions} from "@lib/game/game/common/types";
 import {
     character1,
     character2,
-    image1,
+    image1, image1_2,
     image2,
     mainMenuBackground,
     mainMenuBackground2,
@@ -99,6 +99,10 @@ const scene2actions = scene2.action([
     // new Character(null)
     //     .say("hello")
     //     .toActions(),
+    // scene2.sleep(1000).toActions(),
+    // image1_2.show({
+    //     duration: 0.5,
+    // }).toActions(),
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {

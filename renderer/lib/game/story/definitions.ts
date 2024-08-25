@@ -23,6 +23,7 @@ export const image1 = new Image("i1", {
     },
     scale: 0.7,
 });
+export const image1_2 = image1.copy();
 export const image2 = new Image("i2", {
     src: ImageSpeechless,
     position: {

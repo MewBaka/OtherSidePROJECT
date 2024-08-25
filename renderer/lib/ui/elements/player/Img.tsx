@@ -1,6 +1,6 @@
 "use client";
 
-import {Image as GameImage} from "@lib/game/game/elements/image";
+import {Image, Image as GameImage} from "@lib/game/game/elements/image";
 import {GameState} from "@lib/ui/components/player/gameState";
 import React, {useEffect} from "react";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
@@ -24,9 +24,11 @@ export const Img = React.memo(function ({
     useEffect(() => {
         const initTransform = image.toTransform();
         Object.assign(image.getScope()?.current || {}, initTransform.propToCSS(state, image.state));
+
+        image.events.emit(Image.EventTypes["event:image.elementLoaded"]);
     }, []);
 
     return (
-        <img {...props}/>
+        <img {...props} alt={""}/>
     );
 })

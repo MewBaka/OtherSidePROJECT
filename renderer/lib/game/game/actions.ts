@@ -2,7 +2,7 @@ import {ContentNode} from "@lib/game/game/save/rollback";
 import {Awaitable} from "@lib/util/data";
 import {Background, CommonImage} from "@lib/game/game/show";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {Image} from "@lib/game/game/elements/image";
+import {Image as GameImage, Image} from "@lib/game/game/elements/image";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {Action} from "@lib/game/game/action";
 import type {Character, Sentence} from "@lib/game/game/elements/text";
@@ -269,7 +269,9 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             // this.callee.initiated = true;
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
             const transform = new Transform<ImageTransformProps>([{
-                props: this.callee.state,
+                props: {
+                    ...this.callee.state,
+                },
                 options: {
                     duration: 0,
                 }
@@ -277,7 +279,10 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                 sync: true
             });
 
-            this.callee.events.once("event:image.mount", () => {
+            this.callee.events.once("event:image.mount", async () => {
+                if (!this.callee.getScope().current) {
+                    await this.callee.events.any(GameImage.EventTypes["event:image.elementLoaded"]);
+                }
                 state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
                     transform
                 ], () => {
@@ -285,7 +290,16 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                         type: this.type,
                         node: this.contentNode?.child || null,
                     });
+                    state.stage.next();
                 });
+
+                // const style = transform.propToCSS(state, this.callee.state);
+                // Object.assign(scope.current.style, style);
+                // awaitable.resolve({
+                //     type: this.type,
+                //     node: this.contentNode?.child || null,
+                // });
+                // state.stage.next();
             });
             return awaitable;
         }
@@ -307,6 +321,7 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
 
             if (this.type === ImageActionTypes.show) {
                 this.callee.state.display = true;
+                state.stage.forceUpdate();
             }
 
             state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
