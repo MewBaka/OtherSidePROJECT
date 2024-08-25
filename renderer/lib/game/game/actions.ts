@@ -531,7 +531,7 @@ export type ControlActionContentType = {
                 K extends "control:all" ? [LogicAction.Actions[]] :
                     K extends "control:parallel" ? [LogicAction.Actions[]] :
                         K extends "control:allAsync" ? [LogicAction.Actions[]] :
-                            K extends "control:repeat" ? [number, LogicAction.Actions[]] :
+                            K extends "control:repeat" ? [LogicAction.Actions[], number] :
                                 any;
 }
 
@@ -608,7 +608,7 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
             })();
             return super.executeAction(state);
         } else if (this.type === ControlActionTypes.repeat) { // @todo: test this
-            const [times, actions] =
+            const [actions, times] =
                 (this.contentNode as ContentNode<ControlActionContentType["control:repeat"]>).getContent();
             (async () => {
                 for (let i = 0; i < times; i++) {

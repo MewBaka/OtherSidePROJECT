@@ -90,13 +90,13 @@ export class Condition extends Actionable {
         }
     }
 
-    If(condition: Lambda, action: LogicAction.Actions | LogicAction.Actions[]): this {
+    public If(condition: Lambda, action: LogicAction.Actions | LogicAction.Actions[]): this {
         this.conditions.If.condition = condition;
         this.conditions.If.action = this.construct(Array.isArray(action) ? action : [action]);
         return this;
     }
 
-    ElseIf(condition: Lambda, action: (LogicAction.Actions | LogicAction.Actions[])): this {
+    public ElseIf(condition: Lambda, action: (LogicAction.Actions | LogicAction.Actions[])): this {
         this.conditions.ElseIf.push({
             condition,
             action: this.construct(Array.isArray(action) ? action : [action])
@@ -104,7 +104,7 @@ export class Condition extends Actionable {
         return this;
     }
 
-    Else(action: (LogicAction.Actions | LogicAction.Actions[])): this {
+    public Else(action: (LogicAction.Actions | LogicAction.Actions[])): this {
         this.conditions.Else.action = this.construct(Array.isArray(action) ? action : [action]);
         return this;
     }
