@@ -54,11 +54,21 @@ const scene3actions = scene3.action([
     // scene3.activate().toActions(),
     // scene3.deactivate().toActions(),
     image1.init(scene3).toActions(),
-    image1.show({
-        ease: "circOut",
-        duration: 0.5,
-        sync: true
-    }).toActions(),
+    image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
+        {
+            props: {
+                position: "left",
+                opacity: 1,
+            },
+            options: {
+                duration: 2,
+                ease: "easeOut",
+            }
+        },
+    ], {
+        sync: true,
+        ease: "easeOut",
+    })).toActions(),
 
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
