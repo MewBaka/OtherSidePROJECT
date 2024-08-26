@@ -50,6 +50,13 @@ export class Control extends Actionable {
         return new Control().repeat(times, actions);
     }
 
+    constructor() {
+        super();
+        this.id = Game.getIdManager().getStringId();
+    }
+
+    readonly id: string;
+
     public do(actions: (Actions | Actions[])[]): this {
         return this.push(ControlAction.ActionTypes.do, actions);
     }

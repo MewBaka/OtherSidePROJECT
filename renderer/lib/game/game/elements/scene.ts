@@ -1,6 +1,6 @@
 import {Constructable} from "../constructable";
 import {Game} from "../game";
-import {Awaitable, deepMerge, EventDispatcher} from "@lib/util/data";
+import {Awaitable, deepMerge, EventDispatcher, safeClone} from "@lib/util/data";
 import {Background} from "../show";
 import {ContentNode} from "../save/rollback";
 import {LogicAction} from "@lib/game/game/logicAction";
@@ -8,7 +8,7 @@ import {SceneAction} from "@lib/game/game/actions";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {ITransition} from "@lib/game/game/elements/transition/type";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
-import {Sound} from "@lib/game/game/elements/sound";
+import {Sound, SoundDataRaw} from "@lib/game/game/elements/sound";
 import Actions = LogicAction.Actions;
 
 export type SceneConfig = {
@@ -17,9 +17,17 @@ export type SceneConfig = {
     backgroundMusic?: Sound | null;
     backgroundMusicFade?: number;
 } & Background;
-export type SceneState = {};
+export type SceneState = {
+    backgroundMusic?: Sound | null;
+};
 export type JumpConfig = {
     transition: ITransition;
+}
+
+export type SceneDataRaw = {
+    state: {
+        backgroundMusic?: SoundDataRaw | null;
+    };
 }
 
 export type SceneData = {};
@@ -38,8 +46,6 @@ export type SceneEventTypes = {
     "event:scene.imageLoaded": [],
     "event:scene.setBackgroundMusic": [Sound | null, number];
 };
-
-// @todo: 将只读配置和动态状态分开
 
 export class Scene extends Constructable<
     any,
@@ -66,9 +72,9 @@ export class Scene extends Constructable<
     };
     static defaultState: SceneState = {};
     static targetAction = SceneAction;
-    id: string;
-    name: string;
-    config: SceneConfig;
+    readonly id: string;
+    readonly name: string;
+    readonly config: SceneConfig;
     state: SceneConfig & SceneState;
     srcManager: SrcManager = new SrcManager();
     events: EventDispatcher<SceneEventTypes> = new EventDispatcher();
@@ -266,6 +272,21 @@ export class Scene extends Constructable<
         return this.state.backgroundMusic;
     }
 
-    toData() : any {}
+    toData() : SceneDataRaw {
+        return {
+            state: {
+                ...safeClone(this.state),
+                backgroundMusic: this.state.backgroundMusic?.toData(),
+            },
+        }
+    }
+
+    fromData(data: SceneDataRaw): this {
+        this.state = deepMerge<SceneConfig & SceneState>(this.state, data.state);
+        if (data.state.backgroundMusic) {
+            this.state.backgroundMusic = new Sound().fromData(data.state.backgroundMusic);
+        }
+        return this;
+    }
 }
 

@@ -13,7 +13,6 @@ export type WordConfig = {} & Color;
 
 export type SentenceDataRaw = {
     state: SentenceState;
-    character: CharacterStateData;
 };
 export type SentenceState = {
     display: boolean;
@@ -26,6 +25,7 @@ export class Sentence {
         color: "#fff",
         pause: true,
     };
+    id: string;
     character: Character | null;
     text: Word[];
     config: SentenceConfig;
@@ -37,6 +37,7 @@ export class Sentence {
         this.character = character;
         this.text = this.format(text);
         this.config = deepMerge<SentenceConfig>(Sentence.defaultConfig, config);
+        this.id = Game.getIdManager().getStringId();
     }
 
     static isSentence(obj: any): obj is Sentence {
@@ -66,13 +67,11 @@ export class Sentence {
     toData(): SentenceDataRaw {
         return {
             state: safeClone(this.state),
-            character: safeClone(this.character.toData())
         };
     }
 
     fromData(data: SentenceDataRaw) {
         this.state = deepMerge<SentenceState>(this.state, data);
-        this.character.fromData(data.character);
         return this;
     }
 
@@ -96,13 +95,6 @@ export class Word {
     static isWord(obj: any): obj is Word {
         return obj instanceof Word;
     }
-
-    toData() {
-        return {
-            text: this.text,
-            config: this.config
-        }
-    }
 }
 
 export type CharacterConfig = {}
@@ -125,11 +117,13 @@ export class Character extends Actionable<
 > {
     name: string;
     config: CharacterConfig;
+    readonly id: string;
 
     constructor(name: string, config: CharacterConfig = {}) {
         super();
         this.name = name;
         this.config = config;
+        this.id = Game.getIdManager().getStringId();
     }
 
     public say(content: string): Character;
@@ -152,10 +146,6 @@ export class Character extends Actionable<
     }
 
     public toData(): CharacterStateData {
-        return {};
-    }
-
-    public fromData(_: CharacterStateData): this {
-        return this;
+        return null;
     }
 }

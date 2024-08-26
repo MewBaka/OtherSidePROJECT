@@ -6,13 +6,9 @@ export class Actionable<
     Types extends TransactionType<TransactionEnum> = TransactionType<TransactionEnum>,
     StateData extends Record<string, any> = Record<string, any>
 > {
-    /**@deprecated */
-    transaction: Transaction<TransactionEnum>;
     protected actions: LogicAction.Actions[] = [];
 
-    constructor() {
-        this.transaction = new Transaction<TransactionEnum, Types>((history) => this.undo(history));
-    }
+    constructor() {}
 
     toActions() {
         let actions = this.actions;
@@ -23,8 +19,8 @@ export class Actionable<
     undo(history: HistoryData<TransactionEnum, Types>) {
     }
 
-    public toData(_: any[]): StateData {
-        return {} as StateData;
+    public toData(): StateData | null {
+        return null;
     }
 
     public fromData(_: StateData): this {

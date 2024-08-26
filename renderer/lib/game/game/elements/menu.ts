@@ -27,9 +27,9 @@ export type MenuData = {
 export class Menu extends Actionable {
     static defaultConfig: MenuConfig = {};
     static targetAction = MenuAction;
-    id: string;
+    readonly id: string;
     prompt: Sentence;
-    config: MenuConfig;
+    readonly config: MenuConfig;
     protected choices: Choice[] = [];
 
     constructor(prompt: UnSentencePrompt, config?: MenuConfig);
@@ -94,6 +94,10 @@ export class Menu extends Actionable {
         return output;
     }
 
+    _getFutureActions(): LogicAction.Actions[] {
+        return this.choices.map(choice => choice.action).flat(2);
+    }
+
     private constructChoices(): Choice[] {
         return this.choices.map(choice => {
             return {
@@ -101,10 +105,6 @@ export class Menu extends Actionable {
                 prompt: choice.prompt
             };
         });
-    }
-
-    _getFutureActions(): LogicAction.Actions[] {
-        return this.choices.map(choice => choice.action).flat(2);
     }
 }
 

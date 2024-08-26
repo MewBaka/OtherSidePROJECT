@@ -3,6 +3,7 @@ import {ContentNode, RenderableNode, RootNode} from "./save/rollback";
 import {LogicAction} from "@lib/game/game/logicAction";
 
 import {Action} from "@lib/game/game/action";
+import {Actionable} from "@lib/game/game/actionable";
 
 export class Constructable<
     T extends typeof Constructable = any,

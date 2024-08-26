@@ -2,6 +2,7 @@ import {Constructable} from "../constructable";
 import {Game, LogicAction} from "../game";
 import {deepMerge} from "@lib/util/data";
 import {SceneAction, StoryAction} from "@lib/game/game/actions";
+import {RawData} from "@lib/game/game/save/rollback";
 
 export type StoryConfig = {};
 
@@ -12,10 +13,9 @@ export class Story extends Constructable<
 > {
     static defaultConfig: StoryConfig = {};
     static targetAction = StoryAction;
-    id: string;
-    name: string;
-    config: StoryConfig;
-    scenes: SceneAction<"scene:action">[] = [];
+    readonly id: string;
+    readonly name: string;
+    readonly config: StoryConfig;
 
     constructor(name: string, config: StoryConfig = {}) {
         super();
@@ -24,11 +24,7 @@ export class Story extends Constructable<
         this.config = deepMerge<StoryConfig>(Story.defaultConfig, config);
     }
 
-    public registerScene(scene: SceneAction<"scene:action">): this {
-        this.scenes.push(scene);
-        return this;
-    }
-
+    /**@internal */
     getFutureActions(): LogicAction.Actions[] {
         const set = new Set<LogicAction.Actions>();
         this.getActions().forEach(sceneAction => {
@@ -46,19 +42,49 @@ export class Story extends Constructable<
         return Array.from(set);
     }
 
-    findActionById(id: string): LogicAction.Actions | null {
-        const action = this.getFutureActions();
+    /**@internal */
+    findActionById(id: string, actions?: LogicAction.Actions[]): LogicAction.Actions | null {
+        const action = actions || this.getFutureActions();
         const found = action.find(action => action.contentNode.id === id);
         return found || null;
     }
 
+    /**@internal */
+    getAllElements(actions?: LogicAction.Actions[]): LogicAction.GameElement[] {
+        const action = actions || this.getFutureActions();
+        const set = new Set<LogicAction.GameElement>(
+            action.map(action => action.callee)
+        );
+        return Array.from(set);
+    }
+
+    /**@internal */
+    getAllData(actions?: LogicAction.Actions[]): RawData<Record<string, any>>[] {
+        const action = actions || this.getFutureActions();
+        return action
+            .map(action => ({
+                id: action.contentNode.id,
+                data: action.callee.toData()
+            }))
+            .filter(data => data.data !== null);
+    }
+
+    /**@internal */
+    setAllData(data: RawData<any>[], actions?: LogicAction.Actions[]): void {
+        const action = actions || this.getFutureActions();
+        const map = new Map<string, any>();
+        action.forEach((action, index) => {
+            map.set(action.contentNode.id, data[index]);
+        });
+        action.forEach(action => action.callee.fromData(map.get(action.contentNode.id)));
+    }
+
     toData() {
-        return {
-            id: this.id,
-            name: this.name,
-            config: this.config,
-            actions: this.getActions().map(action => action.toData())
-        }
+        return null;
+    }
+
+    fromData(_: any) {
+        return this;
     }
 }
 

@@ -5,6 +5,11 @@ export enum NodeType {
     ContentNode = "ContentNode",
 }
 
+export type RawData<T> = {
+    id: string;
+    data: T;
+};
+
 export class Node<C = any> {
     id: string;
     type: string;
@@ -37,7 +42,7 @@ export type ContentNodeData = {
 export class ContentNode<T = any> extends Node<T> {
     child: RenderableNode | null;
     parent: RenderableNode | null;
-    callee: LogicAction.Actions;
+    action: LogicAction.Actions;
 
     constructor(
         id: string,
@@ -48,7 +53,7 @@ export class ContentNode<T = any> extends Node<T> {
         super(id, NodeType.ContentNode);
         this.child = child || null;
         this.parent = parent || null;
-        this.callee = callee
+        this.action = callee
     }
 
     setParent(parent: RenderableNode | null) {

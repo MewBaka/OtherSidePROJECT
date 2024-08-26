@@ -21,16 +21,16 @@ import ImageTransformProps = TransformDefinitions.ImageTransformProps;
 import Actions = LogicAction.Actions;
 
 export class TypedAction<
-    ContentType extends Record<string, any>,
-    T extends keyof ContentType & string,
-    Callee extends LogicAction.GameElement
+    ContentType extends Record<string, any> = Record<string, any>,
+    T extends keyof ContentType & string = keyof ContentType & string,
+    Callee extends LogicAction.GameElement = LogicAction.GameElement
 > extends Action<ContentType[T]> {
     declare callee: Callee;
 
     constructor(callee: Callee, type: any, contentNode: ContentNode<ContentType[T]>) {
         super(callee, type, contentNode);
         this.callee = callee;
-        this.contentNode.callee = this;
+        this.contentNode.action = this;
     }
 }
 
@@ -46,7 +46,7 @@ export type CharacterActionContentType = {
             any;
 }
 
-export class CharacterAction<T extends typeof CharacterActionTypes[keyof typeof CharacterActionTypes]>
+export class CharacterAction<T extends typeof CharacterActionTypes[keyof typeof CharacterActionTypes] = typeof CharacterActionTypes[keyof typeof CharacterActionTypes]>
     extends TypedAction<CharacterActionContentType, T, Character> {
     static ActionTypes = CharacterActionTypes;
 
@@ -91,10 +91,10 @@ export type SceneActionContentType = {
                                 K extends typeof SceneActionTypes["jumpTo"] ? [Actions[]] :
                                     K extends typeof SceneActionTypes["setBackgroundMusic"] ? [Sound, number?] :
                                         K extends typeof SceneActionTypes["preUnmount"] ? [] :
-                                        any;
+                                            any;
 }
 
-export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneActionTypes]>
+export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneActionTypes] = typeof SceneActionTypes[keyof typeof SceneActionTypes]>
     extends TypedAction<SceneActionContentType, T, Scene> {
     static ActionTypes = SceneActionTypes;
 
@@ -213,7 +213,7 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             // because they won't be executed
             return (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
         }
-        const action = this.contentNode.child?.callee;
+        const action = this.contentNode.child?.action;
         return action ? [action] : [];
     }
 }
@@ -228,7 +228,7 @@ export type StoryActionContentType = {
         any;
 }
 
-export class StoryAction<T extends typeof StoryActionTypes[keyof typeof StoryActionTypes]>
+export class StoryAction<T extends typeof StoryActionTypes[keyof typeof StoryActionTypes] = typeof StoryActionTypes[keyof typeof StoryActionTypes]>
     extends TypedAction<StoryActionContentType, T, Story> {
     static ActionTypes = StoryActionTypes;
 }
@@ -256,7 +256,7 @@ export type ImageActionContentType = {
                                 any;
 }
 
-export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageActionTypes]>
+export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageActionTypes] = typeof ImageActionTypes[keyof typeof ImageActionTypes]>
     extends TypedAction<ImageActionContentType, T, Image> {
     static ActionTypes = ImageActionTypes;
 
@@ -268,9 +268,6 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             }
 
             const scene = (this.contentNode as ContentNode<ImageActionContentType["image:init"]>).getContent()[0];
-            if (this.callee.id === null) {
-                this.callee.setId(state.clientGame.game.getLiveGame().idManager.getStringId());
-            }
             state.createImage(this.callee, scene);
 
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
@@ -300,10 +297,6 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                 });
             });
             return awaitable;
-        }
-
-        if (!this.callee.id) {
-            throw new Error("Image is not initiated, please call \"image.init()\" first.");
         }
 
         if (this.type === ImageActionTypes.setSrc) {
@@ -351,7 +344,7 @@ export type ConditionActionContentType = {
         any;
 }
 
-export class ConditionAction<T extends typeof ConditionActionTypes[keyof typeof ConditionActionTypes]>
+export class ConditionAction<T extends typeof ConditionActionTypes[keyof typeof ConditionActionTypes] = typeof ConditionActionTypes[keyof typeof ConditionActionTypes]>
     extends TypedAction<ConditionActionContentType, T, Condition> {
     static ActionTypes = ConditionActionTypes;
 
@@ -382,7 +375,7 @@ export type ScriptActionContentType = {
         any;
 }
 
-export class ScriptAction<T extends typeof ScriptActionTypes[keyof typeof ScriptActionTypes]>
+export class ScriptAction<T extends typeof ScriptActionTypes[keyof typeof ScriptActionTypes] = typeof ScriptActionTypes[keyof typeof ScriptActionTypes]>
     extends TypedAction<ScriptActionContentType, T, Script> {
     static ActionTypes = ScriptActionTypes;
 
@@ -407,7 +400,7 @@ export type MenuActionContentType = {
         any;
 }
 
-export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuActionTypes]>
+export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuActionTypes] = typeof MenuActionTypes[keyof typeof MenuActionTypes]>
     extends TypedAction<MenuActionContentType, T, Menu> {
     static ActionTypes = MenuActionTypes;
 
@@ -455,7 +448,7 @@ export type SoundActionContentType = {
                         any;
 }
 
-export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundActionTypes]>
+export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundActionTypes] = typeof SoundActionTypes[keyof typeof SoundActionTypes]>
     extends TypedAction<SoundActionContentType, T, Sound> {
     static ActionTypes = SoundActionTypes;
 
@@ -541,7 +534,7 @@ export type ControlActionContentType = {
                                 any;
 }
 
-export class ControlAction<T extends typeof ControlActionTypes[keyof typeof ControlActionTypes]>
+export class ControlAction<T extends typeof ControlActionTypes[keyof typeof ControlActionTypes] = typeof ControlActionTypes[keyof typeof ControlActionTypes]>
     extends TypedAction<ControlActionContentType, T, Control> {
     static ActionTypes = ControlActionTypes;
 
@@ -560,7 +553,7 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
                 if (!node) {
                     break;
                 } else {
-                    current = node.callee;
+                    current = node.action;
                 }
             } else {
                 current = next;

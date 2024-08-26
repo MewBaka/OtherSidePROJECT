@@ -40,10 +40,10 @@ export class Action<ContentNodeType = any> {
 
     getFutureActions(): LogicAction.Actions[] {
         const action = this.contentNode.child;
-        return action ? [action.callee] : [];
+        return action ? [action.action] : [];
     }
 
     undo() {
-        this.contentNode.callee.undo();
+        this.contentNode.action.undo();
     }
 }

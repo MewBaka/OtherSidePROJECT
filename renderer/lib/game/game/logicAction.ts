@@ -36,18 +36,18 @@ import {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
 
 export namespace LogicAction {
-    export type GameElement = Character | Scene | Story | Sentence | Image | Condition | Script | Menu | Sound | Control;
+    export type GameElement = Character | Scene | Story | Image | Condition | Script | Menu | Sound | Control;
     export type Actions =
-        CharacterAction<any>
-        | ConditionAction<any>
-        | ImageAction<any>
-        | SceneAction<any>
-        | ScriptAction<any>
-        | StoryAction<any>
-        | TypedAction<any, any, any>
-        | MenuAction<any>
-        | SoundAction<any>
-        | ControlAction<any>;
+        (TypedAction
+        | CharacterAction
+        | ConditionAction
+        | ImageAction
+        | SceneAction
+        | ScriptAction
+        | StoryAction
+        | MenuAction
+        | SoundAction
+        | ControlAction) ;
     export type ActionTypes =
         Values<typeof CharacterActionTypes>
         | Values<typeof ConditionActionTypes>

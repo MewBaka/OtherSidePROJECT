@@ -208,7 +208,7 @@ export class LiveGame {
                 return this.lockedAwaiting;
             }
             const next = this.lockedAwaiting.result;
-            this.currentAction = next.node?.callee || null;
+            this.currentAction = next.node?.action || null;
             this.lockedAwaiting = null;
             return next;
         }
@@ -227,7 +227,7 @@ export class LiveGame {
 
         this._lockedCount = 0;
 
-        this.currentAction = nextAction.node.child?.callee;
+        this.currentAction = nextAction.node.child?.action;
         return nextAction;
     }
 
@@ -236,7 +236,7 @@ export class LiveGame {
         if (Awaitable.isAwaitable(nextAction)) {
             return nextAction;
         }
-        return nextAction.node.child?.callee;
+        return nextAction.node.child?.action;
     }
 }
 

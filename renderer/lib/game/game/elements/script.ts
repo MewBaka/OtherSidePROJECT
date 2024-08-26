@@ -22,10 +22,12 @@ const ScriptTransactionTypes = {
 export class Script extends Actionable<typeof ScriptTransactionTypes> {
     handler: ScriptRun;
     cleaner: ScriptCleaner | null = null;
+    readonly id: string;
 
     constructor(handler: ScriptRun) {
         super();
         this.handler = handler;
+        this.id = Game.getIdManager().getStringId();
     }
 
     execute({gameState}: { gameState: GameState }): void {

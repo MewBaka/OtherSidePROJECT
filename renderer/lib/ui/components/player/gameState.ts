@@ -154,6 +154,7 @@ export class GameState {
         images.splice(index, 1);
         return this;
     }
+
     playSound(howl: Howler.Howl, onEnd?: () => void): any {
         const token = howl.play();
         const events = [

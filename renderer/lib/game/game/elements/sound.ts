@@ -1,5 +1,5 @@
 import {Actionable} from "@lib/game/game/actionable";
-import {deepMerge, DeepPartial} from "@lib/util/data";
+import {deepMerge, DeepPartial, safeClone} from "@lib/util/data";
 import {SoundAction, SoundActionContentType} from "@lib/game/game/actions";
 import {Game} from "@lib/game/game/game";
 import {ContentNode} from "@lib/game/game/save/rollback";
@@ -12,6 +12,10 @@ export enum SoundType {
     voice = "voice",
     backgroundMusic = "backgroundMusic",
 }
+
+export type SoundDataRaw = {
+    config: SoundConfig;
+};
 
 export type SoundConfig = {
     // @todo: 速读模式
@@ -52,10 +56,12 @@ export class Sound extends Actionable {
         playing: null,
         token: null,
     };
+    readonly id: string;
 
     constructor(config: DeepPartial<SoundConfig> = {}) {
         super();
         this.config = deepMerge<SoundConfig>(Sound.defaultConfig, config);
+        this.id = Game.getIdManager().getStringId();
     }
 
     public play(): this {
@@ -134,5 +140,16 @@ export class Sound extends Actionable {
     $stop() {
         this.$setToken(null);
         this.$setHowl(null);
+    }
+
+    public toData(): SoundDataRaw {
+        return {
+            config: safeClone(this.config)
+        };
+    }
+
+    public fromData(data: SoundDataRaw): this {
+        this.config = deepMerge<SoundConfig & SoundDataRaw>(this.config, data.config);
+        return this;
     }
 }

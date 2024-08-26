@@ -1,7 +1,6 @@
 import type {CommonImage, CommonImagePosition, NextJSStaticImageData} from "../show";
-import {deepMerge, DeepPartial, EventDispatcher, getCallStack} from "@lib/util/data";
+import {deepMerge, DeepPartial, EventDispatcher, getCallStack, safeClone} from "@lib/util/data";
 import {ContentNode} from "../save/rollback";
-import {HistoryData} from "../save/transaction";
 import {Game} from "@lib/game/game/game";
 import {Transform} from "./transform/transform";
 import {ImageAction, ImageActionContentType} from "@lib/game/game/actions";
@@ -17,6 +16,10 @@ export type ImageConfig = {
     display: boolean;
     cache: boolean;
 } & CommonImage;
+
+export type ImageDataRaw = {
+    state: ImageConfig;
+};
 
 export const ImagePosition: {
     [K in CommonImagePosition]: K;
@@ -61,20 +64,21 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         opacity: 0,
         cache: false,
     };
-    name: string;
-    config: ImageConfig;
+    readonly name: string;
+    readonly config: ImageConfig;
     state: ImageConfig;
     declare actions: ImageAction<any>[];
-    id: null | number | string;
+    readonly id: string;
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
+
     constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
         super();
         this.name = name;
         this.config = deepMerge<ImageConfig>(Image.defaultConfig, config);
         this.state = deepMerge<ImageConfig>({}, this.config);
         this.actions = [];
-        this.id = null;
+        this.id = Game.getIdManager().getStringId();
 
         this.checkConfig();
     }
@@ -98,12 +102,6 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         if (!Transform.isPosition(this.config.position)) {
             throw new Error("Invalid position\nPosition must be one of CommonImagePosition, Align, Coord2D");
         }
-        return this;
-    }
-
-    /**@internal */
-    setId(id: number | string): this {
-        this.id = id;
         return this;
     }
 
@@ -232,6 +230,17 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
 
     copy(): Image {
         return new Image(this.name, this.config);
+    }
+
+    public toData(): ImageDataRaw {
+        return {
+            state: safeClone(this.state)
+        };
+    }
+
+    public fromData(data: ImageDataRaw): this {
+        this.state = deepMerge<ImageConfig>(this.state, data.state);
+        return this;
     }
 
     private _dispose() {
