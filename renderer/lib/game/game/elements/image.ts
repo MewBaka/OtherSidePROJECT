@@ -10,6 +10,7 @@ import {Utils} from "@lib/game/game/common/Utils";
 import React from "react";
 import {Scene} from "@lib/game/game/elements/scene";
 import {AnimationScope} from "framer-motion";
+import _ from "lodash";
 
 export type ImageConfig = {
     src: string | NextJSStaticImageData;
@@ -233,6 +234,10 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     }
 
     public toData(): ImageDataRaw {
+        if (_.isEqual(this.state, this.config)) {
+            return null;
+        }
+
         return {
             state: safeClone(this.state)
         };

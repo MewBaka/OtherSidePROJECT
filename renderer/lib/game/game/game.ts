@@ -1,11 +1,11 @@
 import type {CalledActionResult, GameConfig, GameSettings, SavedGame} from "./gameTypes";
 
-import {RenderableNode, RootNode} from "./save/rollback";
+import {RawData, RenderableNode, RootNode} from "./save/rollback";
 import {Awaitable, deepMerge, safeClone} from "@lib/util/data";
 import {Namespace, Storable, StorableData} from "./save/store";
 import {Singleton} from "@lib/util/singleton";
 import {Constants} from "@/lib/api/config";
-import type {Story} from "./elements/story";
+import {Story, StoryDataRaw} from "./elements/story";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {GameState} from "@lib/ui/components/player/gameState";
 
@@ -150,6 +150,7 @@ export class LiveGame {
             },
             game: {
                 store: {},
+                story: [],
             }
         };
     }
@@ -237,6 +238,21 @@ export class LiveGame {
             return nextAction;
         }
         return nextAction.node.child?.action;
+    }
+
+    toSavedGame(): SavedGame {
+        return {
+            name: this.currentSavedGame?.name || "_",
+            version: Constants.info.app.version,
+            meta: {
+                created: this.currentSavedGame?.meta.created || Date.now(),
+                updated: Date.now(),
+            },
+            game: {
+                store: this.storable.toData(),
+                story: this.story?.getAllData(),
+            }
+        };
     }
 }
 

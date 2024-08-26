@@ -1,8 +1,9 @@
 import {ClientGame} from "../game";
-import {ContentNode} from "./save/rollback";
+import {ContentNode, RawData} from "./save/rollback";
 import {StorableData} from "./save/store";
-import {FileStore, RemoteFileStoreClient} from "./save/storeProvider";
+import {RemoteFileStoreClient} from "./save/storeProvider";
 import {LogicAction} from "@lib/game/game/logicAction";
+import {StoryDataRaw} from "@lib/game/game/elements/story";
 
 
 export interface SavedGame {
@@ -14,29 +15,16 @@ export interface SavedGame {
     };
     game: {
         store: { [key: string]: StorableData; };
+        story: RawData<StoryDataRaw>[];
     };
 }
 
 export type GameConfig = {
-    /**@deprecated */
-    settingFileStore?: FileStore;
-    /**@deprecated */
-    saveFileStore?: FileStore;
     clientGame: ClientGame;
     remoteStore: RemoteFileStoreClient;
 };
 export type GameSettings = {
     volume: number;
-};
-/**@deprecated */
-export type ClientActionProto<T> = {
-    type: string;
-    id: string;
-    content: T;
-};
-/**@deprecated */
-export type ClientResponseProto<T> = {
-    content: T;
 };
 export type CalledActionResult<T extends keyof LogicAction.ActionContents = undefined> = {
     [K in keyof LogicAction.ActionContents]: {

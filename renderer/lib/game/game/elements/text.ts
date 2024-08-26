@@ -2,9 +2,9 @@ import {Game} from "../game";
 import {ContentNode} from "../save/rollback";
 import {Color} from "../show";
 import {deepMerge, safeClone} from "@lib/util/data";
-import {HistoryData} from "../save/transaction";
 import {CharacterAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";
+import _ from "lodash";
 
 export type SentenceConfig = {
     pause?: boolean | number;
@@ -25,19 +25,21 @@ export class Sentence {
         color: "#fff",
         pause: true,
     };
+    static defaultState: SentenceState = {
+        display: true
+    }
     id: string;
     character: Character | null;
     text: Word[];
     config: SentenceConfig;
-    state: SentenceState = {
-        display: true
-    };
+    state: SentenceState;
 
     constructor(character: Character | null, text: (string | Word)[] | (string | Word), config: Partial<SentenceConfig> = {}) {
         this.character = character;
         this.text = this.format(text);
         this.config = deepMerge<SentenceConfig>(Sentence.defaultConfig, config);
         this.id = Game.getIdManager().getStringId();
+        this.state = safeClone(Sentence.defaultState);
     }
 
     static isSentence(obj: any): obj is Sentence {
@@ -64,7 +66,10 @@ export class Sentence {
         return result;
     }
 
-    toData(): SentenceDataRaw {
+    toData(): SentenceDataRaw | null {
+        if (_.isEqual(this.state, Sentence.defaultState)) {
+            return null;
+        }
         return {
             state: safeClone(this.state),
         };
@@ -143,9 +148,5 @@ export class Character extends Actionable<
         );
         this.actions.push(action);
         return this;
-    }
-
-    public toData(): CharacterStateData {
-        return null;
     }
 }

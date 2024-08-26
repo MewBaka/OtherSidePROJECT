@@ -5,6 +5,7 @@ import {SceneAction, StoryAction} from "@lib/game/game/actions";
 import {RawData} from "@lib/game/game/save/rollback";
 
 export type StoryConfig = {};
+export type StoryDataRaw = Record<string, any>;
 
 export class Story extends Constructable<
     any,
@@ -59,14 +60,13 @@ export class Story extends Constructable<
     }
 
     /**@internal */
-    getAllData(actions?: LogicAction.Actions[]): RawData<Record<string, any>>[] {
+    getAllData(actions?: LogicAction.Actions[]): RawData<StoryDataRaw>[] {
         const action = actions || this.getFutureActions();
-        return action
-            .map(action => ({
-                id: action.contentNode.id,
-                data: action.callee.toData()
-            }))
-            .filter(data => data.data !== null);
+        const allCallee = this.getAllElements(action);
+        return allCallee.map(callee => ({
+            id: callee.id,
+            data: callee.toData()
+        })).filter(data => data.data !== null);
     }
 
     /**@internal */

@@ -10,6 +10,7 @@ import {ITransition} from "@lib/game/game/elements/transition/type";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {Sound, SoundDataRaw} from "@lib/game/game/elements/sound";
 import Actions = LogicAction.Actions;
+import _ from "lodash";
 
 export type SceneConfig = {
     invertY?: boolean;
@@ -273,6 +274,9 @@ export class Scene extends Constructable<
     }
 
     toData() : SceneDataRaw {
+        if (_.isEqual(this.state, this.config)) {
+            return null;
+        }
         return {
             state: {
                 ...safeClone(this.state),

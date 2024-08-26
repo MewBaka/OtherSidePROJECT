@@ -5,6 +5,7 @@ import {Game} from "@lib/game/game/game";
 import {ContentNode} from "@lib/game/game/save/rollback";
 import * as Howler from "howler";
 import {HowlOptions} from "howler";
+import _ from "lodash";
 
 export enum SoundType {
     soundEffect = "soundEffect",
@@ -143,6 +144,9 @@ export class Sound extends Actionable {
     }
 
     public toData(): SoundDataRaw {
+        if (_.isEqual(this.config, Sound.defaultConfig)) {
+            return null;
+        }
         return {
             config: safeClone(this.config)
         };
