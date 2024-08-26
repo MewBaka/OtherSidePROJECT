@@ -1,4 +1,4 @@
-import type {CommonImage, CommonImagePosition, StaticImageData} from "../show";
+import type {CommonImage, CommonImagePosition, NextJSStaticImageData} from "../show";
 import {deepMerge, DeepPartial, EventDispatcher, getCallStack} from "@lib/util/data";
 import {ContentNode} from "../save/rollback";
 import {HistoryData} from "../save/transaction";
@@ -13,7 +13,7 @@ import {Scene} from "@lib/game/game/elements/scene";
 import {AnimationScope} from "framer-motion";
 
 export type ImageConfig = {
-    src: string | StaticImageData;
+    src: string | NextJSStaticImageData;
     display: boolean;
     cache: boolean;
 } & CommonImage;
@@ -68,8 +68,6 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     id: null | number | string;
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
-    initiated: boolean;
-
     constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
         super();
         this.name = name;
@@ -81,7 +79,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         this.checkConfig();
     }
 
-    public static staticImageDataToSrc(image: StaticImageData | string): string {
+    public static staticImageDataToSrc(image: NextJSStaticImageData | string): string {
         return typeof image === "string" ? image : image.src;
     }
 
@@ -204,38 +202,6 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         );
         this.actions.push(action);
         return this;
-    }
-
-    undo(history: HistoryData<typeof ImageTransactionTypes>): ImageAction<any> | void {
-        const hideAction = new ImageAction(
-            this,
-            ImageAction.ActionTypes.hide,
-            new ContentNode(
-                Game.getIdManager().getStringId()
-            )
-        );
-        const showAction = new ImageAction(
-            this,
-            ImageAction.ActionTypes.show,
-            new ContentNode(
-                Game.getIdManager().getStringId()
-            )
-        );
-        switch (history.type) {
-            case ImageTransactionTypes.set:
-                this.setSrc(history.data[0]);
-                return void 0;
-            case ImageTransactionTypes.show:
-                if (!history.data) {
-                    return hideAction;
-                }
-                return showAction;
-            case ImageTransactionTypes.hide:
-                if (history.data) {
-                    return showAction;
-                }
-                return hideAction;
-        }
     }
 
     toTransform(): Transform<TransformDefinitions.ImageTransformProps> {

@@ -147,33 +147,8 @@ export class Character extends Actionable<
                 Game.getIdManager().getStringId(),
             ).setContent(sentence)
         );
-        this.transaction.commitWith<typeof CharacterActionTransaction.say>({
-            type: CharacterActionTransaction.say,
-            data: sentence
-        });
         this.actions.push(action);
         return this;
-    }
-
-    /**
-     * @internal
-     * DO NOT USE IN USER SCRIPTS
-     */
-    $hideSay(sentence: Sentence): Character {
-        sentence.state.display = false;
-        this.transaction.commitWith<typeof CharacterActionTransaction.hide>({
-            type: CharacterActionTransaction.hide,
-            data: sentence
-        });
-        return this;
-    }
-
-    undo(history: HistoryData<typeof CharacterActionTransaction, CharacterTransactionDataTypes>): void {
-        if (history.type === CharacterActionTransaction.say) {
-            history.data.state.display = false;
-        } else if (history.type === CharacterActionTransaction.hide) {
-            history.data.state.display = true;
-        }
     }
 
     public toData(): CharacterStateData {

@@ -1,9 +1,8 @@
-import { ClientAPI } from "../api/ipc";
-import { deepMerge } from "../util/data";
-import { Game } from "./game/game";
-import { FileStore, RemoteFileStoreClient } from "./game/save/storeProvider";
-import { Window as IpcWindow } from "../../../main/preload";
-import {Constants} from "@lib/api/config";
+import {ClientAPI} from "../api/ipc";
+import {deepMerge} from "../util/data";
+import {Game} from "./game/game";
+import {RemoteFileStoreClient} from "./game/save/storeProvider";
+import {Window as IpcWindow} from "../../../main/preload";
 
 export type ClientGameConfig = {};
 export type ClientRequirement = {
@@ -17,7 +16,9 @@ type ClientGamePreferenceHelper = {
     getPreference: <K extends keyof ClientGamePreference>(key: keyof ClientGamePreference) => ClientGamePreference[K];
 }
 
-class BaseGame {}
+class BaseGame {
+}
+
 export class ClientGame extends BaseGame {
     static defaultConfig: ClientGameConfig = {};
     static defaultPreference: ClientGamePreference = {
@@ -27,7 +28,7 @@ export class ClientGame extends BaseGame {
     clientAPI: ClientAPI;
     preference: ClientGamePreference & ClientGamePreferenceHelper;
     game: Game;
-    
+
     constructor(config: ClientGameConfig = {}, requirement: ClientRequirement) {
         super();
         this.config = deepMerge<ClientGameConfig>(ClientGame.defaultConfig, config);
@@ -42,6 +43,7 @@ export class ClientGame extends BaseGame {
             },
         };
     }
+
     init(window: IpcWindow) {
         this.game = new Game({
             clientGame: this,

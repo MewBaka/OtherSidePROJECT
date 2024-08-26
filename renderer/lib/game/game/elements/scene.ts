@@ -22,6 +22,8 @@ export type JumpConfig = {
     transition: ITransition;
 }
 
+export type SceneData = {};
+
 // @todo: scene生命周期管理
 
 export type SceneEventTypes = {
@@ -263,5 +265,7 @@ export class Scene extends Constructable<
     $getBackgroundMusic() {
         return this.state.backgroundMusic;
     }
+
+    toData() : any {}
 }
 

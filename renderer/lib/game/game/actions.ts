@@ -206,6 +206,16 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
 
         throw new Error("Unknown scene action type: " + this.type);
     }
+
+    getFutureActions(): LogicAction.Actions[] {
+        if (this.type === SceneActionTypes.jumpTo) {
+            // We don't care about the actions after jumpTo
+            // because they won't be executed
+            return (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
+        }
+        const action = this.contentNode.child?.callee;
+        return action ? [action] : [];
+    }
 }
 
 /* Story */
@@ -263,10 +273,6 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             }
             state.createImage(this.callee, scene);
 
-            // if (this.callee.initiated) {
-            //     return super.executeAction(state);
-            // }
-            // this.callee.initiated = true;
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
             const transform = new Transform<ImageTransformProps>([{
                 props: {
@@ -292,14 +298,6 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                     });
                     state.stage.next();
                 });
-
-                // const style = transform.propToCSS(state, this.callee.state);
-                // Object.assign(scope.current.style, style);
-                // awaitable.resolve({
-                //     type: this.type,
-                //     node: this.contentNode?.child || null,
-                // });
-                // state.stage.next();
             });
             return awaitable;
         }
@@ -368,6 +366,10 @@ export class ConditionAction<T extends typeof ConditionActionTypes[keyof typeof 
             node: this.contentNode,
         };
     }
+
+    getFutureActions() {
+        return [...this.callee._getFutureActions(), ...super.getFutureActions()];
+    }
 }
 
 /* Script */
@@ -414,7 +416,7 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
         const menu = this.contentNode.getContent() as MenuData;
 
         state.createMenu(menu, v => {
-            let lastChild = state.clientGame.game.getLiveGame().currentAction.contentNode.child;
+            let lastChild = state.clientGame.game.getLiveGame().getCurrentAction().contentNode.child;
             if (lastChild) {
                 v.action[v.action.length - 1]?.contentNode.addChild(lastChild);
             }
@@ -424,6 +426,10 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
             });
         }).then(r => r)
         return awaitable;
+    }
+
+    getFutureActions() {
+        return [...this.callee._getFutureActions(), ...super.getFutureActions()];
     }
 }
 
@@ -621,5 +627,11 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
         }
 
         throw new Error("Unknown control action type: " + this.type);
+    }
+
+    getFutureActions() {
+        const actions = this.contentNode.getContent()[0];
+        const childActions = super.getFutureActions();
+        return [...actions, ...childActions];
     }
 }

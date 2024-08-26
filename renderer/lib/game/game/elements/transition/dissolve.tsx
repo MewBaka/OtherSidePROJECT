@@ -7,7 +7,7 @@ import Isolated from "@lib/ui/elements/isolated";
 import Background from "@lib/ui/elements/Background";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {StaticImageData} from "@lib/game/game/show";
+import {NextJSStaticImageData} from "@lib/game/game/show";
 import {Image} from "@lib/game/game/elements/image";
 
 
@@ -29,7 +29,7 @@ export class Dissolve extends Base<Record<string, any>> implements ITransition<D
     };
     private readonly src: string;
 
-    constructor(src: string | StaticImageData, duration: number = 1000) {
+    constructor(src: string | NextJSStaticImageData, duration: number = 1000) {
         super();
         this.duration = duration;
         this.src = typeof src === "string"? src : Image.staticImageDataToSrc(src);

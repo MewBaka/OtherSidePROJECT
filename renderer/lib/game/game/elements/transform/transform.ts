@@ -1,4 +1,4 @@
-import {Align, Background, color, CommonImage, CommonImagePosition, Coord2D, Offset, StaticImageData} from "../../show";
+import {Align, Background, color, CommonImage, CommonImagePosition, Coord2D, Offset, NextJSStaticImageData} from "../../show";
 import type {AnimationPlaybackControls, DOMKeyframesDefinition} from "framer-motion";
 import {ImagePosition} from "../image";
 import {deepMerge, DeepPartial, sleep, toHex} from "@lib/util/data";
@@ -174,7 +174,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         return {backgroundImage, backgroundColor};
     }
 
-    static isStaticImageData(src: any): src is StaticImageData {
+    static isStaticImageData(src: any): src is NextJSStaticImageData {
         return src.src !== undefined;
     }
 

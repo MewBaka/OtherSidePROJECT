@@ -208,12 +208,12 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
     }
 }
 
-export function getCallStack(): string {
+export function getCallStack(n: number = 1): string {
     const stack = new Error().stack;
     if (!stack) {
         return "";
     }
-    return stack;
+    return stack.split('\n').slice(n + 1).join('\n');
 }
 
 export function sleep(ms: number): Promise<void> {

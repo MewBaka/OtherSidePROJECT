@@ -166,4 +166,12 @@ export class Condition extends Actionable {
         }
         return actions;
     }
+
+    _getFutureActions(): LogicAction.Actions[] {
+        return [
+            ...(this.conditions.If.action || []),
+            ...this.conditions.ElseIf.flatMap(e => e.action || []),
+            ...(this.conditions.Else.action || [])
+        ];
+    }
 }

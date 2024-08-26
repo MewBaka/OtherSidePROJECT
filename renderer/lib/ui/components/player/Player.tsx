@@ -85,10 +85,10 @@ export default function Player({
                                     }))
                                 }
                                 {
-                                    ele.texts.map((action) => {
+                                    ele.texts.map(({action, onClick}) => {
                                         return (
-                                            <Say key={"say-" + action.action.id} action={action.action} onClick={() => {
-                                                action.onClick();
+                                            <Say key={"say-" + action.id} action={action} onClick={() => {
+                                                onClick();
                                                 next();
                                             }}/>
                                         )

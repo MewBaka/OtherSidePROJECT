@@ -14,20 +14,23 @@ type Clickable<T, U = undefined> = {
     onClick: U extends undefined ? () => void : (arg0: U) => void;
 };
 
+type TextElement = {
+    character: Character;
+    sentence: Sentence;
+    id: string;
+};
+
+type MenuElement = {
+    prompt: Sentence;
+    choices: Choice[];
+};
+
 type PlayerStateElement = {
-    texts: Clickable<{
-        character: Character;
-        sentence: Sentence;
-        id: string;
-    }>[];
-    menus: Clickable<{
-        prompt: Sentence;
-        choices: Choice[];
-    }, Choice>[];
+    texts: Clickable<TextElement>[];
+    menus: Clickable<MenuElement, Choice>[];
     images: Image[];
 };
 export type PlayerState = {
-    history: CalledActionResult[];
     sounds: Sound[];
     srcManagers: SrcManager[];
     elements: { scene: Scene, ele: PlayerStateElement }[];
@@ -48,9 +51,7 @@ export class GameState {
     static EventTypes: { [K in keyof GameStateEvents]: K } = {
         "event:state.imageLoaded": "event:state.imageLoaded",
     };
-    static SrcManager = SrcManager;
     state: PlayerState = {
-        history: [],
         sounds: [],
         srcManagers: [],
         elements: [],
@@ -111,7 +112,6 @@ export class GameState {
     handle(action: PlayerAction): this {
         if (this.currentHandling === action) return this;
         this.currentHandling = action;
-        this.state.history.push(action);
 
         switch (action.type) {
             case "condition:action":

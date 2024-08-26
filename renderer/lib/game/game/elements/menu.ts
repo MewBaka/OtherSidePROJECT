@@ -102,5 +102,9 @@ export class Menu extends Actionable {
             };
         });
     }
+
+    _getFutureActions(): LogicAction.Actions[] {
+        return this.choices.map(choice => choice.action).flat(2);
+    }
 }
 

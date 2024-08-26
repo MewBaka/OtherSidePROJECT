@@ -38,6 +38,11 @@ export class Action<ContentNodeType = any> {
         }
     }
 
+    getFutureActions(): LogicAction.Actions[] {
+        const action = this.contentNode.child;
+        return action ? [action.callee] : [];
+    }
+
     undo() {
         this.contentNode.callee.undo();
     }

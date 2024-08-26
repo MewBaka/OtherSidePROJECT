@@ -8,7 +8,6 @@ import {Constants} from "@/lib/api/config";
 import type {Story} from "./elements/story";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {GameState} from "@lib/ui/components/player/gameState";
-import { cloneDeep } from "lodash";
 
 class IdManager extends Singleton<IdManager>() {
     private id = 0;
@@ -121,21 +120,17 @@ export class LiveGame {
 
     game: Game;
     storable: Storable;
-
     currentSceneNumber: number | null = null;
-    currentNode: RenderableNode | null = null;
-    currentAction: LogicAction.Actions | null = null;
     currentSavedGame: SavedGame | null = null;
     story: Story | null = null;
     lockedAwaiting: Awaitable<CalledActionResult, any> | null = null;
     idManager: GameIdManager;
-
     _lockedCount = 0;
-
     /**
      * Possible future nodes
      */
     future: RenderableNode[] = [];
+    private currentAction: LogicAction.Actions | null = null;
 
     constructor(game: Game) {
         this.game = game;
@@ -188,8 +183,12 @@ export class LiveGame {
         return this;
     }
 
-    setCurrentNode(node: RenderableNode) {
-        this.currentNode = node;
+    getCurrentAction(): LogicAction.Actions {
+        return this.currentAction;
+    }
+
+    setCurrentAction(action: LogicAction.Actions) {
+        this.currentAction = action;
         return this;
     }
 

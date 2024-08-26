@@ -1,5 +1,5 @@
 import {Constructable} from "../constructable";
-import {Game} from "../game";
+import {Game, LogicAction} from "../game";
 import {deepMerge} from "@lib/util/data";
 import {SceneAction, StoryAction} from "@lib/game/game/actions";
 
@@ -27,6 +27,29 @@ export class Story extends Constructable<
     public registerScene(scene: SceneAction<"scene:action">): this {
         this.scenes.push(scene);
         return this;
+    }
+
+    getFutureActions(): LogicAction.Actions[] {
+        const set = new Set<LogicAction.Actions>();
+        this.getActions().forEach(sceneAction => {
+            const queue: LogicAction.Actions[] = [];
+            queue.push(sceneAction);
+            set.add(sceneAction);
+
+            while (queue.length > 0) {
+                const action = queue.shift();
+                set.add(action);
+                queue.push(...action.getFutureActions());
+            }
+        });
+
+        return Array.from(set);
+    }
+
+    findActionById(id: string): LogicAction.Actions | null {
+        const action = this.getFutureActions();
+        const found = action.find(action => action.contentNode.id === id);
+        return found || null;
     }
 
     toData() {

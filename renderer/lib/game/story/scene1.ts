@@ -315,6 +315,7 @@ function isNumberCorrect(gameState: GameState, number: number) {
     return namespace.get("number") === number;
 }
 
+// @todo: 测试多场景
 
 story.action([
     scene1Actions
