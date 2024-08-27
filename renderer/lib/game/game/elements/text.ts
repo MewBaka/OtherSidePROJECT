@@ -122,13 +122,11 @@ export class Character extends Actionable<
 > {
     name: string;
     config: CharacterConfig;
-    readonly id: string;
 
     constructor(name: string, config: CharacterConfig = {}) {
-        super();
+        super(Actionable.IdPrefixes.Text);
         this.name = name;
         this.config = config;
-        this.id = Game.getIdManager().getStringId();
     }
 
     public say(content: string): Character;

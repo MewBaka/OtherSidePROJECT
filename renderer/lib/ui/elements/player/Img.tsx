@@ -8,10 +8,12 @@ import {Utils} from "@lib/game/game/common/Utils";
 
 export const Img = React.memo(function ({
                                             state,
-                                            image
+                                            image,
+    onLoad,
                                         }: Readonly<{
     state: GameState;
     image: GameImage;
+    onLoad?: () => void;
 }>) {
     const props: any = {
         ...image.toHTMLElementProps(),
@@ -29,6 +31,6 @@ export const Img = React.memo(function ({
     }, []);
 
     return (
-        <img {...props} alt={""}/>
+        <img {...props} alt={""} onLoad={onLoad}/>
     );
 })

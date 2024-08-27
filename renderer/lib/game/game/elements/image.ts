@@ -71,17 +71,15 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     readonly config: ImageConfig;
     state: ImageConfig;
     declare actions: ImageAction<any>[];
-    readonly id: string;
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
 
     constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
-        super();
+        super(Actionable.IdPrefixes.Image);
         this.name = name;
         this.config = deepMerge<ImageConfig>(Image.defaultConfig, config);
         this.state = deepMerge<ImageConfig>({}, this.config);
         this.actions = [];
-        this.id = Game.getIdManager().getStringId();
 
         this.checkConfig();
     }

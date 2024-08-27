@@ -51,11 +51,9 @@ export class Control extends Actionable {
     }
 
     constructor() {
-        super();
-        this.id = Game.getIdManager().getStringId();
+        super(Actionable.IdPrefixes.Control);
     }
 
-    readonly id: string;
 
     public do(actions: (Actions | Actions[])[]): this {
         return this.push(ControlAction.ActionTypes.do, actions);

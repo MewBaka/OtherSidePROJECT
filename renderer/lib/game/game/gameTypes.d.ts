@@ -3,7 +3,8 @@ import {ContentNode, RawData} from "./save/rollback";
 import {StorableData} from "./save/store";
 import {RemoteFileStoreClient} from "./save/storeProvider";
 import {LogicAction} from "@lib/game/game/logicAction";
-import {ElementStateRaw} from "@lib/game/game/elements/story";
+import {ElementStateRaw, NodeChildIdMap} from "@lib/game/game/elements/story";
+import {PlayerStateData} from "@lib/ui/components/player/gameState";
 
 
 export interface SavedGame {
@@ -16,6 +17,8 @@ export interface SavedGame {
     game: {
         store: { [key: string]: StorableData; };
         elementState: RawData<ElementStateRaw>[];
+        nodeChildIdMap: Record<string, string>;
+        stage: PlayerStateData;
         currentScene: number;
         currentAction: string | null;
     };

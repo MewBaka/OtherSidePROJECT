@@ -61,7 +61,7 @@ export class Story extends Constructable<
     /**@internal */
     findActionById(id: string, actions?: LogicAction.Actions[]): LogicAction.Actions | null {
         if (actions) {
-            const action = actions.find(action => action.contentNode.id === id);
+            const action = actions.find(action => action.getId() === id);
             return action || null;
         }
 
@@ -120,13 +120,19 @@ export class Story extends Constructable<
     }
 
     /**@internal */
-    setAllElementState(data: RawData<any>[], actions?: LogicAction.Actions[]): void {
+    setAllElementState(data: RawData<ElementStateRaw>[], actions?: LogicAction.Actions[]): void {
         const action = actions || this.getAllActions();
         const map = new Map<string, any>();
-        action.forEach((action, index) => {
-            map.set(action.contentNode.id, data[index]);
+
+        data.forEach(data => map.set(data.id, data.data));
+
+        const allCallee = this.getAllElements(action);
+        allCallee.forEach(callee => {
+            const state = map.get(callee.id);
+            if (state) {
+                callee.fromData(state);
+            }
         });
-        action.forEach(action => action.callee.fromData(map.get(action.contentNode.id)));
     }
 
     /**@internal */
@@ -137,6 +143,21 @@ export class Story extends Constructable<
             id: callee.id,
             data: callee.toData()
         })).filter(data => data.data !== null);
+    }
+
+    /**@internal */
+    findElementById(id: string, elements: LogicAction.GameElement[]): LogicAction.GameElement | null {
+        return elements.find(element => element.id === id) || null;
+    }
+
+    /**
+     * @internal
+     * 通过多个ID查找多个元素
+     */
+    findElementsByIds(ids: string[], elements: LogicAction.GameElement[]): LogicAction.GameElement[] {
+        const map = new Map<string, LogicAction.GameElement>();
+        elements.forEach(element => map.set(element.id, element));
+        return ids.map(id => map.get(id)).filter(Boolean);
     }
 
     /**
@@ -163,12 +184,17 @@ export class Story extends Constructable<
      * @internal
      * 使用指定的映射表还原节点子辈
      */
-    setNodeChildByMap(map: NodeChildIdMap, actions?: LogicAction.Actions[]): void {
+    setNodeChildByMap(map: NodeChildIdMap | Record<string, string>, actions?: LogicAction.Actions[]): void {
+        if (!map) {
+            return;
+        }
+        const childMap = map instanceof Map ? map : new Map(Object.entries(map));
+
         const action = actions || this.getAllActions();
         const mappedNodes = this.getMappedNodes(this.getAllNodes(action));
         action.forEach(action => {
             const node = action.contentNode;
-            const childId = map.get(node.id);
+            const childId = childMap.get(node.id);
             const child = childId && mappedNodes.get(childId);
             if (child) {
                 node.setChild(child);

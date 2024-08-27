@@ -8,6 +8,7 @@ import {Scene} from "@lib/game/game/elements/scene";
 import {Sound} from "@lib/game/game/elements/sound";
 import * as Howler from "howler";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
+import {LogicAction} from "@lib/game/game/logicAction";
 
 type Clickable<T, U = undefined> = {
     action: T;
@@ -35,6 +36,14 @@ export type PlayerState = {
     srcManagers: SrcManager[];
     elements: { scene: Scene, ele: PlayerStateElement }[];
 };
+export type PlayerStateData = {
+    elements: {
+        scene: string;
+        ele: {
+            images: string[];
+        };
+    }[]
+};
 export type PlayerAction = CalledActionResult;
 
 interface StageUtils {
@@ -42,6 +51,7 @@ interface StageUtils {
     next: () => void;
     dispatch: (action: PlayerAction) => void;
 }
+
 
 type GameStateEvents = {
     "event:state.imageLoaded": [];
@@ -122,11 +132,13 @@ export class GameState {
     }
 
     public createText(id: string, sentence: Sentence, afterClick?: () => void, scene?: Scene) {
-        return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
+        const waitableAction = this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
             character: sentence.character,
             sentence,
             id
         }, afterClick);
+        this.stage.forceUpdate();
+        return waitableAction;
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
@@ -238,6 +250,43 @@ export class GameState {
         this.stage.forceUpdate();
         return new Promise<void>((r) => {
             resolve = r;
+        });
+    }
+
+    toData(): PlayerStateData {
+        return {
+            elements: this.state.elements.map(e => {
+                return {
+                    scene: e.scene.id,
+                    ele: {
+                        images: e.ele.images.map(i => i.id)
+                    }
+                }
+            })
+        };
+    }
+
+    loadData(data: PlayerStateData, actions: LogicAction.Actions[]) {
+        this.state.elements = [];
+
+        const story = this.clientGame.game.getLiveGame().story;
+        const allElements = story.getAllElements(actions);
+        const {elements} = data;
+        elements.forEach(e => {
+            const [
+                scene,
+                ...images
+            ] = (story.findElementsByIds([e.scene, ...e.ele.images], allElements) as [Scene, ...Image[]]);
+            const element: { scene: Scene, ele: PlayerStateElement } = {
+                scene: scene,
+                ele: {
+                    images: images,
+                    menus: [],
+                    texts: []
+                }
+            };
+            this.state.elements.push(element);
+            this.state.srcManagers.push(element.scene.srcManager);
         });
     }
 }

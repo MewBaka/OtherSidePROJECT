@@ -27,7 +27,6 @@ export type MenuData = {
 export class Menu extends Actionable {
     static defaultConfig: MenuConfig = {};
     static targetAction = MenuAction;
-    readonly id: string;
     prompt: Sentence;
     readonly config: MenuConfig;
     protected choices: Choice[] = [];
@@ -35,8 +34,7 @@ export class Menu extends Actionable {
     constructor(prompt: UnSentencePrompt, config?: MenuConfig);
     constructor(prompt: Sentence, config?: MenuConfig);
     constructor(prompt: UnSentencePrompt | Sentence, config: MenuConfig = {}) {
-        super();
-        this.id = Game.getIdManager().getStringId();
+        super(Actionable.IdPrefixes.Menu);
         this.prompt = Sentence.isSentence(prompt) ? prompt : new Sentence(null, prompt);
         this.config = deepMerge<MenuConfig>(Menu.defaultConfig, config);
     }

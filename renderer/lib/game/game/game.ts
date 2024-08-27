@@ -1,11 +1,11 @@
 import type {CalledActionResult, GameConfig, GameSettings, SavedGame} from "./gameTypes";
 
-import {RawData, RenderableNode, RootNode} from "./save/rollback";
+import {RenderableNode, RootNode} from "./save/rollback";
 import {Awaitable, deepMerge, safeClone} from "@lib/util/data";
 import {Namespace, Storable, StorableData} from "./save/store";
 import {Singleton} from "@lib/util/singleton";
 import {Constants} from "@/lib/api/config";
-import {Story, ElementStateRaw} from "./elements/story";
+import {Story} from "./elements/story";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {GameState} from "@lib/ui/components/player/gameState";
 
@@ -151,6 +151,10 @@ export class LiveGame {
             game: {
                 store: {},
                 elementState: [],
+                nodeChildIdMap: {},
+                stage: {
+                    elements: [],
+                },
                 currentScene: 0,
                 currentAction: null,
             }
@@ -242,7 +246,49 @@ export class LiveGame {
         return nextAction.node.child?.action;
     }
 
-    toSavedGame(): SavedGame {
+    loadSavedGame(savedGame: SavedGame, {gameState}: {gameState: GameState}) {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return;
+        }
+
+        if (savedGame.version !== Constants.info.app.version) {
+            throw new Error("Saved game version mismatch");
+        }
+
+        this.currentSavedGame = savedGame;
+
+        const actions = this.story.getAllActions();
+        const {
+            store,
+            elementState,
+            nodeChildIdMap,
+            currentScene,
+            currentAction,
+            stage,
+        } = savedGame.game;
+        this.storable.load(store);
+        this.story.setAllElementState(elementState, actions);
+        this.story.setNodeChildByMap(nodeChildIdMap, actions);
+        this.currentSceneNumber = currentScene;
+        this.currentAction = this.story.findActionById(currentAction, actions) || null;
+        gameState.loadData(stage, actions);
+    }
+
+    generateSavedGame({gameState}: { gameState: GameState }): SavedGame {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return null;
+        }
+
+        const actions = this.story.getAllActions();
+
+        const elementState = this.story.getAllElementState(actions);
+        const nodeChildIds = Object.fromEntries(this.story.getNodeChildIdMap(actions));
+        const stage = gameState.toData();
+
         return {
             name: this.currentSavedGame?.name || "_",
             version: Constants.info.app.version,
@@ -252,7 +298,9 @@ export class LiveGame {
             },
             game: {
                 store: this.storable.toData(),
-                elementState: this.story?.getAllElementState(),
+                elementState: elementState,
+                stage: stage,
+                nodeChildIdMap: nodeChildIds,
                 currentScene: this.currentSceneNumber || 0,
                 currentAction: this.getCurrentAction()?.getId() || null,
             }

@@ -61,7 +61,6 @@ export type ConditionData = {
 export class Condition extends Actionable {
     static defaultConfig: ConditionConfig = {};
     readonly config: ConditionConfig;
-    readonly id: string;
     conditions: ConditionData = {
         If: {
             condition: null,
@@ -74,9 +73,8 @@ export class Condition extends Actionable {
     };
 
     constructor(config: ConditionConfig = {}) {
-        super();
+        super(Actionable.IdPrefixes.Condition);
         this.config = deepMerge<ConditionConfig>(Condition.defaultConfig, config);
-        this.id = Game.getIdManager().getStringId();
     }
 
     static getInitialState(): ConditionData {

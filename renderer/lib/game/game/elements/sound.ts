@@ -58,12 +58,10 @@ export class Sound extends Actionable {
         playing: null,
         token: null,
     };
-    readonly id: string;
 
     constructor(config: DeepPartial<SoundConfig> = {}) {
-        super();
+        super(Actionable.IdPrefixes.Sound);
         this.config = deepMerge<SoundConfig>(Sound.defaultConfig, config);
-        this.id = Game.getIdManager().getStringId();
     }
 
     public play(): this {

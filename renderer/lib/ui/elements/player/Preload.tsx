@@ -4,7 +4,7 @@ import {Scene as GameScene} from "@lib/game/game/elements/scene";
 import {Sound} from "@lib/game/game/elements/sound";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {usePreloaded} from "@lib/ui/providers/preloaded";
-import {PreloadedSrc} from "@lib/ui/elements/player/Preloaded";
+import {Preloaded, PreloadedSrc} from "@lib/ui/elements/player/Preloaded";
 import {Image} from "@lib/game/game/elements/image";
 import {Utils} from "@lib/game/game/common/core";
 import {Img} from "@lib/ui/elements/player/Img";
@@ -61,10 +61,16 @@ export function Preload({
 
         // @todo: 更智能的资源分析，尝试找出最有可能需要加载的资源
         const newImages = [];
+        const promises = [];
         src.image.forEach((src: Image) => {
-            const cached = SrcManager.cacheablize(Utils.srcToString(src.state.src), window.location.origin);
-            const img = (<Img image={src} state={state}/>);
+            let resolve: () => void;
+            const promise = new Promise<void>(r => resolve = r);
+            const img = (<Img image={src} state={state} onLoad={() => resolve()}/>);
             preloaded.add({type: "image", src, preloaded: img});
+        });
+
+        Promise.all(promises).then(() => {
+            preloaded.events.emit(Preloaded.EventTypes["event:preloaded.ready"]);
         });
 
         src.audio.forEach((src: Sound) => {
@@ -78,6 +84,9 @@ export function Preload({
                 }));
             }
         });
+
+        console.log("[Preload] Preloaded", preloaded.preloaded); // @debug
+        preloaded.events.emit(Preloaded.EventTypes["event:preloaded.mount"]);
 
         // @todo: better src manager, smart preload
         // maybe video preload here
