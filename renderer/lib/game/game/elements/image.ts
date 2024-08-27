@@ -1,22 +1,28 @@
-import type {CommonImage, CommonImagePosition, StaticImageData} from "../show";
-import {deepMerge, DeepPartial, EventDispatcher, getCallStack} from "@lib/util/data";
+import type {CommonImage, CommonImagePosition, NextJSStaticImageData} from "../show";
+import {deepMerge, DeepPartial, EventDispatcher, getCallStack, safeClone} from "@lib/util/data";
 import {ContentNode} from "../save/rollback";
-import {HistoryData} from "../save/transaction";
 import {Game} from "@lib/game/game/game";
 import {Transform} from "./transform/transform";
-import {ImageAction, ImageActionContentType} from "@lib/game/game/actions";
+import {ImageAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";
 import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {Utils} from "@lib/game/game/common/Utils";
 import React from "react";
 import {Scene} from "@lib/game/game/elements/scene";
 import {AnimationScope} from "framer-motion";
+import _ from "lodash";
+import {ImageActionContentType} from "@lib/game/game/actionTypes";
 
 export type ImageConfig = {
-    src: string | StaticImageData;
+    src: string | NextJSStaticImageData;
     display: boolean;
     cache: boolean;
+    disposed?: boolean;
 } & CommonImage;
+
+export type ImageDataRaw = {
+    state: ImageConfig;
+};
 
 export const ImagePosition: {
     [K in CommonImagePosition]: K;
@@ -61,27 +67,24 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         opacity: 0,
         cache: false,
     };
-    name: string;
-    config: ImageConfig;
+    readonly name: string;
+    readonly config: ImageConfig;
     state: ImageConfig;
     declare actions: ImageAction<any>[];
-    id: null | number | string;
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
-    initiated: boolean;
 
     constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
-        super();
+        super(Actionable.IdPrefixes.Image);
         this.name = name;
         this.config = deepMerge<ImageConfig>(Image.defaultConfig, config);
         this.state = deepMerge<ImageConfig>({}, this.config);
         this.actions = [];
-        this.id = null;
 
         this.checkConfig();
     }
 
-    public static staticImageDataToSrc(image: StaticImageData | string): string {
+    public static staticImageDataToSrc(image: NextJSStaticImageData | string): string {
         return typeof image === "string" ? image : image.src;
     }
 
@@ -100,12 +103,6 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         if (!Transform.isPosition(this.config.position)) {
             throw new Error("Invalid position\nPosition must be one of CommonImagePosition, Align, Coord2D");
         }
-        return this;
-    }
-
-    /**@internal */
-    setId(id: number | string): this {
-        this.id = id;
         return this;
     }
 
@@ -206,38 +203,6 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return this;
     }
 
-    undo(history: HistoryData<typeof ImageTransactionTypes>): ImageAction<any> | void {
-        const hideAction = new ImageAction(
-            this,
-            ImageAction.ActionTypes.hide,
-            new ContentNode(
-                Game.getIdManager().getStringId()
-            )
-        );
-        const showAction = new ImageAction(
-            this,
-            ImageAction.ActionTypes.show,
-            new ContentNode(
-                Game.getIdManager().getStringId()
-            )
-        );
-        switch (history.type) {
-            case ImageTransactionTypes.set:
-                this.setSrc(history.data[0]);
-                return void 0;
-            case ImageTransactionTypes.show:
-                if (!history.data) {
-                    return hideAction;
-                }
-                return showAction;
-            case ImageTransactionTypes.hide:
-                if (history.data) {
-                    return showAction;
-                }
-                return hideAction;
-        }
-    }
-
     toTransform(): Transform<TransformDefinitions.ImageTransformProps> {
         return new Transform<TransformDefinitions.ImageTransformProps>(this.state, {
             duration: 0,
@@ -268,6 +233,21 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return new Image(this.name, this.config);
     }
 
+    public toData(): ImageDataRaw {
+        if (this.state.disposed || _.isEqual(this.state, this.config)) {
+            return null;
+        }
+
+        return {
+            state: safeClone(this.state)
+        };
+    }
+
+    public fromData(data: ImageDataRaw): this {
+        this.state = deepMerge<ImageConfig>(this.state, data.state);
+        return this;
+    }
+
     private _dispose() {
         this.actions.push(new ImageAction<typeof ImageAction.ActionTypes.dispose>(
             this,
@@ -276,6 +256,11 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
                 Game.getIdManager().getStringId()
             )
         ));
+        return this;
+    }
+
+    $setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
+        this.state.disposed = true;
         return this;
     }
 

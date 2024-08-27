@@ -60,7 +60,7 @@ export type ConditionData = {
 
 export class Condition extends Actionable {
     static defaultConfig: ConditionConfig = {};
-    config: ConditionConfig;
+    readonly config: ConditionConfig;
     conditions: ConditionData = {
         If: {
             condition: null,
@@ -73,7 +73,7 @@ export class Condition extends Actionable {
     };
 
     constructor(config: ConditionConfig = {}) {
-        super();
+        super(Actionable.IdPrefixes.Condition);
         this.config = deepMerge<ConditionConfig>(Condition.defaultConfig, config);
     }
 
@@ -90,13 +90,13 @@ export class Condition extends Actionable {
         }
     }
 
-    If(condition: Lambda, action: LogicAction.Actions | LogicAction.Actions[]): this {
+    public If(condition: Lambda, action: LogicAction.Actions | LogicAction.Actions[]): this {
         this.conditions.If.condition = condition;
         this.conditions.If.action = this.construct(Array.isArray(action) ? action : [action]);
         return this;
     }
 
-    ElseIf(condition: Lambda, action: (LogicAction.Actions | LogicAction.Actions[])): this {
+    public ElseIf(condition: Lambda, action: (LogicAction.Actions | LogicAction.Actions[])): this {
         this.conditions.ElseIf.push({
             condition,
             action: this.construct(Array.isArray(action) ? action : [action])
@@ -104,7 +104,7 @@ export class Condition extends Actionable {
         return this;
     }
 
-    Else(action: (LogicAction.Actions | LogicAction.Actions[])): this {
+    public Else(action: (LogicAction.Actions | LogicAction.Actions[])): this {
         this.conditions.Else.action = this.construct(Array.isArray(action) ? action : [action]);
         return this;
     }
@@ -155,15 +155,23 @@ export class Condition extends Actionable {
             let node = actions[i].contentNode;
             let child = actions[i + 1]?.contentNode;
             if (child) {
-                node.addChild(child);
+                node.setInitChild(child);
             }
             if (i === actions.length - 1 && lastChild) {
-                node.addChild(lastChild);
+                node.setInitChild(lastChild);
             }
             if (i === 0 && parentChild) {
-                parentChild.addChild(node);
+                parentChild.setInitChild(node);
             }
         }
         return actions;
+    }
+
+    _getFutureActions(): LogicAction.Actions[] {
+        return [
+            ...(this.conditions.If.action || []),
+            ...this.conditions.ElseIf.flatMap(e => e.action || []),
+            ...(this.conditions.Else.action || [])
+        ];
     }
 }

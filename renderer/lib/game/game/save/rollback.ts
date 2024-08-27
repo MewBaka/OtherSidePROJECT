@@ -1,9 +1,15 @@
 import {LogicAction} from "@lib/game/game/logicAction";
+import {Game} from "@lib/game/game/game";
 
 export enum NodeType {
     TreeNode = "TreeNode",
     ContentNode = "ContentNode",
 }
+
+export type RawData<T> = {
+    id: string;
+    data: T;
+};
 
 export class Node<C = any> {
     id: string;
@@ -35,9 +41,36 @@ export type ContentNodeData = {
 }
 
 export class ContentNode<T = any> extends Node<T> {
-    child: RenderableNode | null;
+    static forEachParent(node: RenderableNode, callback: (node: RenderableNode) => void) {
+        const seen: Set<RenderableNode> = new Set();
+        let current = node;
+        while (current) {
+            if (seen.has(current)) {
+                break;
+            }
+            seen.add(current);
+            callback(current);
+            current = current.parent;
+        }
+    }
+
+    static forEachChild(node: RenderableNode, callback: (node: RenderableNode) => void) {
+        const seen: Set<RenderableNode> = new Set();
+        let current = node;
+        while (current) {
+            if (seen.has(current)) {
+                break;
+            }
+            seen.add(current);
+            callback(current);
+            current = current.child;
+        }
+    }
+
+    child?: RenderableNode | null;
+    initChild?: RenderableNode | null;
     parent: RenderableNode | null;
-    callee: LogicAction.Actions;
+    action: LogicAction.Actions;
 
     constructor(
         id: string,
@@ -45,10 +78,10 @@ export class ContentNode<T = any> extends Node<T> {
         parent?: RenderableNode | null,
         callee?: LogicAction.Actions
     ) {
-        super(id, NodeType.ContentNode);
+        super(Game.getIdManager().prefix("node", id, "-"), NodeType.ContentNode);
         this.child = child || null;
         this.parent = parent || null;
-        this.callee = callee
+        this.action = callee
     }
 
     setParent(parent: RenderableNode | null) {
@@ -71,9 +104,19 @@ export class ContentNode<T = any> extends Node<T> {
     }
 
     /**
-     * For chaining
+     * To track the changes of the child
+     * should only be called when constructing the tree
      */
-    addChild(child: RenderableNode) {
+    setInitChild(child: RenderableNode) {
+        this.initChild = child;
+        return this.setChild(child);
+    }
+
+    /**
+     * Public method for setting the content of the node
+     * should only be called when changing the state in-game
+     */
+    public addChild(child: RenderableNode) {
         this.setChild(child);
         return this;
     }
@@ -141,17 +184,21 @@ export class RootNode extends ContentNode {
 
     forEach(callback: (node: RenderableNode) => void) {
         const queue = [this.child];
+        const seen: Set<RenderableNode> = new Set();
         while (queue.length > 0) {
             const node = queue.shift();
             if (!node) {
                 continue;
             }
+            if (seen.has(node)) {
+                continue;
+            }
+            seen.add(node);
             callback(node);
             if (node instanceof ContentNode) {
                 queue.push(node.child);
             }
         }
-        return void 0;
     }
 }
 

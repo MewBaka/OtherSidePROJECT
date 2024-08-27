@@ -1,3 +1,5 @@
+"use client";
+
 import Logo from "@/public/static/images/mewbaka.png";
 
 

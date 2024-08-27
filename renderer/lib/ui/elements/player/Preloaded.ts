@@ -23,6 +23,8 @@ export type PreloadedEventTypes = {
     "event:preloaded.add": [PreloadedSrc | string];
     "event:preloaded.remove": [PreloadedSrc | string];
     "event:preloaded.change": [];
+    "event:preloaded.mount": [];
+    "event:preloaded.ready": [];
 }
 
 export class Preloaded {
@@ -30,6 +32,8 @@ export class Preloaded {
         "event:preloaded.add": "event:preloaded.add",
         "event:preloaded.remove": "event:preloaded.remove",
         "event:preloaded.change": "event:preloaded.change",
+        "event:preloaded.mount": "event:preloaded.mount",
+        "event:preloaded.ready": "event:preloaded.ready",
     }
     preloaded: PreloadedSrc[] = [];
     events: EventDispatcher<PreloadedEventTypes> = new EventDispatcher();

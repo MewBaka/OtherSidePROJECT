@@ -1,5 +1,5 @@
 import {Sound} from "@lib/game/game/elements/sound";
-import {StaticImageData} from "@lib/game/game/show";
+import {NextJSStaticImageData} from "@lib/game/game/show";
 import {Image} from "@lib/game/game/elements/image";
 import {Transform, Utils} from "@lib/game/game/common/core";
 import {Constants} from "@lib/api/config";

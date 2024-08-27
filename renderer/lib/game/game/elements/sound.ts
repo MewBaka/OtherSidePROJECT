@@ -1,10 +1,12 @@
 import {Actionable} from "@lib/game/game/actionable";
-import {deepMerge, DeepPartial} from "@lib/util/data";
-import {SoundAction, SoundActionContentType} from "@lib/game/game/actions";
+import {deepMerge, DeepPartial, safeClone} from "@lib/util/data";
+import {SoundAction} from "@lib/game/game/actions";
 import {Game} from "@lib/game/game/game";
 import {ContentNode} from "@lib/game/game/save/rollback";
 import * as Howler from "howler";
 import {HowlOptions} from "howler";
+import _ from "lodash";
+import {SoundActionContentType} from "@lib/game/game/actionTypes";
 
 export enum SoundType {
     soundEffect = "soundEffect",
@@ -12,6 +14,10 @@ export enum SoundType {
     voice = "voice",
     backgroundMusic = "backgroundMusic",
 }
+
+export type SoundDataRaw = {
+    config: SoundConfig;
+};
 
 export type SoundConfig = {
     // @todo: 速读模式
@@ -54,7 +60,7 @@ export class Sound extends Actionable {
     };
 
     constructor(config: DeepPartial<SoundConfig> = {}) {
-        super();
+        super(Actionable.IdPrefixes.Sound);
         this.config = deepMerge<SoundConfig>(Sound.defaultConfig, config);
     }
 
@@ -134,5 +140,19 @@ export class Sound extends Actionable {
     $stop() {
         this.$setToken(null);
         this.$setHowl(null);
+    }
+
+    public toData(): SoundDataRaw {
+        if (_.isEqual(this.config, Sound.defaultConfig)) {
+            return null;
+        }
+        return {
+            config: safeClone(this.config)
+        };
+    }
+
+    public fromData(data: SoundDataRaw): this {
+        this.config = deepMerge<SoundConfig & SoundDataRaw>(this.config, data.config);
+        return this;
     }
 }

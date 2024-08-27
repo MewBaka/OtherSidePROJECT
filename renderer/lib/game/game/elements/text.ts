@@ -2,9 +2,9 @@ import {Game} from "../game";
 import {ContentNode} from "../save/rollback";
 import {Color} from "../show";
 import {deepMerge, safeClone} from "@lib/util/data";
-import {HistoryData} from "../save/transaction";
 import {CharacterAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";
+import _ from "lodash";
 
 export type SentenceConfig = {
     pause?: boolean | number;
@@ -13,7 +13,6 @@ export type WordConfig = {} & Color;
 
 export type SentenceDataRaw = {
     state: SentenceState;
-    character: CharacterStateData;
 };
 export type SentenceState = {
     display: boolean;
@@ -26,17 +25,21 @@ export class Sentence {
         color: "#fff",
         pause: true,
     };
+    static defaultState: SentenceState = {
+        display: true
+    }
+    id: string;
     character: Character | null;
     text: Word[];
     config: SentenceConfig;
-    state: SentenceState = {
-        display: true
-    };
+    state: SentenceState;
 
     constructor(character: Character | null, text: (string | Word)[] | (string | Word), config: Partial<SentenceConfig> = {}) {
         this.character = character;
         this.text = this.format(text);
         this.config = deepMerge<SentenceConfig>(Sentence.defaultConfig, config);
+        this.id = Game.getIdManager().getStringId();
+        this.state = safeClone(Sentence.defaultState);
     }
 
     static isSentence(obj: any): obj is Sentence {
@@ -63,16 +66,17 @@ export class Sentence {
         return result;
     }
 
-    toData(): SentenceDataRaw {
+    toData(): SentenceDataRaw | null {
+        if (_.isEqual(this.state, Sentence.defaultState)) {
+            return null;
+        }
         return {
             state: safeClone(this.state),
-            character: safeClone(this.character.toData())
         };
     }
 
     fromData(data: SentenceDataRaw) {
         this.state = deepMerge<SentenceState>(this.state, data);
-        this.character.fromData(data.character);
         return this;
     }
 
@@ -95,13 +99,6 @@ export class Word {
 
     static isWord(obj: any): obj is Word {
         return obj instanceof Word;
-    }
-
-    toData() {
-        return {
-            text: this.text,
-            config: this.config
-        }
     }
 }
 
@@ -127,7 +124,7 @@ export class Character extends Actionable<
     config: CharacterConfig;
 
     constructor(name: string, config: CharacterConfig = {}) {
-        super();
+        super(Actionable.IdPrefixes.Text);
         this.name = name;
         this.config = config;
     }
@@ -147,40 +144,7 @@ export class Character extends Actionable<
                 Game.getIdManager().getStringId(),
             ).setContent(sentence)
         );
-        this.transaction.commitWith<typeof CharacterActionTransaction.say>({
-            type: CharacterActionTransaction.say,
-            data: sentence
-        });
         this.actions.push(action);
-        return this;
-    }
-
-    /**
-     * @internal
-     * DO NOT USE IN USER SCRIPTS
-     */
-    $hideSay(sentence: Sentence): Character {
-        sentence.state.display = false;
-        this.transaction.commitWith<typeof CharacterActionTransaction.hide>({
-            type: CharacterActionTransaction.hide,
-            data: sentence
-        });
-        return this;
-    }
-
-    undo(history: HistoryData<typeof CharacterActionTransaction, CharacterTransactionDataTypes>): void {
-        if (history.type === CharacterActionTransaction.say) {
-            history.data.state.display = false;
-        } else if (history.type === CharacterActionTransaction.hide) {
-            history.data.state.display = true;
-        }
-    }
-
-    public toData(): CharacterStateData {
-        return {};
-    }
-
-    public fromData(_: CharacterStateData): this {
         return this;
     }
 }

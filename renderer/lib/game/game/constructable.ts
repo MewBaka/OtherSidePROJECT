@@ -3,6 +3,7 @@ import {ContentNode, RenderableNode, RootNode} from "./save/rollback";
 import {LogicAction} from "@lib/game/game/logicAction";
 
 import {Action} from "@lib/game/game/action";
+import {Actionable} from "@lib/game/game/actionable";
 
 export class Constructable<
     T extends typeof Constructable = any,
@@ -55,9 +56,9 @@ export class Constructable<
         for (let i = 0; i < this.actions.length; i++) {
             const action = this.actions[i];
             if (i === 0 && parent) {
-                parent.addChild(action.contentNode);
+                parent.setInitChild(action.contentNode);
             } else if (i > 0) {
-                (this.actions[i - 1].contentNode)?.addChild(action.contentNode);
+                (this.actions[i - 1].contentNode)?.setInitChild(action.contentNode);
             }
         }
         return (!!this.actions.length) ? this.actions[0].contentNode : null;

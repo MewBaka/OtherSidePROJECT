@@ -27,16 +27,14 @@ export type MenuData = {
 export class Menu extends Actionable {
     static defaultConfig: MenuConfig = {};
     static targetAction = MenuAction;
-    id: string;
     prompt: Sentence;
-    config: MenuConfig;
+    readonly config: MenuConfig;
     protected choices: Choice[] = [];
 
     constructor(prompt: UnSentencePrompt, config?: MenuConfig);
     constructor(prompt: Sentence, config?: MenuConfig);
     constructor(prompt: UnSentencePrompt | Sentence, config: MenuConfig = {}) {
-        super();
-        this.id = Game.getIdManager().getStringId();
+        super(Actionable.IdPrefixes.Menu);
         this.prompt = Sentence.isSentence(prompt) ? prompt : new Sentence(null, prompt);
         this.config = deepMerge<MenuConfig>(Menu.defaultConfig, config);
     }
@@ -65,13 +63,13 @@ export class Menu extends Actionable {
             let node = actions[i].contentNode;
             let child = actions[i + 1]?.contentNode;
             if (child) {
-                node.addChild(child);
+                node.setInitChild(child);
             }
             if (i === this.choices.length - 1 && lastChild) {
-                node.addChild(lastChild);
+                node.setInitChild(lastChild);
             }
             if (i === 0 && parentChild) {
-                parentChild.addChild(node);
+                parentChild.setInitChild(node);
             }
         }
         return actions;
@@ -92,6 +90,10 @@ export class Menu extends Actionable {
         ];
         this.choices = [];
         return output;
+    }
+
+    _getFutureActions(choices: Choice[]): LogicAction.Actions[] {
+        return choices.map(choice => choice.action).flat(2);
     }
 
     private constructChoices(): Choice[] {

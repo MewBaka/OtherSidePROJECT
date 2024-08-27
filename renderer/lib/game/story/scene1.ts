@@ -174,7 +174,10 @@ const scene1Actions = scene1.action([
         .toActions(),
     Control.allAsync([
         shake(image1), // 通过自定义的函数返回操作
-        speechless(scene1, image2),
+        Control.do([
+            speechless(scene1, image2),
+            image2.dispose().toActions(),
+        ]).toActions(),
         sound1.play().toActions()
     ]).toActions(),
 
@@ -315,6 +318,7 @@ function isNumberCorrect(gameState: GameState, number: number) {
     return namespace.get("number") === number;
 }
 
+// @todo: 测试多场景
 
 story.action([
     scene1Actions

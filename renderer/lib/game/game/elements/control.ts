@@ -43,6 +43,18 @@ export class Control extends Actionable {
         return new Control().allAsync(actions);
     }
 
+    /**
+     * 重复执行操作
+     */
+    public static repeat(times: number, actions: (Actions | Actions[])[]): Control {
+        return new Control().repeat(times, actions);
+    }
+
+    constructor() {
+        super(Actionable.IdPrefixes.Control);
+    }
+
+
     public do(actions: (Actions | Actions[])[]): this {
         return this.push(ControlAction.ActionTypes.do, actions);
     }
@@ -63,24 +75,28 @@ export class Control extends Actionable {
         return this.push(ControlAction.ActionTypes.allAsync, actions);
     }
 
+    public repeat(times: number, actions: (Actions | Actions[])[]): this {
+        return this.push(ControlAction.ActionTypes.repeat, actions, times);
+    }
+
     construct(actions: Actions[]): Actions[] {
         for (let i = 0; i < actions.length; i++) {
             const action = actions[i];
             if (i !== 0) {
-                actions[i - 1]?.contentNode.addChild(action.contentNode);
+                actions[i - 1]?.contentNode.setInitChild(action.contentNode);
             }
         }
         return actions;
     }
 
-    private push(type: Values<typeof ControlAction.ActionTypes>, actions: (Actions | Actions[])[]): this {
+    private push(type: Values<typeof ControlAction.ActionTypes>, actions: (Actions | Actions[])[], ...args: any[]): this {
         const flatted = actions.flat(2) as Actions[];
         const action = new ControlAction(
             this,
             type,
-            new ContentNode<[Actions[]]>(
+            new ContentNode(
                 Game.getIdManager().getStringId()
-            ).setContent([this.construct(flatted)])
+            ).setContent([this.construct(flatted), ...args])
         );
         this.actions.push(action);
         return this;

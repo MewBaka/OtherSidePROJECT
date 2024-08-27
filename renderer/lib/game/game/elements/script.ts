@@ -24,7 +24,7 @@ export class Script extends Actionable<typeof ScriptTransactionTypes> {
     cleaner: ScriptCleaner | null = null;
 
     constructor(handler: ScriptRun) {
-        super();
+        super(Actionable.IdPrefixes.Script);
         this.handler = handler;
     }
 

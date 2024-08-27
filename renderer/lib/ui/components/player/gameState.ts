@@ -8,29 +8,41 @@ import {Scene} from "@lib/game/game/elements/scene";
 import {Sound} from "@lib/game/game/elements/sound";
 import * as Howler from "howler";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
+import {LogicAction} from "@lib/game/game/logicAction";
 
 type Clickable<T, U = undefined> = {
     action: T;
     onClick: U extends undefined ? () => void : (arg0: U) => void;
 };
 
+type TextElement = {
+    character: Character;
+    sentence: Sentence;
+    id: string;
+};
+
+type MenuElement = {
+    prompt: Sentence;
+    choices: Choice[];
+};
+
 type PlayerStateElement = {
-    texts: Clickable<{
-        character: Character;
-        sentence: Sentence;
-        id: string;
-    }>[];
-    menus: Clickable<{
-        prompt: Sentence;
-        choices: Choice[];
-    }, Choice>[];
+    texts: Clickable<TextElement>[];
+    menus: Clickable<MenuElement, Choice>[];
     images: Image[];
 };
 export type PlayerState = {
-    history: CalledActionResult[];
     sounds: Sound[];
     srcManagers: SrcManager[];
     elements: { scene: Scene, ele: PlayerStateElement }[];
+};
+export type PlayerStateData = {
+    elements: {
+        scene: string;
+        ele: {
+            images: string[];
+        };
+    }[]
 };
 export type PlayerAction = CalledActionResult;
 
@@ -40,6 +52,7 @@ interface StageUtils {
     dispatch: (action: PlayerAction) => void;
 }
 
+
 type GameStateEvents = {
     "event:state.imageLoaded": [];
 };
@@ -48,9 +61,7 @@ export class GameState {
     static EventTypes: { [K in keyof GameStateEvents]: K } = {
         "event:state.imageLoaded": "event:state.imageLoaded",
     };
-    static SrcManager = SrcManager;
     state: PlayerState = {
-        history: [],
         sounds: [],
         srcManagers: [],
         elements: [],
@@ -111,7 +122,6 @@ export class GameState {
     handle(action: PlayerAction): this {
         if (this.currentHandling === action) return this;
         this.currentHandling = action;
-        this.state.history.push(action);
 
         switch (action.type) {
             case "condition:action":
@@ -122,11 +132,13 @@ export class GameState {
     }
 
     public createText(id: string, sentence: Sentence, afterClick?: () => void, scene?: Scene) {
-        return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
+        const waitableAction = this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
             character: sentence.character,
             sentence,
             id
         }, afterClick);
+        this.stage.forceUpdate();
+        return waitableAction;
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
@@ -154,6 +166,7 @@ export class GameState {
         images.splice(index, 1);
         return this;
     }
+
     playSound(howl: Howler.Howl, onEnd?: () => void): any {
         const token = howl.play();
         const events = [
@@ -237,6 +250,43 @@ export class GameState {
         this.stage.forceUpdate();
         return new Promise<void>((r) => {
             resolve = r;
+        });
+    }
+
+    toData(): PlayerStateData {
+        return {
+            elements: this.state.elements.map(e => {
+                return {
+                    scene: e.scene.id,
+                    ele: {
+                        images: e.ele.images.map(i => i.id)
+                    }
+                }
+            })
+        };
+    }
+
+    loadData(data: PlayerStateData, actions: LogicAction.Actions[]) {
+        this.state.elements = [];
+
+        const story = this.clientGame.game.getLiveGame().story;
+        const allElements = story.getAllElements(actions);
+        const {elements} = data;
+        elements.forEach(e => {
+            const [
+                scene,
+                ...images
+            ] = (story.findElementsByIds([e.scene, ...e.ele.images], allElements) as [Scene, ...Image[]]);
+            const element: { scene: Scene, ele: PlayerStateElement } = {
+                scene: scene,
+                ele: {
+                    images: images,
+                    menus: [],
+                    texts: []
+                }
+            };
+            this.state.elements.push(element);
+            this.state.srcManagers.push(element.scene.srcManager);
         });
     }
 }

@@ -5,10 +5,9 @@ import {Awaitable, deepMerge, safeClone} from "@lib/util/data";
 import {Namespace, Storable, StorableData} from "./save/store";
 import {Singleton} from "@lib/util/singleton";
 import {Constants} from "@/lib/api/config";
-import type {Story} from "./elements/story";
+import {Story} from "./elements/story";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {GameState} from "@lib/ui/components/player/gameState";
-import { cloneDeep } from "lodash";
 
 class IdManager extends Singleton<IdManager>() {
     private id = 0;
@@ -121,21 +120,17 @@ export class LiveGame {
 
     game: Game;
     storable: Storable;
-
     currentSceneNumber: number | null = null;
-    currentNode: RenderableNode | null = null;
-    currentAction: LogicAction.Actions | null = null;
     currentSavedGame: SavedGame | null = null;
     story: Story | null = null;
     lockedAwaiting: Awaitable<CalledActionResult, any> | null = null;
     idManager: GameIdManager;
-
     _lockedCount = 0;
-
     /**
      * Possible future nodes
      */
     future: RenderableNode[] = [];
+    private currentAction: LogicAction.Actions | null = null;
 
     constructor(game: Game) {
         this.game = game;
@@ -155,6 +150,13 @@ export class LiveGame {
             },
             game: {
                 store: {},
+                elementState: [],
+                nodeChildIdMap: {},
+                stage: {
+                    elements: [],
+                },
+                currentScene: 0,
+                currentAction: null,
             }
         };
     }
@@ -188,8 +190,12 @@ export class LiveGame {
         return this;
     }
 
-    setCurrentNode(node: RenderableNode) {
-        this.currentNode = node;
+    getCurrentAction(): LogicAction.Actions {
+        return this.currentAction;
+    }
+
+    setCurrentAction(action: LogicAction.Actions) {
+        this.currentAction = action;
         return this;
     }
 
@@ -209,7 +215,7 @@ export class LiveGame {
                 return this.lockedAwaiting;
             }
             const next = this.lockedAwaiting.result;
-            this.currentAction = next.node?.callee || null;
+            this.currentAction = next.node?.action || null;
             this.lockedAwaiting = null;
             return next;
         }
@@ -228,7 +234,7 @@ export class LiveGame {
 
         this._lockedCount = 0;
 
-        this.currentAction = nextAction.node.child?.callee;
+        this.currentAction = nextAction.node.child?.action;
         return nextAction;
     }
 
@@ -237,7 +243,68 @@ export class LiveGame {
         if (Awaitable.isAwaitable(nextAction)) {
             return nextAction;
         }
-        return nextAction.node.child?.callee;
+        return nextAction.node.child?.action;
+    }
+
+    loadSavedGame(savedGame: SavedGame, {gameState}: {gameState: GameState}) {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return;
+        }
+
+        if (savedGame.version !== Constants.info.app.version) {
+            throw new Error("Saved game version mismatch");
+        }
+
+        this.currentSavedGame = savedGame;
+
+        const actions = this.story.getAllActions();
+        const {
+            store,
+            elementState,
+            nodeChildIdMap,
+            currentScene,
+            currentAction,
+            stage,
+        } = savedGame.game;
+        this.storable.load(store);
+        this.story.setAllElementState(elementState, actions);
+        this.story.setNodeChildByMap(nodeChildIdMap, actions);
+        this.currentSceneNumber = currentScene;
+        this.currentAction = this.story.findActionById(currentAction, actions) || null;
+        gameState.loadData(stage, actions);
+    }
+
+    generateSavedGame({gameState}: { gameState: GameState }): SavedGame {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return null;
+        }
+
+        const actions = this.story.getAllActions();
+
+        const elementState = this.story.getAllElementState(actions);
+        const nodeChildIds = Object.fromEntries(this.story.getNodeChildIdMap(actions));
+        const stage = gameState.toData();
+
+        return {
+            name: this.currentSavedGame?.name || "_",
+            version: Constants.info.app.version,
+            meta: {
+                created: this.currentSavedGame?.meta.created || Date.now(),
+                updated: Date.now(),
+            },
+            game: {
+                store: this.storable.toData(),
+                elementState: elementState,
+                stage: stage,
+                nodeChildIdMap: nodeChildIds,
+                currentScene: this.currentSceneNumber || 0,
+                currentAction: this.getCurrentAction()?.getId() || null,
+            }
+        };
     }
 }
 
