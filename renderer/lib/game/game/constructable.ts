@@ -56,9 +56,9 @@ export class Constructable<
         for (let i = 0; i < this.actions.length; i++) {
             const action = this.actions[i];
             if (i === 0 && parent) {
-                parent.addChild(action.contentNode);
+                parent.setInitChild(action.contentNode);
             } else if (i > 0) {
-                (this.actions[i - 1].contentNode)?.addChild(action.contentNode);
+                (this.actions[i - 1].contentNode)?.setInitChild(action.contentNode);
             }
         }
         return (!!this.actions.length) ? this.actions[0].contentNode : null;

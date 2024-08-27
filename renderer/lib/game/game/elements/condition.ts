@@ -157,13 +157,13 @@ export class Condition extends Actionable {
             let node = actions[i].contentNode;
             let child = actions[i + 1]?.contentNode;
             if (child) {
-                node.addChild(child);
+                node.setInitChild(child);
             }
             if (i === actions.length - 1 && lastChild) {
-                node.addChild(lastChild);
+                node.setInitChild(lastChild);
             }
             if (i === 0 && parentChild) {
-                parentChild.addChild(node);
+                parentChild.setInitChild(node);
             }
         }
         return actions;

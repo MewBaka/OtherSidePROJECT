@@ -44,7 +44,7 @@ export const sound1 = new Sound({
 
 
 export function speechless(scene: Scene, image: Image) {
-    return Control.do([
+    return Control.all([
         image.show(new Transform<TransformDefinitions.ImageTransformProps>([{
             props: {
                 opacity: 1,
@@ -59,10 +59,12 @@ export function speechless(scene: Scene, image: Image) {
         }], {
             sync: false
         })).toActions(),
-        scene.sleep(3000).toActions(),
-        image.hide({
-            duration: 0.5,
-        }).toActions(),
+        Control.do([
+            scene.sleep(3000).toActions(),
+            image.hide({
+                duration: 0.5,
+            }).toActions(),
+        ]).toActions(),
     ]).toActions()
 }
 

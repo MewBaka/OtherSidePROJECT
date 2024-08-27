@@ -85,7 +85,7 @@ export class Control extends Actionable {
         for (let i = 0; i < actions.length; i++) {
             const action = actions[i];
             if (i !== 0) {
-                actions[i - 1]?.contentNode.addChild(action.contentNode);
+                actions[i - 1]?.contentNode.setInitChild(action.contentNode);
             }
         }
         return actions;

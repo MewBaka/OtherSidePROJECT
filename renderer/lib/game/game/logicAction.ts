@@ -8,32 +8,25 @@ import type {Menu} from "@lib/game/game/elements/menu";
 import {Values} from "@lib/util/data";
 import {
     CharacterAction,
-    CharacterActionContentType,
-    CharacterActionTypes,
     ConditionAction,
-    ConditionActionContentType,
-    ConditionActionTypes, ControlAction, ControlActionContentType,
-    ImageAction,
-    ImageActionContentType,
-    ImageActionTypes,
+    ControlAction, ImageAction,
     MenuAction,
-    MenuActionContentType,
-    MenuActionTypes,
     SceneAction,
-    SceneActionContentType,
-    SceneActionTypes,
     ScriptAction,
-    ScriptActionContentType,
-    ScriptActionTypes,
     SoundAction,
-    SoundActionContentType,
     StoryAction,
-    StoryActionContentType,
-    StoryActionTypes,
     TypedAction
 } from "@lib/game/game/actions";
 import {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
+import {
+    CharacterActionContentType, CharacterActionTypes,
+    ConditionActionContentType, ConditionActionTypes,
+    ControlActionContentType, ImageActionContentType, ImageActionTypes,
+    MenuActionContentType,
+    MenuActionTypes, SceneActionContentType, SceneActionTypes, ScriptActionContentType, ScriptActionTypes,
+    SoundActionContentType, StoryActionContentType, StoryActionTypes
+} from "@lib/game/game/actionTypes";
 
 export namespace LogicAction {
     export type GameElement = Character | Scene | Story | Image | Condition | Script | Menu | Sound | Control;

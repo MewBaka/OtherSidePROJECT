@@ -1,6 +1,5 @@
 import {ContentNode} from "@lib/game/game/save/rollback";
 import {Awaitable} from "@lib/util/data";
-import {Background, CommonImage} from "@lib/game/game/show";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {Image as GameImage, Image} from "@lib/game/game/elements/image";
 import {LogicAction} from "@lib/game/game/logicAction";
@@ -10,15 +9,33 @@ import type {Scene} from "@lib/game/game/elements/scene";
 import type {Story} from "@lib/game/game/elements/story";
 import type {Script} from "@lib/game/game/elements/script";
 import type {Menu, MenuData} from "@lib/game/game/elements/menu";
-import type {Condition, ConditionData} from "@lib/game/game/elements/condition";
+import type {Condition} from "@lib/game/game/elements/condition";
 import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {GameState} from "@lib/ui/components/player/gameState";
 import type {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
-import {ITransition} from "@lib/game/game/elements/transition/type";
+import {
+    CharacterActionContentType,
+    CharacterActionTypes,
+    ConditionActionContentType,
+    ConditionActionTypes,
+    ControlActionContentType,
+    ControlActionTypes,
+    ImageActionContentType,
+    ImageActionTypes,
+    MenuActionContentType,
+    MenuActionTypes,
+    SceneActionContentType,
+    SceneActionTypes,
+    ScriptActionContentType,
+    ScriptActionTypes,
+    SoundActionContentType,
+    SoundActionTypes,
+    StoryActionContentType,
+    StoryActionTypes
+} from "@lib/game/game/actionTypes";
 import ImageTransformProps = TransformDefinitions.ImageTransformProps;
-import Actions = LogicAction.Actions;
 
 export class TypedAction<
     ContentType extends Record<string, any> = Record<string, any>,
@@ -32,18 +49,6 @@ export class TypedAction<
         this.callee = callee;
         this.contentNode.action = this;
     }
-}
-
-/* Character */
-export const CharacterActionTypes = {
-    say: "character:say",
-    action: "character:action",
-} as const;
-export type CharacterActionContentType = {
-    [K in typeof CharacterActionTypes[keyof typeof CharacterActionTypes]]:
-    K extends "character:say" ? Sentence :
-        K extends "character:action" ? any :
-            any;
 }
 
 export class CharacterAction<T extends typeof CharacterActionTypes[keyof typeof CharacterActionTypes] = typeof CharacterActionTypes[keyof typeof CharacterActionTypes]>
@@ -64,34 +69,6 @@ export class CharacterAction<T extends typeof CharacterActionTypes[keyof typeof 
         }
         return super.executeAction(state);
     }
-}
-
-/* Scene */
-export const SceneActionTypes = {
-    action: "scene:action",
-    setBackground: "scene:setBackground",
-    sleep: "scene:sleep",
-    setTransition: "scene:setTransition",
-    applyTransition: "scene:applyTransition",
-    init: "scene:init",
-    exit: "scene:exit",
-    jumpTo: "scene:jumpTo",
-    setBackgroundMusic: "scene:setBackgroundMusic",
-    preUnmount: "scene:preUnmount",
-} as const;
-export type SceneActionContentType = {
-    [K in typeof SceneActionTypes[keyof typeof SceneActionTypes]]:
-    K extends typeof SceneActionTypes["action"] ? Scene :
-        K extends typeof SceneActionTypes["sleep"] ? number | Promise<any> | Awaitable<any, any> :
-            K extends typeof SceneActionTypes["setBackground"] ? [Background["background"]] :
-                K extends typeof SceneActionTypes["setTransition"] ? [ITransition] :
-                    K extends typeof SceneActionTypes["applyTransition"] ? [ITransition] :
-                        K extends typeof SceneActionTypes["init"] ? [] :
-                            K extends typeof SceneActionTypes["exit"] ? [] :
-                                K extends typeof SceneActionTypes["jumpTo"] ? [Actions[]] :
-                                    K extends typeof SceneActionTypes["setBackgroundMusic"] ? [Sound, number?] :
-                                        K extends typeof SceneActionTypes["preUnmount"] ? [] :
-                                            any;
 }
 
 export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneActionTypes] = typeof SceneActionTypes[keyof typeof SceneActionTypes]>
@@ -218,42 +195,9 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
     }
 }
 
-/* Story */
-export const StoryActionTypes = {
-    action: "story:action",
-} as const;
-export type StoryActionContentType = {
-    [K in typeof StoryActionTypes[keyof typeof StoryActionTypes]]:
-    K extends "story:action" ? Story :
-        any;
-}
-
 export class StoryAction<T extends typeof StoryActionTypes[keyof typeof StoryActionTypes] = typeof StoryActionTypes[keyof typeof StoryActionTypes]>
     extends TypedAction<StoryActionContentType, T, Story> {
     static ActionTypes = StoryActionTypes;
-}
-
-/* Image */
-export const ImageActionTypes = {
-    action: "image:action",
-    setSrc: "image:setSrc",
-    setPosition: "image:setPosition",
-    show: "image:show",
-    hide: "image:hide",
-    applyTransform: "image:applyTransform",
-    init: "image:init",
-    dispose: "image:dispose",
-} as const;
-export type ImageActionContentType = {
-    [K in typeof ImageActionTypes[keyof typeof ImageActionTypes]]:
-    K extends "image:setSrc" ? [string] :
-        K extends "image:setPosition" ? [CommonImage["position"], Transform<TransformDefinitions.ImageTransformProps>] :
-            K extends "image:show" ? [void, Transform<TransformDefinitions.ImageTransformProps>] :
-                K extends "image:hide" ? [void, Transform<TransformDefinitions.ImageTransformProps>] :
-                    K extends "image:applyTransform" ? [void, Transform<TransformDefinitions.ImageTransformProps>, string] :
-                        K extends "image:init" ? [Scene?] :
-                            K extends "image:dispose" ? [] :
-                                any;
 }
 
 export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageActionTypes] = typeof ImageActionTypes[keyof typeof ImageActionTypes]>
@@ -329,19 +273,10 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             return awaitable;
         } else if (this.type === ImageActionTypes.dispose) {
             state.disposeImage(this.callee);
+            this.callee.$setDispose();
             return super.executeAction(state);
         }
     }
-}
-
-/* Condition */
-export const ConditionActionTypes = {
-    action: "condition:action",
-} as const;
-export type ConditionActionContentType = {
-    [K in typeof ConditionActionTypes[keyof typeof ConditionActionTypes]]:
-    K extends "condition:action" ? ConditionData :
-        any;
 }
 
 export class ConditionAction<T extends typeof ConditionActionTypes[keyof typeof ConditionActionTypes] = typeof ConditionActionTypes[keyof typeof ConditionActionTypes]>
@@ -365,16 +300,6 @@ export class ConditionAction<T extends typeof ConditionActionTypes[keyof typeof 
     }
 }
 
-/* Script */
-export const ScriptActionTypes = {
-    action: "script:action",
-} as const;
-export type ScriptActionContentType = {
-    [K in typeof ScriptActionTypes[keyof typeof ScriptActionTypes]]:
-    K extends "script:action" ? Script :
-        any;
-}
-
 export class ScriptAction<T extends typeof ScriptActionTypes[keyof typeof ScriptActionTypes] = typeof ScriptActionTypes[keyof typeof ScriptActionTypes]>
     extends TypedAction<ScriptActionContentType, T, Script> {
     static ActionTypes = ScriptActionTypes;
@@ -388,16 +313,6 @@ export class ScriptAction<T extends typeof ScriptActionTypes[keyof typeof Script
             node: this.contentNode,
         };
     }
-}
-
-/* Menu */
-export const MenuActionTypes = {
-    action: "menu:action",
-} as const;
-export type MenuActionContentType = {
-    [K in typeof MenuActionTypes[keyof typeof MenuActionTypes]]:
-    K extends "menu:action" ? MenuData :
-        any;
 }
 
 export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuActionTypes] = typeof MenuActionTypes[keyof typeof MenuActionTypes]>
@@ -422,30 +337,9 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
     }
 
     getFutureActions() {
-        return [...this.callee._getFutureActions(), ...super.getFutureActions()];
+        const menu = (this.contentNode as ContentNode<MenuActionContentType["menu:action"]>).getContent();
+        return [...this.callee._getFutureActions(menu.choices), ...super.getFutureActions()];
     }
-}
-
-export const SoundActionTypes = {
-    action: "sound:action",
-    play: "sound:play",
-    stop: "sound:stop", // @todo: add pause and resume
-    fade: "sound:fade",
-    setVolume: "sound:setVolume",
-    setRate: "sound:setRate",
-} as const;
-export type SoundActionContentType = {
-    [K in typeof SoundActionTypes[keyof typeof SoundActionTypes]]:
-    K extends "sound:play" ? [void] :
-        K extends "sound:stop" ? [void] :
-            K extends "sound:fade" ? [{
-                    start: number;
-                    end: number;
-                    duration: number;
-                }] :
-                K extends "sound:setVolume" ? [number] :
-                    K extends "sound:setRate" ? [number] :
-                        any;
 }
 
 export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundActionTypes] = typeof SoundActionTypes[keyof typeof SoundActionTypes]>
@@ -511,27 +405,6 @@ export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundAct
             return super.executeAction(state);
         }
     }
-}
-
-export const ControlActionTypes = {
-    action: "control:action",
-    do: "control:do",
-    doAsync: "control:doAsync",
-    any: "control:any",
-    all: "control:all",
-    allAsync: "control:allAsync",
-    repeat: "control:repeat",
-} as const;
-export type ControlActionContentType = {
-    [K in typeof ControlActionTypes[keyof typeof ControlActionTypes]]:
-    K extends "control:do" ? [LogicAction.Actions[]] :
-        K extends "control:doAsync" ? [LogicAction.Actions[]] :
-            K extends "control:any" ? [LogicAction.Actions[]] :
-                K extends "control:all" ? [LogicAction.Actions[]] :
-                    K extends "control:parallel" ? [LogicAction.Actions[]] :
-                        K extends "control:allAsync" ? [LogicAction.Actions[]] :
-                            K extends "control:repeat" ? [LogicAction.Actions[], number] :
-                                any;
 }
 
 export class ControlAction<T extends typeof ControlActionTypes[keyof typeof ControlActionTypes] = typeof ControlActionTypes[keyof typeof ControlActionTypes]>
@@ -622,7 +495,7 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
         throw new Error("Unknown control action type: " + this.type);
     }
 
-    getFutureActions() {
+    getFutureActions(): LogicAction.Actions[] {
         const actions = this.contentNode.getContent()[0];
         const childActions = super.getFutureActions();
         return [...actions, ...childActions];

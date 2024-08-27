@@ -65,13 +65,13 @@ export class Menu extends Actionable {
             let node = actions[i].contentNode;
             let child = actions[i + 1]?.contentNode;
             if (child) {
-                node.addChild(child);
+                node.setInitChild(child);
             }
             if (i === this.choices.length - 1 && lastChild) {
-                node.addChild(lastChild);
+                node.setInitChild(lastChild);
             }
             if (i === 0 && parentChild) {
-                parentChild.addChild(node);
+                parentChild.setInitChild(node);
             }
         }
         return actions;
@@ -94,8 +94,8 @@ export class Menu extends Actionable {
         return output;
     }
 
-    _getFutureActions(): LogicAction.Actions[] {
-        return this.choices.map(choice => choice.action).flat(2);
+    _getFutureActions(choices: Choice[]): LogicAction.Actions[] {
+        return choices.map(choice => choice.action).flat(2);
     }
 
     private constructChoices(): Choice[] {

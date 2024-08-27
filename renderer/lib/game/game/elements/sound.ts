@@ -1,11 +1,12 @@
 import {Actionable} from "@lib/game/game/actionable";
 import {deepMerge, DeepPartial, safeClone} from "@lib/util/data";
-import {SoundAction, SoundActionContentType} from "@lib/game/game/actions";
+import {SoundAction} from "@lib/game/game/actions";
 import {Game} from "@lib/game/game/game";
 import {ContentNode} from "@lib/game/game/save/rollback";
 import * as Howler from "howler";
 import {HowlOptions} from "howler";
 import _ from "lodash";
+import {SoundActionContentType} from "@lib/game/game/actionTypes";
 
 export enum SoundType {
     soundEffect = "soundEffect",

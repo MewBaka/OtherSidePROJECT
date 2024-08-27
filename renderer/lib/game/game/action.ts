@@ -3,6 +3,7 @@ import {ContentNode} from "@lib/game/game/save/rollback";
 import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {Awaitable, getCallStack} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
+import {Game} from "@lib/game/game/game";
 
 export class Action<ContentNodeType = any> {
     static ActionTypes = {
@@ -11,6 +12,7 @@ export class Action<ContentNodeType = any> {
     callee: LogicAction.GameElement;
     type: ContentNodeType;
     contentNode: ContentNode<ContentNodeType>;
+    _id: string;
     private readonly __stack: string;
 
     constructor(callee: LogicAction.GameElement, type: ContentNodeType, contentNode: ContentNode<ContentNodeType>) {
@@ -18,6 +20,7 @@ export class Action<ContentNodeType = any> {
         this.type = type;
         this.contentNode = contentNode;
         this.__stack = getCallStack();
+        this._id = Game.getIdManager().prefix("action", Game.getIdManager().getStringId(), "-");
     }
 
     static isAction(action: any): action is Action {
@@ -29,6 +32,10 @@ export class Action<ContentNodeType = any> {
             type: this.type as any,
             node: this.contentNode,
         };
+    }
+
+    getId() {
+        return this._id;
     }
 
     toData() {

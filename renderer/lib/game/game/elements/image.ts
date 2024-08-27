@@ -3,7 +3,7 @@ import {deepMerge, DeepPartial, EventDispatcher, getCallStack, safeClone} from "
 import {ContentNode} from "../save/rollback";
 import {Game} from "@lib/game/game/game";
 import {Transform} from "./transform/transform";
-import {ImageAction, ImageActionContentType} from "@lib/game/game/actions";
+import {ImageAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";
 import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {Utils} from "@lib/game/game/common/Utils";
@@ -11,11 +11,13 @@ import React from "react";
 import {Scene} from "@lib/game/game/elements/scene";
 import {AnimationScope} from "framer-motion";
 import _ from "lodash";
+import {ImageActionContentType} from "@lib/game/game/actionTypes";
 
 export type ImageConfig = {
     src: string | NextJSStaticImageData;
     display: boolean;
     cache: boolean;
+    disposed?: boolean;
 } & CommonImage;
 
 export type ImageDataRaw = {
@@ -234,7 +236,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     }
 
     public toData(): ImageDataRaw {
-        if (_.isEqual(this.state, this.config)) {
+        if (this.state.disposed || _.isEqual(this.state, this.config)) {
             return null;
         }
 
@@ -256,6 +258,11 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
                 Game.getIdManager().getStringId()
             )
         ));
+        return this;
+    }
+
+    $setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
+        this.state.disposed = true;
         return this;
     }
 

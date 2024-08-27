@@ -5,7 +5,7 @@ import {Awaitable, deepMerge, safeClone} from "@lib/util/data";
 import {Namespace, Storable, StorableData} from "./save/store";
 import {Singleton} from "@lib/util/singleton";
 import {Constants} from "@/lib/api/config";
-import {Story, StoryDataRaw} from "./elements/story";
+import {Story, ElementStateRaw} from "./elements/story";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {GameState} from "@lib/ui/components/player/gameState";
 
@@ -150,7 +150,9 @@ export class LiveGame {
             },
             game: {
                 store: {},
-                story: [],
+                elementState: [],
+                currentScene: 0,
+                currentAction: null,
             }
         };
     }
@@ -250,7 +252,9 @@ export class LiveGame {
             },
             game: {
                 store: this.storable.toData(),
-                story: this.story?.getAllData(),
+                elementState: this.story?.getAllElementState(),
+                currentScene: this.currentSceneNumber || 0,
+                currentAction: this.getCurrentAction()?.getId() || null,
             }
         };
     }
