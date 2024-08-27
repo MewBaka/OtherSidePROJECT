@@ -260,7 +260,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         };
 
         const props = {} as DOMKeyframesDefinition;
-        props.transform = this.propToTransformCSS(state, prop);
+        props.transform = this.propToCSSTransform(state, prop);
         for (const key in prop) {
             if (FieldHandlers[key]) {
                 Object.assign(props, FieldHandlers[key](prop[key]));
@@ -269,7 +269,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         return props;
     }
 
-    propToTransformCSS(state: GameState, prop: DeepPartial<T>): string {
+    propToCSSTransform(state: GameState, prop: DeepPartial<T>): string {
         if (!state.getLastScene()) {
             throw new Error("No scene found in state, make sure you called \"scene.activate()\" before this method.");
         }

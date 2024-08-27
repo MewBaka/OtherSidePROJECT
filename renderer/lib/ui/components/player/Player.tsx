@@ -61,12 +61,12 @@ export default function Player({
         game.game.getLiveGame().newGame();
 
         // @debug
-        game.game.getLiveGame().loadSavedGame(
-            JSON.parse('{"name":"NewGame-1724731442455","version":"0.1.2","meta":{"created":1724731442455,"updated":1724731543139},"game":{"store":{"game":{}},"elementState":[{"id":"$2-1","data":{"state":{"src":"/static/images/test_sensei.png","display":true,"position":"right","scale":0.7,"rotation":0,"opacity":1,"cache":false}}},{"id":"$2-3","data":{"state":{"src":{"src":"/_next/static/media/test_speechless.8b6fe21e.png","height":3000,"width":3000,"blurDataURL":"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ftest_speechless.8b6fe21e.png&w=8&q=70","blurWidth":8,"blurHeight":8},"display":false,"position":{"xalign":0.3,"yalign":0.7,"xoffset":70,"yoffset":-10},"scale":0.1,"rotation":0,"opacity":0,"cache":true}}},{"id":"$4-6","data":{"config":{"src":"/static/sounds/SE_Appear_01b.wav.mp3","sync":false,"loop":false,"volume":1,"streaming":true}}}],"stage":{"elements":[{"scene":"35","ele":{"images":["$2-1"]}}]},"nodeChildIdMap":{"node-189":"node-60","node-88":"node-83","node-80":"node-75","node-125":"node-58","node-58":"node-36","node-33":"node-16"},"currentScene":0,"currentAction":"action-43"}}'),
-            {
-                gameState: state
-            }
-        );
+        // game.game.getLiveGame().loadSavedGame(
+        //     JSON.parse('{"name":"NewGame-1724731442455","version":"0.1.2","meta":{"created":1724731442455,"updated":1724731543139},"game":{"store":{"game":{}},"elementState":[{"id":"$2-1","data":{"state":{"src":"/static/images/test_sensei.png","display":true,"position":"right","scale":0.7,"rotation":0,"opacity":1,"cache":false}}},{"id":"$2-3","data":{"state":{"src":{"src":"/_next/static/media/test_speechless.8b6fe21e.png","height":3000,"width":3000,"blurDataURL":"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ftest_speechless.8b6fe21e.png&w=8&q=70","blurWidth":8,"blurHeight":8},"display":false,"position":{"xalign":0.3,"yalign":0.7,"xoffset":70,"yoffset":-10},"scale":0.1,"rotation":0,"opacity":0,"cache":true}}},{"id":"$4-6","data":{"config":{"src":"/static/sounds/SE_Appear_01b.wav.mp3","sync":false,"loop":false,"volume":1,"streaming":true}}}],"stage":{"elements":[{"scene":"35","ele":{"images":["$2-1"]}}]},"nodeChildIdMap":{"node-189":"node-60","node-88":"node-83","node-80":"node-75","node-125":"node-58","node-58":"node-36","node-33":"node-16"},"currentScene":0,"currentAction":"action-43"}}'),
+        //     {
+        //         gameState: state
+        //     }
+        // );
         console.log("Loaded game", game.game.getLiveGame().currentSavedGame);
         console.log(state);
 

@@ -84,7 +84,18 @@ export default function Image({
             };
         })];
 
-        image.events.emit(GameImage.EventTypes["event:image.ready"], scope);
+        if (processingTransform && processingTransform.getControl()) {
+            console.warn("processing transform not completed");
+            processingTransform.getControl().complete();
+        }
+        const transform = image.toTransform();
+        if (scope.current) {
+            transform.assignState(image.state);
+            console.debug("assigned", transform.propToCSS(state, transform.state), image) // @debug
+            Object.assign(scope.current.style, transform.propToCSS(state, transform.state));
+        }
+
+        // image.events.emit(GameImage.EventTypes["event:image.ready"], scope);
 
         return () => {
             fc.forEach((fc) => {
@@ -92,7 +103,7 @@ export default function Image({
             });
             image.events.emit(GameImage.EventTypes["event:image.unmount"]);
         };
-    }, []);
+    }, [scope.current]);
 
     return (
         <div className={
