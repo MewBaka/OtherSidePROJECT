@@ -53,7 +53,7 @@ const scene3 = new Scene("scene3", {
 const scene3actions = scene3.action([
     // scene3.activate().toActions(),
     // scene3.deactivate().toActions(),
-    image1.init(scene3).toActions(),
+    image1.init().toActions(),
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {

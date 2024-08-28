@@ -28,7 +28,9 @@ export default function Player({
     const [, forceUpdate] = useReducer((x) => x + 1, 0);
     const {game} = useGame();
     const [state, dispatch] = useReducer(handleAction, new GameState(game, {
-        forceUpdate,
+        forceUpdate: () => {
+            forceUpdate();
+        },
         next,
         dispatch: (action) => dispatch(action),
     }));
@@ -71,10 +73,9 @@ export default function Player({
         console.log(state);
 
         state.stage.forceUpdate();
+        state.stage.next();
 
-        return () => {
-        }
-
+        return () => {};
     }, []);
 
     function handlePreloadLoaded() {

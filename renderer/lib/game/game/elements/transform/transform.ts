@@ -203,17 +203,18 @@ export class Transform<T extends TransformDefinitions.Types> {
                     if (!scope.current) {
                         throw new Error("No scope found when animating.");
                     }
+                    const current = scope.current as Element;
 
-                    const animation = animate(scope.current, this.propToCSS(state, this.state), options);
+                    const animation = animate(current, this.propToCSS(state, this.state), options);
                     this.setControl(animation);
 
                     if (options?.sync !== false) {
                         await new Promise<void>(r => animation.then(() => r()));
-                        Object.assign(scope.current, this.propToCSS(state, this.state));
+                        Object.assign(current["style"], this.propToCSS(state, this.state));
                         this.setControl(null);
                     } else {
                         animation.then(() => {
-                            Object.assign(scope.current, this.propToCSS(state, this.state));
+                            Object.assign(current["style"], this.propToCSS(state, this.state));
                             this.setControl(null);
                         });
                     }
@@ -223,6 +224,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             // I don't understand
             // but if we don't wait for a while, something will go wrong
             await sleep(2);
+            this.setControl(null);
 
             if (this.sequenceOptions.sync) {
                 resolve();
@@ -287,7 +289,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         return this;
     }
 
-    private setControl(control: AnimationPlaybackControls) {
+    setControl(control: AnimationPlaybackControls) {
         this.control = control;
         return this;
     }

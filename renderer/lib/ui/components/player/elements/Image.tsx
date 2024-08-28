@@ -4,9 +4,10 @@ import clsx from "clsx";
 import React, {DetailedHTMLProps, ImgHTMLAttributes, useEffect, useMemo, useState} from "react";
 import {useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {deepMerge} from "@lib/util/data";
+import {deepMerge, sleep} from "@lib/util/data";
 import {usePreloaded} from "@lib/ui/providers/preloaded";
 import {Transform} from "@lib/game/game/elements/transform/transform";
+import {TransformDefinitions} from "@lib/game/game/common/types";
 
 // @todo: 增加无障碍支持
 
@@ -54,17 +55,19 @@ export default function Image({
 
         image.events.emit(GameImage.EventTypes["event:image.mount"]);
 
-        const listening = [
+        const fc = [...[
             GameImage.EventTypes["event:image.show"],
             GameImage.EventTypes["event:image.hide"],
             GameImage.EventTypes["event:image.applyTransform"]
-        ];
-
-        const fc = [...listening.map((type) => {
+        ].map((type) => {
             return {
                 fc: image.events.on(type, async (transform) => {
+                    console.debug("assigning transform", transform, "to image", image.name, "with state", image.state); // @debug
                     if (processingTransform && processingTransform.getControl()) {
+                        console.warn("processing transform not completed");
+                        console.log("last transform", processingTransform.state, processingTransform.getControl().state);
                         processingTransform.getControl().complete();
+                        processingTransform.setControl(null);
                     }
 
                     transform.assignState(image.state);
@@ -77,25 +80,24 @@ export default function Image({
                         onAnimationEnd();
                     }
 
+                    console.debug("done assigning")
+
                     setProcessingTransform(null);
                     return true;
                 }),
                 type,
             };
-        })];
+        }), {
+            type: GameImage.EventTypes["event:image.init"],
+            fc: image.events.on(GameImage.EventTypes["event:image.init"], async () => {
+                console.log("init", image.state, image.toTransform().propToCSS(state, image.state)) // @debug
+                assignTo(image.toTransform().propToCSS(state, image.state));
+            })
+        }];
 
-        if (processingTransform && processingTransform.getControl()) {
-            console.warn("processing transform not completed");
-            processingTransform.getControl().complete();
-        }
-        const transform = image.toTransform();
-        if (scope.current) {
-            transform.assignState(image.state);
-            console.debug("assigned", transform.propToCSS(state, transform.state), image) // @debug
-            Object.assign(scope.current.style, transform.propToCSS(state, transform.state));
-        }
+        assignTo(image.toTransform().propToCSS(state, image.state));
 
-        // image.events.emit(GameImage.EventTypes["event:image.ready"], scope);
+        image.events.emit(GameImage.EventTypes["event:image.ready"], scope);
 
         return () => {
             fc.forEach((fc) => {
@@ -103,12 +105,32 @@ export default function Image({
             });
             image.events.emit(GameImage.EventTypes["event:image.unmount"]);
         };
-    }, [scope.current]);
+    }, []);
+
+    function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
+        if (processingTransform && processingTransform.getControl()) {
+            console.log("last transform", processingTransform.state, processingTransform.getControl().state);
+            console.warn("processing transform not completed");
+            processingTransform.getControl().complete();
+            processingTransform.setControl(null);
+        }
+        if (!scope.current) {
+            console.warn("scope not ready");
+            return;
+        }
+        if (arg0 instanceof Transform) {
+            arg0.assignState(image.state);
+            Object.assign(scope.current.style, arg0.propToCSS(state, image.state));
+        } else {
+            Object.assign(scope.current.style, arg0);
+        }
+    }
 
     return (
         <div className={
             clsx("fixed inset-0 flex items-center justify-center z-0", {
-                "hidden": !image.state.display,
+                // "hidden": !image.state.display,
+                "opacity-0": !image.state.display,
             })
         } style={{
             width: '100vw',

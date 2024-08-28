@@ -161,23 +161,23 @@ export class LiveGame {
         };
     }
 
-    getStorable() {
-        return this.storable;
-    }
-
     /* Store */
     initNamespaces() {
         this.storable.addNamespace(new Namespace<StorableData>(LiveGame.GameSpacesKey.game, LiveGame.DefaultNamespaces.game));
         return this;
     }
 
+    getStorable() {
+        return this.storable;
+    }
+
     /* Game */
-    loadStory(story: Story) {
+    public loadStory(story: Story) {
         this.story = story;
         return this;
     }
 
-    newGame() {
+    public newGame() {
         this.initNamespaces();
 
         this.currentSceneNumber = 0;
@@ -188,6 +188,36 @@ export class LiveGame {
         this.currentSavedGame = newGame;
 
         return this;
+    }
+
+    public loadSavedGame(savedGame: SavedGame, {gameState}: {gameState: GameState}) {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return;
+        }
+
+        if (savedGame.version !== Constants.info.app.version) {
+            throw new Error("Saved game version mismatch");
+        }
+
+        this.currentSavedGame = savedGame;
+
+        const actions = this.story.getAllActions();
+        const {
+            store,
+            elementState,
+            nodeChildIdMap,
+            currentScene,
+            currentAction,
+            stage,
+        } = savedGame.game;
+        this.storable.load(store);
+        this.story.setAllElementState(elementState, actions);
+        this.story.setNodeChildByMap(nodeChildIdMap, actions);
+        this.setCurrentAction(this.story.findActionById(currentAction, actions) || null);
+        this.currentSceneNumber = currentScene;
+        gameState.loadData(stage, actions);
     }
 
     getCurrentAction(): LogicAction.Actions {
@@ -244,36 +274,6 @@ export class LiveGame {
             return nextAction;
         }
         return nextAction.node.child?.action;
-    }
-
-    loadSavedGame(savedGame: SavedGame, {gameState}: {gameState: GameState}) {
-        const story = this.story;
-        if (!story) {
-            console.warn("No story loaded");
-            return;
-        }
-
-        if (savedGame.version !== Constants.info.app.version) {
-            throw new Error("Saved game version mismatch");
-        }
-
-        this.currentSavedGame = savedGame;
-
-        const actions = this.story.getAllActions();
-        const {
-            store,
-            elementState,
-            nodeChildIdMap,
-            currentScene,
-            currentAction,
-            stage,
-        } = savedGame.game;
-        this.storable.load(store);
-        this.story.setAllElementState(elementState, actions);
-        this.story.setNodeChildByMap(nodeChildIdMap, actions);
-        this.currentSceneNumber = currentScene;
-        this.currentAction = this.story.findActionById(currentAction, actions) || null;
-        gameState.loadData(stage, actions);
     }
 
     generateSavedGame({gameState}: { gameState: GameState }): SavedGame {

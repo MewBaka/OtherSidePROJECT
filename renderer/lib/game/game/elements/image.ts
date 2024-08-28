@@ -41,6 +41,7 @@ const ImageTransactionTypes = {
 export type ImageEventTypes = {
     "event:image.show": [Transform<TransformDefinitions.ImageTransformProps>];
     "event:image.hide": [Transform<TransformDefinitions.ImageTransformProps>];
+    "event:image.init": [];
     "event:image.applyTransform": [Transform<TransformDefinitions.ImageTransformProps>];
     "event:image.mount": [];
     "event:image.unmount": [];
@@ -52,6 +53,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     static EventTypes: { [K in keyof ImageEventTypes]: K } = {
         "event:image.show": "event:image.show",
         "event:image.hide": "event:image.hide",
+        "event:image.init": "event:image.init",
         "event:image.applyTransform": "event:image.applyTransform",
         "event:image.mount": "event:image.mount",
         "event:image.unmount": "event:image.unmount",

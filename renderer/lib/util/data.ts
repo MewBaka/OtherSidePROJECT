@@ -191,11 +191,14 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
 
         if (promises.length === 0) {
             return new Promise<void>((resolve) => {
-                this.on("event:EventDispatcher.register", (type, fc) => {
+                const type = "event:EventDispatcher.register";
+                const listener = this.on(type, (type, fc) => {
                     if (type === event) {
+                        this.off(type, listener);
+
                         let res = fc?.(...args);
-                        if (res["then"]) {
-                            res["then"](resolve)
+                        if (res && res["then"]) {
+                            res["then"](resolve);
                         } else {
                             resolve(res);
                         }
