@@ -1,45 +1,50 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
+  
+<h1 align="center">OtherSideProject 「侧面PROJECT」</h1>
+
+<p align="center">全新异世冒险百合类视觉小说《侧面PROJECT》</p>
+
+<div align=center>
+  <img src="https://img.shields.io/github/license/mewbaka/othersideproject">
+  <img src="https://img.shields.io/badge/language-TypeScript-brightgreen">
+  <img src="https://img.shields.io/github/release/mewbaka/othersideproject.svg">
+  <img src="https://img.shields.io/github/stars/mewbaka/othersideproject">
+</div>
 
 > [!WARNING]  
-> 因更多的游戏元素需要，侧面Project制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
+> 因更多的游戏元素需要，侧面PROJECT制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
 > Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)
 > 仓库之中，但之后不再维护。Nomen制作的Electron版本(基于NarraLeaf)将作为侧面Project的主要版本。
 >
 > Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'
-> Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
-
-# OtherSideProject 「侧面Project」
-
-全新异世冒险百合类视觉小说《侧面Project》
+> Py引擎更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
 
 ## 1. 开发
 
-目前不提供
+请查看[NarraLeaf语义规定](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md)
 
 ## 2. 文档以及设定
 
 推荐您前往**飞书**查看这些内容，至少很舒服
 
-打开飞书链接时，可能要求您登录，点击右上角的叉号即可
+打开飞书链接时，可能要求您登录，**点击右上角的叉号即可**
 
-|    /     |                               GitHub                                |                               飞书                                |
+|    🤔     |                               GitHub                                |                               飞书                                |
 |:--------:|:-------------------------------------------------------------------:|:---------------------------------------------------------------:|
-|   世界观    | https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md  | https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd |
+|   世界观    | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)  | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
 |   人物设定   |                                 ---                                 |                               ---                               |
-|   策划案    |                                 ---                                 | https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh |
-| ~~开发文档~~ | https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc.md |                               ---                               |
+|   策划案    |                                 ---                                 | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
+| 开发文档 |[前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                               ---                               |
 
 ## 3. 捐赠
 
 本游戏使用捐赠作为主要收入来源，您可以前往我们的爱发电来支持我们
 
+<img width="92" alt="image" src="https://github.com/user-attachments/assets/6ac597f5-c699-49ea-b33d-e8628b32d7e3">
+
 [点击此处前往](https://afdian.com/a/OtherSideProject)
 
 ## 4. 开发周期
-
-**Demo 版本开发周期**：20240901 -> 20250201（153 天）
-
-**正式版本开发周期**：20250201 -> 20250720（169 天）
 
 **正式发布**：20250801
 
@@ -52,7 +57,7 @@
 - Debian: 计划兼容
 - 其他Linux发行版: 等待测试
 
-游戏将在：**GitHub**，**Gitee（镜像）**，**本家网站**，**Steam** 分发
+游戏将在：**GitHub**，**Gitee（镜像）**，**本家网站**，**itch.io**，**Steam** 分发
 
 技术栈：
 
@@ -76,13 +81,19 @@ Nextron
 
 **前期测试版本UI设计**：WangZixu_旭
 
-**LOGO原稿设计**：墨泽影
+**UI设计**：WangZixu_旭
+
+**第一版LOGO原稿设计**：墨泽影
+
+**第二版LOGO设计**：WangZixu_旭
 
 **MewBakaLOGO原稿设计**：南介私雨，WangZixu_旭
 
 ### 6.3 剧情/宣发脚本设计
 
-**人物设定，剧情脚本编写**：WangZixu_旭，瓦西里.舒克申_Official，神郭嘉，程方宇 Cecffrvy，Bika
+**人物设定，剧情脚本编写**：MewStory团队（WangZixu_旭，瓦西里.舒克申_Official，神郭嘉，程方宇 Cecffrvy，Bika）
+
+![](https://github.com/user-attachments/assets/24d3b1f4-29ac-4da0-851b-73c58aedbfcc)
 
 ### 6.4 贡献者
 
@@ -137,7 +148,7 @@ https://otherside.mewbaka.top/warn/lgbt/
 本游戏包含大量的女性向 LGBT（女同性恋）内容，可能包含与传统性别观念和性取向认知有所不同的描述和情节。我们理解和尊重每个人对
 LGBT 群体的看法和感受，并充分理解这类内容可能不适合所有玩家。如果您对 LGBT 元素持反对态度，或对其内容感到不适，我们强烈建议您立即停止游戏体验，以免产生不必要的困扰。
 
-请注意，如果您选择继续阅读或参与游戏内容，我们将视作您已经知悉并接受这些元素的存在。侧面Project制作团队将不会对因此引发的任何不适、困惑或其他负面感受（包括但不限于心理不适、恋爱观混淆等）承担责任。
+请注意，如果您选择继续阅读或参与游戏内容，我们将视作您已经知悉并接受这些元素的存在。侧面PROJECT制作团队将不会对因此引发的任何不适、困惑或其他负面感受（包括但不限于心理不适、恋爱观混淆等）承担责任。
 
 最后，我们建议所有玩家保持理性的态度，正确理解和对待恋爱观念和性取向，尊重多元化的性别表达和关系形式。我们希望通过此游戏提供一种不同的视角，而非倡导或改变任何个人的性取向或恋爱观念。
 
@@ -155,10 +166,10 @@ LGBT 群体的看法和感受，并充分理解这类内容可能不适合所有
 
 本游戏的部分内容使用了互联网公开的免费商用型音效库/图标库/背景图像库，具体信息请在 **8.6 所使用的公开素材展示** 区域查看
 
-其他内容均为 **侧面Project制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用 非商用（需署名）** 范围，不允许
+其他内容均为 **侧面PROJECT制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用 非商用（需署名）** 范围，不允许
 **商用**
 
-根据Mozllia许可证规定，您不能删除或篡改原始版权声明，但是您可以在文件下方填写属于您的版权声明
+根据 MPL-2.0 许可证规定，您不能删除或篡改原始版权声明，但是您可以在文件下方填写属于您的版权声明
 
 请保留原版权声明：**Copyright © 2024 MewBaka&OtherSideProject, All Rights** **Reserved**.
 
