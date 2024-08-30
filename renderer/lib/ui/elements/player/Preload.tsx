@@ -53,8 +53,6 @@ export function Preload({
             return src[p.type].has(preloadedSrcP);
         });
 
-        console.log("[Preload] Preloading", src); // @debug
-
         // @todo: 让屏幕等待required的图片加载完成
         // 通过事件分发，在每次加载完成后触发事件
         // srcManager通过检查所有需要的资源都has之后解锁

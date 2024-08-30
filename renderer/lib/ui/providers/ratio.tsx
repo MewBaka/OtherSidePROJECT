@@ -5,6 +5,7 @@ import {createContext, useContext, useState} from "react";
 type Ratio = {
     w: number;
     h: number;
+    updateStyle: () => void;
 }
 type ThemeContextType = {
     ratio: Ratio;
@@ -13,7 +14,8 @@ type ThemeContextType = {
 
 const DefaultValue = {
     w: 0,
-    h: 0
+    h: 0,
+    updateStyle: () => void 0
 };
 const Context = createContext<null | ThemeContextType>(null);
 

@@ -15,7 +15,7 @@ export const scene1 = new Scene("scene1", {
     invertX: false
 });
 
-export const image1 = new Image("i1", {
+export const image1 = new Image("test_sensei", {
     src: "/static/images/test_sensei.png",
     position: {
         xalign: 0.3,
@@ -24,7 +24,7 @@ export const image1 = new Image("i1", {
     scale: 0.7,
 });
 export const image1_2 = image1.copy();
-export const image2 = new Image("i2", {
+export const image2 = new Image("image_speechless", {
     src: ImageSpeechless,
     position: {
         xalign: 0.3,

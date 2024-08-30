@@ -5,8 +5,8 @@ import {createWindow} from './helpers';
 import {RemoteHandler} from './app/mainHandler';
 import {ServerConstants} from "./config";
 
-const WIDTH = 1920 * 0.75;
-const HEIGHT = 1080 * 0.75;
+const WIDTH = 1280 * 0.75;
+const HEIGHT = 720 * 0.75;
 const isDevMode = ServerConstants.app.devMode;
 const isProd = (process.env.NODE_ENV === 'production');
 

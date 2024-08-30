@@ -1,11 +1,10 @@
 import {Image as GameImage} from "@/lib/game/game/elements/image";
 import {useAspectRatio} from "@/lib/ui/providers/ratio";
 import clsx from "clsx";
-import React, {DetailedHTMLProps, ImgHTMLAttributes, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {deepMerge, sleep} from "@lib/util/data";
-import {usePreloaded} from "@lib/ui/providers/preloaded";
+import {deepMerge} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {TransformDefinitions} from "@lib/game/game/common/types";
 
@@ -22,33 +21,8 @@ export default function Image({
 }>) {
     const {ratio} = useAspectRatio();
     const [scope, animate] = useAnimate();
-    const {preloaded} = usePreloaded();
-    const [backgroundLoaded, setBackgroundLoaded] = useState(false);
     const [processingTransform, setProcessingTransform] =
         useState<Transform<any> | null>(null);
-
-    const preloadedImage = preloaded.get<"image">(GameImage.staticImageDataToSrc(image.state.src));
-
-    const cloned = useMemo(() => {
-        const srcUrl = GameImage.staticImageDataToSrc(image.state.src);
-        if (preloadedImage && preloadedImage?.preloaded) {
-            console.log("[Preload] already preloaded", preloadedImage.src, preloadedImage.preloaded); // @debug
-            preloadedImage.src.setScope(scope);
-            return preloadedImage.preloaded;
-        }
-        console.warn("untracked image", srcUrl)
-        const props:
-            DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> = {
-            src: srcUrl,
-            width: image.state.width,
-            height: image.state.height,
-            style: {
-                position: 'absolute'
-            },
-            ref: scope
-        };
-        return React.cloneElement(<img alt={"image"}/>, props);
-    }, [scope, image.state.width, image.state.height, image.state.src, preloadedImage]);
 
     useEffect(() => {
         image.setScope(scope);
@@ -62,25 +36,17 @@ export default function Image({
         ].map((type) => {
             return {
                 fc: image.events.on(type, async (transform) => {
-                    console.debug("assigning transform", transform, "to image", image.name, "with state", image.state); // @debug
-                    if (processingTransform && processingTransform.getControl()) {
-                        console.warn("processing transform not completed");
-                        console.log("last transform", processingTransform.state, processingTransform.getControl().state);
-                        processingTransform.getControl().complete();
-                        processingTransform.setControl(null);
-                    }
+                    assignTo(transform.propToCSS(state, image.state));
 
                     transform.assignState(image.state);
 
                     setProcessingTransform(transform);
                     await transform.animate({scope, animate}, state);
-                    image.state = deepMerge({}, transform.state);
+                    image.state = deepMerge(image.state, transform.state);
 
                     if (onAnimationEnd) {
                         onAnimationEnd();
                     }
-
-                    console.debug("done assigning")
 
                     setProcessingTransform(null);
                     return true;
@@ -90,8 +56,8 @@ export default function Image({
         }), {
             type: GameImage.EventTypes["event:image.init"],
             fc: image.events.on(GameImage.EventTypes["event:image.init"], async () => {
-                console.log("init", image.state, image.toTransform().propToCSS(state, image.state)) // @debug
-                assignTo(image.toTransform().propToCSS(state, image.state));
+                await image.toTransform().animate({scope, animate}, state);
+                image.state = deepMerge(image.state, image.toTransform().state);
             })
         }];
 
@@ -142,9 +108,10 @@ export default function Image({
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {(cloned || (
-                    <img className={"relative"} alt={"image"} src={GameImage.staticImageDataToSrc(image.state.src)} width={image.state.width}
-                         height={image.state.height} style={{position: 'absolute'}} ref={scope} onLoad={() => setBackgroundLoaded(true)}/>
+                {((
+                    <img className={"absolute"} alt={"image"} src={GameImage.staticImageDataToSrc(image.state.src)}
+                         width={image.state.width}
+                         height={image.state.height} ref={scope}/>
                 ))}
             </div>
         </div>

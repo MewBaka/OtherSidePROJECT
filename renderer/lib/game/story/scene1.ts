@@ -106,9 +106,9 @@ const scene2 = new Scene("scene2", {
 
 const scene2actions = scene2.action([
     image1.init().toActions(),
-    // new Character(null)
-    //     .say("hello")
-    //     .toActions(),
+    new Character(null)
+        .say("hello")
+        .toActions(),
     // scene2.sleep(1000).toActions(),
     // image1_2.show({
     //     duration: 0.5,
@@ -128,6 +128,7 @@ const scene2actions = scene2.action([
         sync: true,
         ease: "easeOut",
     })).toActions(),
+    scene2.sleep(1000).toActions(),
     new Character(null)
         .say("world")
         .toActions(),
@@ -169,6 +170,7 @@ const scene1Actions = scene1.action([
         duration: 0.5,
         sync: true,
     }).toActions(),
+    scene1.sleep(1000).toActions(),
     character1
         .say("你好！")
         .toActions(),

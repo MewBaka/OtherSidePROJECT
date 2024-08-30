@@ -141,7 +141,7 @@ export class Transform<T extends TransformDefinitions.Types> {
     }
 
     public static offsetToCSS(origin: string | number, offset: Offset[keyof Offset] | undefined | false = 0): string | number {
-        if (offset === false) return origin;
+        if (offset === false || !offset) return origin;
         return typeof origin === "number" ? origin + offset : `calc(${origin} + ${offset}px)`;
     }
 
@@ -198,13 +198,15 @@ export class Transform<T extends TransformDefinitions.Types> {
             }
             for (let i = 0; i < this.sequenceOptions.repeat; i++) {
                 for (const {props, options} of this.sequences) {
-                    this.state = deepMerge(this.state, props);
+                    const initState = deepMerge({}, this.propToCSS(state, this.state));
 
                     if (!scope.current) {
                         throw new Error("No scope found when animating.");
                     }
                     const current = scope.current as Element;
+                    Object.assign(current["style"], initState);
 
+                    this.state = deepMerge(this.state, props);
                     const animation = animate(current, this.propToCSS(state, this.state), options);
                     this.setControl(animation);
 
