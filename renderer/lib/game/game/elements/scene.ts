@@ -12,6 +12,12 @@ import {Sound, SoundDataRaw} from "@lib/game/game/elements/sound";
 import Actions = LogicAction.Actions;
 import _ from "lodash";
 
+/**
+ * @todo: 提前加载所需场景的资源
+ * @todo: 允许场景切换过程中使用Transform
+ * @todo: 允许图片使用Transition来变换
+ */
+
 export type SceneConfig = {
     invertY?: boolean;
     invertX?: boolean;
@@ -135,19 +141,21 @@ export class Scene extends Constructable<
         const jumpConfig: Partial<JumpConfig> = config || {};
         if (arg0 instanceof Scene) {
             const actions = arg0.getSceneActions();
-            this._transitionToScene(arg0, jumpConfig.transition);
+            this._transitionToScene(arg0, jumpConfig.transition)
+                ._exit();
             return this._jumpTo(actions);
         }
 
         const actions = Array.isArray(arg0) ? arg0 : [arg0];
         const scene = actions[0]?.callee;
         if (scene) {
-            this._transitionToScene(scene, jumpConfig.transition);
+            this._transitionToScene(scene, jumpConfig.transition)
+                ._exit();
         }
         return this._jumpTo(actions);
     }
 
-    public transitionSceneBackground(scene: Scene, transition: ITransition) {
+    public transitionSceneBackground(scene?: Scene, transition?: ITransition) {
         this._transitionToScene(scene, transition);
         return this;
     }
@@ -246,15 +254,16 @@ export class Scene extends Constructable<
         return this;
     }
 
-    private _transitionToScene(scene: Scene, transition?: ITransition): this {
+    private _transitionToScene(scene?: Scene, transition?: ITransition): this {
         if (transition) {
             this._setTransition(transition)
                 ._applyTransition(transition)
         }
-        this._actions.push(
-            ...scene.activate().toActions(),
-        );
-        this._exit()
+        if (scene) {
+            this._actions.push(
+                ...scene.activate().toActions(),
+            );
+        }
         return this;
     }
 

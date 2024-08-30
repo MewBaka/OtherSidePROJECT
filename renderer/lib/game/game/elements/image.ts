@@ -12,6 +12,7 @@ import {Scene} from "@lib/game/game/elements/scene";
 import {AnimationScope} from "framer-motion";
 import _ from "lodash";
 import {ImageActionContentType} from "@lib/game/game/actionTypes";
+import {StaticImageData} from "next/image";
 
 export type ImageConfig = {
     src: string | NextJSStaticImageData;
@@ -113,13 +114,15 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
      * @param src 可以是public目录下的文件
      * 例如 **%root%/public/static/image.png** 在这里应该填入 **"/static/image.png"**
      */
-    public setSrc(src: string): this {
+    public setSrc(src: string | StaticImageData): this {
         const action = new ImageAction<typeof ImageAction.ActionTypes.setSrc>(
             this,
             ImageAction.ActionTypes.setSrc,
             new ContentNode<[string]>(
                 Game.getIdManager().getStringId()
-            ).setContent([src])
+            ).setContent([
+                typeof src === "string" ? src : Image.staticImageDataToSrc(src)
+            ])
         );
         this.actions.push(action);
         return this;
