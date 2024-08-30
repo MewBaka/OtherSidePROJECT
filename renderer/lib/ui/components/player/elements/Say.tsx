@@ -27,6 +27,12 @@ export default function Say({
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
 
+    const elementBehaviors = Constants?.app?.game?.elementBehavior;
+
+    if (!elementBehaviors) {
+        throw new Error("Cannot load elementBehaviors in client\nat Say.tsx\nPlease try refreshing the page.");
+    }
+
     const handleComplete = () => {
         setCurrentWordIndex((prevIndex) => prevIndex + 1);
         if (currentWordIndex === sentence.text.length - 1) {
@@ -49,7 +55,7 @@ export default function Say({
         }
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (Constants.app.game.elementBehavior.say.skipKeys.includes(e.key)) {
+            if (Constants?.app?.game?.elementBehavior?.say?.skipKeys.includes(e.key)) {
                 if (isFinished) {
                     if (onClick) onClick();
                 } else {
@@ -65,7 +71,7 @@ export default function Say({
 
     return (
         <Isolated>
-            {sentence.state.display &&
+            {sentence.state.display && elementBehaviors &&
                 <div className={
                     clsx("absolute bottom-0 w-[calc(100%-40px)] h-[calc(33%-40px)] bg-white m-4 box-border rounded-md shadow-md flex items-center justify-center", className)
                 } onClick={onElementClick}>
@@ -91,7 +97,7 @@ export default function Say({
                         useTypeEffect ?
                             <TypingEffect text={word.text}
                                           onComplete={index === currentWordIndex ? handleComplete : undefined}
-                                          speed={Constants.app.game.elementBehavior.say.textCps}/> :
+                                          speed={elementBehaviors.say.textCps}/> :
                             word.text
                     }
                   </span>

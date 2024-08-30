@@ -227,24 +227,32 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             });
 
             this.callee.events.once("event:image.mount", async () => {
-                if (!this.callee.getScope().current) {
+                if (!this.callee.getScope()?.current) {
                     await this.callee.events.any(GameImage.EventTypes["event:image.elementLoaded"]);
                 }
-                state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
-                    transform
-                ], () => {
-                    awaitable.resolve({
-                        type: this.type,
-                        node: this.contentNode?.child || null,
-                    });
-                    state.stage.next();
+
+                await this.callee.events.any("event:image.init");
+                awaitable.resolve({
+                    type: this.type,
+                    node: this.contentNode.child
                 });
+                state.stage.next();
+                // state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
+                //     transform
+                // ], () => {
+                //     awaitable.resolve({
+                //         type: this.type,
+                //         node: this.contentNode?.child || null,
+                //     });
+                //     state.stage.next();
+                // });
             });
             return awaitable;
         }
 
         if (this.type === ImageActionTypes.setSrc) {
             this.callee.state.src = (this.contentNode as ContentNode<ImageActionContentType["image:setSrc"]>).getContent()[0];
+            state.stage.forceUpdate();
             return super.executeAction(state);
         } else if ([
             ImageActionTypes.show,

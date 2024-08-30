@@ -141,7 +141,7 @@ export class Transform<T extends TransformDefinitions.Types> {
     }
 
     public static offsetToCSS(origin: string | number, offset: Offset[keyof Offset] | undefined | false = 0): string | number {
-        if (offset === false) return origin;
+        if (offset === false || !offset) return origin;
         return typeof origin === "number" ? origin + offset : `calc(${origin} + ${offset}px)`;
     }
 
@@ -198,22 +198,25 @@ export class Transform<T extends TransformDefinitions.Types> {
             }
             for (let i = 0; i < this.sequenceOptions.repeat; i++) {
                 for (const {props, options} of this.sequences) {
-                    this.state = deepMerge(this.state, props);
+                    const initState = deepMerge({}, this.propToCSS(state, this.state));
 
                     if (!scope.current) {
                         throw new Error("No scope found when animating.");
                     }
+                    const current = scope.current as Element;
+                    Object.assign(current["style"], initState);
 
-                    const animation = animate(scope.current, this.propToCSS(state, this.state), options);
+                    this.state = deepMerge(this.state, props);
+                    const animation = animate(current, this.propToCSS(state, this.state), options);
                     this.setControl(animation);
 
                     if (options?.sync !== false) {
                         await new Promise<void>(r => animation.then(() => r()));
-                        Object.assign(scope.current, this.propToCSS(state, this.state));
+                        Object.assign(current["style"], this.propToCSS(state, this.state));
                         this.setControl(null);
                     } else {
                         animation.then(() => {
-                            Object.assign(scope.current, this.propToCSS(state, this.state));
+                            Object.assign(current["style"], this.propToCSS(state, this.state));
                             this.setControl(null);
                         });
                     }
@@ -223,6 +226,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             // I don't understand
             // but if we don't wait for a while, something will go wrong
             await sleep(2);
+            this.setControl(null);
 
             if (this.sequenceOptions.sync) {
                 resolve();
@@ -260,7 +264,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         };
 
         const props = {} as DOMKeyframesDefinition;
-        props.transform = this.propToTransformCSS(state, prop);
+        props.transform = this.propToCSSTransform(state, prop);
         for (const key in prop) {
             if (FieldHandlers[key]) {
                 Object.assign(props, FieldHandlers[key](prop[key]));
@@ -269,7 +273,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         return props;
     }
 
-    propToTransformCSS(state: GameState, prop: DeepPartial<T>): string {
+    propToCSSTransform(state: GameState, prop: DeepPartial<T>): string {
         if (!state.getLastScene()) {
             throw new Error("No scene found in state, make sure you called \"scene.activate()\" before this method.");
         }
@@ -287,7 +291,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         return this;
     }
 
-    private setControl(control: AnimationPlaybackControls) {
+    setControl(control: AnimationPlaybackControls) {
         this.control = control;
         return this;
     }
