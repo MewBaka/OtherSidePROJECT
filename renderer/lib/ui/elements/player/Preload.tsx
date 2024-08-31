@@ -5,7 +5,7 @@ import {Sound} from "@lib/game/game/elements/sound";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {usePreloaded} from "@lib/ui/providers/preloaded";
 import {Preloaded, PreloadedSrc} from "@lib/ui/elements/player/Preloaded";
-import {Image} from "@lib/game/game/elements/image";
+import {Image as GameImage} from "@lib/game/game/elements/image";
 import {Utils} from "@lib/game/game/common/core";
 import {Img} from "@lib/ui/elements/player/Img";
 
@@ -17,6 +17,7 @@ export function Preload({
     srcManager: SrcManager;
 }>) {
     const {preloaded} = usePreloaded();
+    const [imgs, setImgs] = React.useState<any[]>([]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -24,17 +25,24 @@ export function Preload({
             return;
         }
 
+        const currentSceneSrc = state.getLastScene()?.srcManager;
+        const combinedSrc = [...srcManager.src, ...(currentSceneSrc ? currentSceneSrc.src : [])];
+
         const src = {
-            image: new Set([srcManager.src].flat().filter(
-                src => src.type === SrcManager.SrcTypes.image
-            ).map(src => src.src)),
-            audio: new Set([srcManager.src].flat().filter(
-                src => src.type === SrcManager.SrcTypes.audio
-            ).map(src => src.src)),
-            video: new Set([srcManager.src].flat().filter(
-                src => src.type === SrcManager.SrcTypes.video
-            ).map(src => src.src)),
-        } as const;
+            image: new Set<GameImage>(),
+            audio: new Set<Sound>(),
+            video: new Set<string>()
+        };
+
+        combinedSrc.forEach(srcItem => {
+            if (srcItem.type === SrcManager.SrcTypes.image) {
+                src.image.add(srcItem.src);
+            } else if (srcItem.type === SrcManager.SrcTypes.audio) {
+                src.audio.add(srcItem.src);
+            } else if (srcItem.type === SrcManager.SrcTypes.video) {
+                src.video.add(srcItem.src);
+            }
+        });
 
         preloaded.preloaded = preloaded.preloaded.filter(p => {
             if (p.type === SrcManager.SrcTypes.audio) {
@@ -60,10 +68,18 @@ export function Preload({
         // @todo: 更智能的资源分析，尝试找出最有可能需要加载的资源
         const newImages = [];
         const promises = [];
-        src.image.forEach((src: Image) => {
+        src.image.forEach((src: GameImage) => {
             let resolve: () => void;
             const promise = new Promise<void>(r => resolve = r);
-            const img = (<Img image={src} state={state} onLoad={() => resolve()}/>);
+
+            const htmlImg = new Image();
+            htmlImg.src = Utils.srcToString(src.state.src);
+            newImages.push(htmlImg);
+
+            const img = (<Img image={src} state={state} onLoad={() => {
+                resolve();
+                console.info("[Preload] Image loaded", src); // @debug
+            }}/>);
             preloaded.add({type: "image", src, preloaded: img});
         });
 
@@ -83,7 +99,7 @@ export function Preload({
             }
         });
 
-        console.log("[Preload] Preloaded", preloaded.preloaded); // @debug
+        console.log("[Preload] Preloaded", preloaded.preloaded, src.image); // @debug
         preloaded.events.emit(Preloaded.EventTypes["event:preloaded.mount"]);
 
         // @todo: better src manager, smart preload
