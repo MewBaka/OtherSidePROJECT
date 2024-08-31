@@ -52,10 +52,7 @@ export default function Scene({
         });
     }
 
-    async function fadeTo(music: Sound, fade?: number) {
-        if (!music) {
-            return;
-        }
+    async function fadeTo(music: Sound | null, fade?: number) {
         if (settingProgress) {
             clearTimeout(settingProgress);
             setSettingProgress(null);
@@ -78,8 +75,12 @@ export default function Scene({
             }
         }
 
+        if (!nextMusic) {
+            return;
+        }
+
         nextMusic.$getHowl()?.volume(0);
-        nextMusic.$setToken(nextMusic.$getHowl()?.play(nextMusic.$getToken()));
+        nextMusic.$setToken(nextMusic.$getHowl()?.play(nextMusic.$getToken() || undefined));
         console.log("[fadeTo]", nextMusic.$getToken(), nextMusic.config.src, nextMusic.$getHowl());
         if (fade) {
             nextMusic.$getHowl()?.fade(0, nextMusic.config.volume, fade, nextMusic.$getToken());

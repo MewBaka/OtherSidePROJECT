@@ -155,7 +155,8 @@ scene1.applyTransition(new Dissolve(Image.staticImageDataToSrc(mainMenuBackgroun
 
 // 新版写法
 /*
-scene1.transitionSceneBackground(scene2, new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
+scene1.transitionSceneBackground(undefined, new Dissolve(mainMenuBackground2, 2000))
+    .setSceneBackground(mainMenuBackground2)
     .toActions(),
 */
 

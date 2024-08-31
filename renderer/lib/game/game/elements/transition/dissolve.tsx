@@ -29,10 +29,12 @@ export class Dissolve extends Base<Record<string, any>> implements ITransition<D
     };
     private readonly src: string;
 
-    constructor(src: string | NextJSStaticImageData, duration: number = 1000) {
+    constructor(src: string | NextJSStaticImageData | Scene, duration: number = 1000) {
         super();
         this.duration = duration;
-        this.src = typeof src === "string"? src : Image.staticImageDataToSrc(src);
+        this.src = typeof src === "string"? src : 
+            src instanceof Scene? Scene.backgroundToSrc(src.config.background) :
+            Image.staticImageDataToSrc(src);
     }
 
     public start(onComplete?: () => void): void {
