@@ -11,6 +11,8 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -40,6 +42,8 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -57,9 +61,6 @@ jobs:
 
       - name: Install electron-builder
         run: npm install electron-builder
-
-      - name: Set up GitHub Personal Access Token
-        run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" > ~/.bashrc
 
       - name: Build macOS release
         run: npx electron-builder --mac
