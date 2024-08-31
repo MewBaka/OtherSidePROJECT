@@ -1,5 +1,5 @@
 import {Align, Background, color, CommonImage, CommonImagePosition, Coord2D, Offset, NextJSStaticImageData} from "../../show";
-import type {AnimationPlaybackControls, DOMKeyframesDefinition} from "framer-motion";
+import type {AnimationPlaybackControls, DOMKeyframesDefinition, DynamicAnimationOptions} from "framer-motion";
 import {ImagePosition} from "../image";
 import {deepMerge, DeepPartial, sleep, toHex} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
@@ -207,7 +207,11 @@ export class Transform<T extends TransformDefinitions.Types> {
                     Object.assign(current["style"], initState);
 
                     this.state = deepMerge(this.state, props);
-                    const animation = animate(current, this.propToCSS(state, this.state), options);
+                    const animation = animate(
+                        current,
+                        this.propToCSS(state, this.state),
+                        this.optionsToFramerMotionOptions(options)
+                    );
                     this.setControl(animation);
 
                     if (options?.sync !== false) {
@@ -227,6 +231,7 @@ export class Transform<T extends TransformDefinitions.Types> {
             // but if we don't wait for a while, something will go wrong
             await sleep(2);
             this.setControl(null);
+            console.log("animation done")
 
             if (this.sequenceOptions.sync) {
                 resolve();
@@ -271,6 +276,17 @@ export class Transform<T extends TransformDefinitions.Types> {
             }
         }
         return props;
+    }
+
+    optionsToFramerMotionOptions(options?: Partial<TransformDefinitions.CommonTransformProps>): DynamicAnimationOptions {
+        if (!options) {
+            return options;
+        }
+        const {duration, ease} = options;
+        return {
+            duration: duration / 1000,
+            ease,
+        };
     }
 
     propToCSSTransform(state: GameState, prop: DeepPartial<T>): string {
