@@ -58,6 +58,9 @@ jobs:
       - name: Install electron-builder
         run: npm install electron-builder
 
+      - name: Set up GitHub Personal Access Token
+        run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" > ~/.bashrc
+
       - name: Build macOS release
         run: npx electron-builder --mac
 

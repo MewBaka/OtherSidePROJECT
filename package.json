@@ -47,6 +47,9 @@
     "appId": "com.mewbaka.othersideproject",
     "win": {
       "target": "dir"
+    },
+    "mac": {
+      "target": "zip"
     }
   }
 }
