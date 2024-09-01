@@ -61,7 +61,7 @@ const scene3actions = scene3.action([
                 opacity: 1,
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },
@@ -84,11 +84,11 @@ const scene3actions = scene3.action([
     ], {
         sync: true,
         ease: "easeOut",
-        duration: 2
+        duration: 2000
     })).toActions(),
     image1.hide({
         ease: "linear",
-        duration: 2,
+        duration: 2000,
     }).toActions(),
     new Character(null)
         .say("hello")
@@ -120,7 +120,7 @@ const scene2actions = scene2.action([
                 opacity: 1,
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },
@@ -134,7 +134,7 @@ const scene2actions = scene2.action([
         .toActions(),
     image1.hide({
         ease: "linear",
-        duration: 2,
+        duration: 2000,
     }).toActions(),
 
     // scene2.setBackgroundMusic(scene2Bgm).toActions(),

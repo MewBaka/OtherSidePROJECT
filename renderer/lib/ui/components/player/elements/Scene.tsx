@@ -5,7 +5,7 @@ import clsx from "clsx";
 import {Scene as GameScene, SceneEventTypes} from "@lib/game/game/elements/scene";
 import {useAspectRatio} from "@/lib/ui/providers/ratio";
 import React, {useEffect, useState} from "react";
-import Transition from "@lib/game/game/elements/transition/Transition";
+import BackgroundTransition from "@lib/game/game/elements/transition/BackgroundTransition";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {Sound} from "@lib/game/game/elements/sound";
@@ -145,11 +145,11 @@ export default function Scene({
                     transform: 'translate(-50%, -50%)',
                 }}
             >
-                <Transition scene={scene} props={{
+                <BackgroundTransition scene={scene} props={{
                     width: ratio.w,
                     height: ratio.h,
                     src: SrcManager.cacheablize(GameScene.backgroundToSrc(scene.state.background), baseUrl),
-                }} state={state}/>
+                }}/>
             </div>
             {children}
         </div>

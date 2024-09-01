@@ -1,30 +1,39 @@
 "use client";
 
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Scene as GameScene, SceneEventTypes} from "../../elements/scene";
-import {ITransition, TransitionEventTypes} from "./type";
-import {EventListener} from "@lib/util/data";
+import {ElementProp, ITransition, TransitionEventTypes} from "./type";
+import {deepMerge, EventListener} from "@lib/util/data";
 import Background from "@lib/ui/elements/Background";
 import {GameState} from "@lib/ui/components/player/gameState";
+import {SrcManager} from "@lib/game/game/elements/srcManager";
 
-export default function Transition({scene, props, state}: { scene: GameScene, props: Record<string, any>, state: GameState }) {
+export default function BackgroundTransition({scene, props}: { scene: GameScene, props: Record<string, any> }) {
     const [transition, setTransition] =
         useState<null | ITransition>(null);
     const [transitionProps, setTransitionProps] =
         useState<Record<string, any>>({});
 
     useEffect(() => {
-        const sceneEvents: {
-            type: keyof SceneEventTypes;
-            handler: EventListener<any>;
-        }[] = [
+        // const sceneEvents: {
+        //     type: keyof SceneEventTypes;
+        //     handler: EventListener<any>;
+        // }[] = [
+        //     {
+        //         type: GameScene.EventTypes["event:scene.setTransition"],
+        //         handler: scene.events.on(GameScene.EventTypes["event:scene.setTransition"], (transition) => {
+        //             setTransition(transition);
+        //         })
+        //     }
+        // ];
+        const sceneEventTokens = scene.events.onEvents([
             {
                 type: GameScene.EventTypes["event:scene.setTransition"],
-                handler: scene.events.on(GameScene.EventTypes["event:scene.setTransition"], (transition) => {
+                listener: (transition) => {
                     setTransition(transition);
-                })
+                }
             }
-        ];
+        ]);
 
         const transitionEvents: {
             type: keyof typeof TransitionEventTypes;
@@ -38,18 +47,12 @@ export default function Transition({scene, props, state}: { scene: GameScene, pr
             {
                 type: TransitionEventTypes.update,
                 handler: transition?.events.on(TransitionEventTypes.update, (progress) => {
-                    setTransitionProps(transition?.toElementProps() || {});
+                    setTransitionProps(progress);
                 })
             },
             {
                 type: TransitionEventTypes.end,
                 handler: transition?.events.on(TransitionEventTypes.end, () => {
-                })
-            },
-            {
-                type: TransitionEventTypes.ready,
-                handler: transition?.events.on(TransitionEventTypes.ready, () => {
-                    scene.events.emit(GameScene.EventTypes["event:scene.imageLoaded"]);
                 })
             }
         ];
@@ -71,7 +74,17 @@ export default function Transition({scene, props, state}: { scene: GameScene, pr
     return (
         <>
             {
-                transition ? transition.toElements(scene, props, {state}) : (
+                transition ? (() =>{
+                    return transition.toElementProps().map((p, index) => {
+                        const mergedProps =
+                            deepMerge<ElementProp<HTMLImageElement>>(props, p, transitionProps);
+                        return (
+                            <Background key={index}>
+                                <img {...mergedProps} onLoad={handleImageOnload}/>
+                            </Background>
+                        );
+                    });
+                })() : (
                     <Background>
                         <img {...props} onLoad={handleImageOnload}/>
                     </Background>

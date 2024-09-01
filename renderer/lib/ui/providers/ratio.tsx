@@ -1,11 +1,15 @@
 "use client";
 
-import {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useState} from "react";
 
 type Ratio = {
     w: number;
     h: number;
     updateStyle: () => void;
+    style: React.CSSProperties;
+    s: {
+        style: React.CSSProperties;
+    };
 }
 type ThemeContextType = {
     ratio: Ratio;
@@ -15,7 +19,11 @@ type ThemeContextType = {
 const DefaultValue = {
     w: 0,
     h: 0,
-    updateStyle: () => void 0
+    updateStyle: () => void 0,
+    style: {},
+    s: {
+        style: {}
+    }
 };
 const Context = createContext<null | ThemeContextType>(null);
 

@@ -1,5 +1,5 @@
 import {Scene} from "@lib/game/game/elements/scene";
-import mainMenuBackground from "@/public/static/images/main-menu-background.webp";
+import mainMenuBackground from "@/public/static/images/main-menu-background.png";
 import mainMenuBackground2 from "@/public/static/images/main-menu-background2.jpg";
 import {Character} from "@lib/game/game/elements/text";
 import {Sound, SoundType} from "@lib/game/game/elements/sound";
@@ -53,7 +53,7 @@ export function speechless(scene: Scene, image: Image) {
                 }
             },
             options: {
-                duration: 0.5,
+                duration: 500,
                 ease: "easeOut",
             }
         }], {
@@ -62,7 +62,7 @@ export function speechless(scene: Scene, image: Image) {
         Control.do([
             scene.sleep(3000).toActions(),
             image.hide({
-                duration: 0.5,
+                duration: 500,
             }).toActions(),
         ]).toActions(),
     ]).toActions()
@@ -77,7 +77,7 @@ export function shake(image: Image) {
                 }
             },
             options: {
-                duration: 0.1,
+                duration: 100,
                 ease: "easeOut",
             }
         },
@@ -88,7 +88,7 @@ export function shake(image: Image) {
                 }
             },
             options: {
-                duration: 0.1,
+                duration: 100,
                 ease: "easeOut",
             }
         },
