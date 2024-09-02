@@ -9,6 +9,7 @@ import BackgroundTransition from "@lib/game/game/elements/transition/BackgroundT
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {Sound} from "@lib/game/game/elements/sound";
+import {Utils} from "@lib/game/game/common/Utils";
 
 export default function Scene({
                                   scene,
@@ -24,7 +25,7 @@ export default function Scene({
     const {ratio} = useAspectRatio();
     const baseUrl = window.location.origin;
     const [backgroundMusic, setBackgroundMusic] =
-        useState<Sound>(() => scene.$getBackgroundMusic());
+        useState<Sound>(() => scene._$getBackgroundMusic());
     const [settingProgress, setSettingProgress] =
         useState<NodeJS.Timeout | null>(null);
     const [resolve, setResolve] = useState<(() => void) | null>(null);
@@ -148,8 +149,8 @@ export default function Scene({
                 <BackgroundTransition scene={scene} props={{
                     width: ratio.w,
                     height: ratio.h,
-                    src: SrcManager.cacheablize(GameScene.backgroundToSrc(scene.state.background), baseUrl),
-                }}/>
+                    src: SrcManager.cacheablize(Utils.backgroundToSrc(scene.state.background), baseUrl),
+                }} state={state}/>
             </div>
             {children}
         </div>

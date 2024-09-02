@@ -73,6 +73,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         opacity: 0,
         cache: false,
     };
+    static ImagePosition = ImagePosition;
     readonly name: string;
     readonly config: ImageConfig;
     state: ImageConfig;
@@ -115,9 +116,13 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     /**
      * 设置图片源
      * @param src 可以是public目录下的文件
+     * @param transition
      * 例如 **%root%/public/static/image.png** 在这里应该填入 **"/static/image.png"**
      */
-    public setSrc(src: string | StaticImageData): this {
+    public setSrc(src: string | StaticImageData, transition?: ITransition): this {
+        if (transition) {
+            this._transitionSrc(transition);
+        }
         const action = new ImageAction<typeof ImageAction.ActionTypes.setSrc>(
             this,
             ImageAction.ActionTypes.setSrc,
@@ -131,10 +136,9 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return this;
     }
 
-    public transitionSrc(src: string | StaticImageData, transition: ITransition): this {
+    private _transitionSrc(transition: ITransition): this {
         this._setTransition(transition)
-            ._applyTransition(transition)
-            .setSrc(src);
+            ._applyTransition(transition);
         return this;
     }
 
@@ -159,6 +163,12 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
      */
     public show(): this;
 
+    /**
+     * 让图片显示，如果图片已显示，则不会有任何效果
+     *
+     * 如果使用自定义Transform，需要在变换时设置opacity为1
+     * @param options
+     */
     public show(options: Transform<TransformDefinitions.ImageTransformProps>): this;
 
     public show(options: Partial<TransformDefinitions.CommonTransformProps>): this;
@@ -168,7 +178,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
             (options instanceof Transform) ? options : new Transform<TransformDefinitions.ImageTransformProps>([
                 {
                     props: {
-                        opacity: 1
+                        opacity: 1,
                     },
                     options: options
                 }
@@ -192,6 +202,12 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
      */
     public hide(): this;
 
+    /**
+     * 让图片隐藏，如果图片已隐藏，则不会有任何效果
+     *
+     * 如果使用自定义Transform，需要在变换时设置opacity为0
+     * @param transform
+     */
     public hide(transform: Transform<TransformDefinitions.ImageTransformProps>): this;
 
     public hide(transform: Partial<TransformDefinitions.CommonTransformProps>): this;

@@ -23,7 +23,7 @@ export default function Image({
 }>) {
     const {ratio} = useAspectRatio();
     const [scope, animate] = useAnimate();
-    const [processingTransform, setProcessingTransform] =
+    const [transform, setTransform] =
         useState<Transform<any> | null>(null);
     const [transformProps, setTransformProps] =
         useState<CSSElementProp<DOMKeyframesDefinition>>({style: {}});
@@ -49,7 +49,7 @@ export default function Image({
 
                     transform.assignState(image.state);
 
-                    setProcessingTransform(transform);
+                    setTransform(transform);
                     await transform.animate({scope, animate}, state);
                     image.state = deepMerge(image.state, transform.state);
                     setTransformProps({
@@ -60,7 +60,7 @@ export default function Image({
                         onAnimationEnd();
                     }
 
-                    setProcessingTransform(null);
+                    setTransform(null);
                     return true;
                 }),
             };
@@ -108,11 +108,11 @@ export default function Image({
     }, [transition, image]);
 
     function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
-        if (processingTransform && processingTransform.getControl()) {
-            console.log("last transform", processingTransform.state, processingTransform.getControl().state);
+        if (transform && transform.getControl()) {
+            console.log("last transform", transform.state, transform.getControl().state);
             console.warn("processing transform not completed");
-            processingTransform.getControl().complete();
-            processingTransform.setControl(null);
+            transform.getControl().complete();
+            transform.setControl(null);
         }
         if (!scope.current) {
             console.warn("scope not ready");
@@ -131,6 +131,9 @@ export default function Image({
         src: Utils.staticImageDataToSrc(image.state.src),
         width: image.state.width,
         height: image.state.height,
+        style: {
+            border: "solid 5px red",
+        }
     };
 
     return (
@@ -154,7 +157,7 @@ export default function Image({
                     return (
                         <img key={index} ref={scope} {...mergedProps}/>
                     );
-                }): (
+                }) : (
                     <img ref={scope} {...deepMerge(defaultProps, transformProps)} />
                 )}
             </div>

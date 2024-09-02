@@ -29,7 +29,7 @@ export class Fade extends Base<FadeProps> implements ITransition {
         super();
         this.duration = duration;
         this.src = typeof src === "string" ? src :
-            src instanceof Scene ? Scene.backgroundToSrc(src.config.background) :
+            src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
                 Utils.staticImageDataToSrc(src);
     }
 

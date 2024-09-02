@@ -30,6 +30,7 @@ import {
     transition1
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
+import {FadeIn} from "@lib/game/game/elements/transition/fadeIn";
 
 const story = new Story("test");
 
@@ -67,7 +68,6 @@ const scene3actions = scene3.action([
         },
     ], {
         sync: true,
-        ease: "easeOut",
     })).toActions(),
 
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
@@ -77,14 +77,12 @@ const scene3actions = scene3.action([
                 opacity: 1,
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },
     ], {
         sync: true,
-        ease: "easeOut",
-        duration: 2000
     })).toActions(),
     image1.hide({
         ease: "linear",
@@ -126,7 +124,6 @@ const scene2actions = scene2.action([
         },
     ], {
         sync: true,
-        ease: "easeOut",
     })).toActions(),
     scene2.sleep(1000).toActions(),
     new Character(null)
@@ -168,7 +165,7 @@ const scene1Actions = scene1.action([
 
     image1.show({
         ease: "circOut",
-        duration: 0.5,
+        duration: 500,
         sync: true,
     }).toActions(),
     scene1.sleep(1000).toActions(),
@@ -188,7 +185,7 @@ const scene1Actions = scene1.action([
     character1.say("你最近过的怎么样？")
         .toActions(),
 
-    image1.transitionSrc("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", transition1).toActions(),
+    image1.setSrc("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", transition1).toActions(),
 
     new Menu("我最近过的怎么样？")
         .choose("我过的很好", [
@@ -206,7 +203,7 @@ const scene1Actions = scene1.action([
             scene1.jumpTo(
                 scene2actions,
                 {
-                    transition: new Dissolve(mainMenuBackground2, 2000)
+                    transition: new FadeIn(mainMenuBackground2, 2000, "left", 30)
                 }
             ).toActions(),
         ])
@@ -225,7 +222,6 @@ const scene1Actions = scene1.action([
         },
     ], {
         sync: true,
-        ease: "easeOut",
     })).toActions(),
 
     character2

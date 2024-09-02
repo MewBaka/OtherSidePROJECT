@@ -15,7 +15,7 @@ export const scene1 = new Scene("scene1", {
     invertY: true,
     invertX: false
 });
-export const transition1 = new Fade("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png");
+export const transition1 = new Fade("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", 300);
 
 export const image1 = new Image("test_sensei", {
     src: "/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png",

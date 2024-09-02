@@ -45,6 +45,9 @@ export namespace TransformDefinitions {
     } & {
         sync: boolean;
     };
+    export type TransformConfig = {
+        sync: boolean;
+    }
     export type CommonSequenceProps = {
         sync: boolean;
         repeat: number;

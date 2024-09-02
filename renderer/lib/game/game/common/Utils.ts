@@ -1,4 +1,5 @@
-import {NextJSStaticImageData} from "@lib/game/game/show";
+import {Background, NextJSStaticImageData} from "@lib/game/game/show";
+import {Transform} from "@lib/game/game/elements/transform/transform";
 
 export class Utils {
     public static srcToString(src: string | NextJSStaticImageData): string {
@@ -11,6 +12,12 @@ export class Utils {
 
     public static isStaticImageData(src: any): src is NextJSStaticImageData {
         return src.src !== undefined;
+    }
+
+    public static backgroundToSrc(background: Background["background"]) {
+        return Transform.isStaticImageData(background) ? background.src : (
+            background["url"] || null
+        );
     }
 }
 
