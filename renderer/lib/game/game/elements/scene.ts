@@ -44,7 +44,6 @@ export type SceneData = {};
 export type SceneEventTypes = {
     "event:scene.setTransition": [ITransition | null];
     "event:scene.remove": [];
-    "event:scene.applyTransition": [ITransition];
     "event:scene.load": [],
     "event:scene.unload": [],
     "event:scene.mount": [],
@@ -62,7 +61,6 @@ export class Scene extends Constructable<
     static EventTypes: { [K in keyof SceneEventTypes]: K } = {
         "event:scene.setTransition": "event:scene.setTransition",
         "event:scene.remove": "event:scene.remove",
-        "event:scene.applyTransition": "event:scene.applyTransition",
         "event:scene.load": "event:scene.load",
         "event:scene.unload": "event:scene.unload",
         "event:scene.mount": "event:scene.mount",

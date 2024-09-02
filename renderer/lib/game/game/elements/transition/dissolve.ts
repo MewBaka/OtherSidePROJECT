@@ -1,6 +1,5 @@
-import {ElementProp, ITransition, TransitionEventTypes} from "@lib/game/game/elements/transition/type";
+import {ElementProp, ITransition} from "@lib/game/game/elements/transition/type";
 import {Base} from "@lib/game/game/elements/transition/base";
-import {animate} from "framer-motion";
 import {Scene} from "@lib/game/game/elements/scene";
 import {NextJSStaticImageData} from "@lib/game/game/show";
 import {Image} from "@lib/game/game/elements/image";

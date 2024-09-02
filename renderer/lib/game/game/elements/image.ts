@@ -13,6 +13,7 @@ import {AnimationScope} from "framer-motion";
 import _ from "lodash";
 import {ImageActionContentType} from "@lib/game/game/actionTypes";
 import {StaticImageData} from "next/image";
+import {ITransition} from "@lib/game/game/elements/transition/type";
 
 export type ImageConfig = {
     src: string | NextJSStaticImageData;
@@ -48,6 +49,7 @@ export type ImageEventTypes = {
     "event:image.unmount": [];
     "event:image.ready": [AnimationScope];
     "event:image.elementLoaded": [];
+    "event:image.setTransition": [ITransition | null];
 };
 
 export class Image extends Actionable<typeof ImageTransactionTypes> {
@@ -60,6 +62,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         "event:image.unmount": "event:image.unmount",
         "event:image.ready": "event:image.ready",
         "event:image.elementLoaded": "event:image.elementLoaded",
+        "event:image.setTransition": "event:image.setTransition",
     }
     static defaultConfig: ImageConfig = {
         src: "",
@@ -125,6 +128,13 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
             ])
         );
         this.actions.push(action);
+        return this;
+    }
+
+    public transitionSrc(src: string | StaticImageData, transition: ITransition): this {
+        this._setTransition(transition)
+            ._applyTransition(transition)
+            .setSrc(src);
         return this;
     }
 
@@ -264,7 +274,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return this;
     }
 
-    $setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
+    _$setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
         this.state.disposed = true;
         return this;
     }
@@ -277,6 +287,32 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
                 Game.getIdManager().getStringId()
             ).setContent([
                 scene
+            ])
+        ));
+        return this;
+    }
+
+    _setTransition(transition: ITransition | null): this {
+        this.actions.push(new ImageAction<typeof ImageAction.ActionTypes.setTransition>(
+            this,
+            ImageAction.ActionTypes.setTransition,
+            new ContentNode<[ITransition | null]>(
+                Game.getIdManager().getStringId()
+            ).setContent([
+                transition
+            ])
+        ));
+        return this;
+    }
+
+    _applyTransition(transition: ITransition): this {
+        this.actions.push(new ImageAction<"image:applyTransition">(
+            this,
+            "image:applyTransition",
+            new ContentNode<[ITransition]>(
+                Game.getIdManager().getStringId()
+            ).setContent([
+                transition
             ])
         ));
         return this;

@@ -237,15 +237,6 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
                     node: this.contentNode.child
                 });
                 state.stage.next();
-                // state.animateImage(Image.EventTypes["event:image.applyTransform"], this.callee, [
-                //     transform
-                // ], () => {
-                //     awaitable.resolve({
-                //         type: this.type,
-                //         node: this.contentNode?.child || null,
-                //     });
-                //     state.stage.next();
-                // });
             });
             return awaitable;
         }
@@ -281,8 +272,25 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             return awaitable;
         } else if (this.type === ImageActionTypes.dispose) {
             state.disposeImage(this.callee);
-            this.callee.$setDispose();
+            this.callee._$setDispose();
             return super.executeAction(state);
+        } else if (this.type === ImageActionTypes.setTransition) {
+            this.callee.events.emit(
+                "event:image.setTransition",
+                (this.contentNode as ContentNode<ImageActionContentType["image:setTransition"]>).getContent()[0]
+            );
+            return super.executeAction(state);
+        } else if (this.type === ImageActionTypes.applyTransition) {
+            const awaitable = new Awaitable<CalledActionResult, any>(v => v);
+            const transition = (this.contentNode as ContentNode<ImageActionContentType["image:applyTransition"]>).getContent()[0];
+            transition.start(() => {
+                awaitable.resolve({
+                    type: this.type,
+                    node: this.contentNode.child
+                });
+                state.stage.next();
+            });
+            return awaitable;
         }
     }
 }

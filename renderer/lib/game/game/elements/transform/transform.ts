@@ -6,6 +6,7 @@ import {GameState} from "@lib/ui/components/player/gameState";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
 import SequenceProps = TransformDefinitions.SequenceProps;
+import {CSSElementProp, ElementProp} from "@lib/game/game/elements/transition/type";
 
 
 export class Transform<T extends TransformDefinitions.Types> {

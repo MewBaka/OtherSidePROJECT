@@ -167,9 +167,11 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
     public onEvents(events: {
         type: keyof Type;
         listener: EventListener<Type[keyof Type]>;
-    }[]): EventToken[] {
-        return events.map(({type, listener}) => {
-            this.on(type, listener);
+    }[]): {
+        tokens: EventToken[];
+        cancel: () => void;
+    } {
+        const tokens = events.map(({type, listener}) => {
             return {
                 type,
                 listener,
@@ -178,6 +180,12 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
                 }
             };
         }) as EventToken[];
+        return {
+            tokens,
+            cancel: () => {
+                tokens.forEach(token => token.cancel());
+            }
+        };
     }
 
     public off<K extends keyof Type>(event: K, listener: EventListener<Type[K]>): void {
