@@ -1,6 +1,8 @@
 import {Scene} from "@lib/game/game/elements/scene";
-import mainMenuBackground from "@/public/static/images/main-menu-background.webp";
+import mainMenuBackground from "@/public/static/images/main-menu-background.png";
 import mainMenuBackground2 from "@/public/static/images/main-menu-background2.jpg";
+import kotoba_tcr_bingfu_lh_pm_wx_xy from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png";
+import kotoba_tcr_bingfu_lh_pm_xz from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_xz.png";
 import {Character} from "@lib/game/game/elements/text";
 import {Sound, SoundType} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
@@ -8,20 +10,23 @@ import ImageSpeechless from "@/public/static/images/test_speechless.png";
 import {Control} from "@lib/game/game/elements/control";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
+import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
+import {Fade} from "@lib/game/game/elements/transition/fade";
 
 export const scene1 = new Scene("scene1", {
     background: mainMenuBackground,
     invertY: true,
     invertX: false
 });
+export const transition1 = new Fade(kotoba_tcr_bingfu_lh_pm_xz);
 
 export const image1 = new Image("test_sensei", {
-    src: "/static/images/test_sensei.png",
+    src: kotoba_tcr_bingfu_lh_pm_wx_xy,
     position: {
         xalign: 0.3,
         yalign: 0.5
     },
-    scale: 0.7,
+    scale: 0.3,
 });
 export const image1_2 = image1.copy();
 export const image2 = new Image("image_speechless", {
@@ -53,7 +58,7 @@ export function speechless(scene: Scene, image: Image) {
                 }
             },
             options: {
-                duration: 0.5,
+                duration: 500,
                 ease: "easeOut",
             }
         }], {
@@ -62,7 +67,7 @@ export function speechless(scene: Scene, image: Image) {
         Control.do([
             scene.sleep(3000).toActions(),
             image.hide({
-                duration: 0.5,
+                duration: 500,
             }).toActions(),
         ]).toActions(),
     ]).toActions()
@@ -77,7 +82,7 @@ export function shake(image: Image) {
                 }
             },
             options: {
-                duration: 0.1,
+                duration: 100,
                 ease: "easeOut",
             }
         },
@@ -88,7 +93,7 @@ export function shake(image: Image) {
                 }
             },
             options: {
-                duration: 0.1,
+                duration: 100,
                 ease: "easeOut",
             }
         },

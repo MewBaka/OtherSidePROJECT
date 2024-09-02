@@ -8,28 +8,29 @@ import {
     Scene,
     Script,
     Sentence,
-    Sound,
     Story,
     Transform,
     Word
 } from "@lib/game/game/common/core";
 import {GameState, LiveGame} from "@lib/game/game/common/game";
 import type {TransformDefinitions} from "@lib/game/game/common/types";
+import kotoba_tcr_bingfu_lh_pm_xz from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_xz.png";
 
 import {
     character1,
     character2,
-    image1, image1_2,
+    image1,
     image2,
     mainMenuBackground,
     mainMenuBackground2,
-    scene1, scene2Bgm,
+    scene1,
+    scene2Bgm,
     shake,
     sound1,
-    speechless
+    speechless,
+    transition1
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
-import {SoundType} from "@lib/game/game/elements/sound";
 
 const story = new Story("test");
 
@@ -61,7 +62,7 @@ const scene3actions = scene3.action([
                 opacity: 1,
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },
@@ -84,11 +85,11 @@ const scene3actions = scene3.action([
     ], {
         sync: true,
         ease: "easeOut",
-        duration: 2
+        duration: 2000
     })).toActions(),
     image1.hide({
         ease: "linear",
-        duration: 2,
+        duration: 2000,
     }).toActions(),
     new Character(null)
         .say("hello")
@@ -120,7 +121,7 @@ const scene2actions = scene2.action([
                 opacity: 1,
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },
@@ -134,7 +135,7 @@ const scene2actions = scene2.action([
         .toActions(),
     image1.hide({
         ease: "linear",
-        duration: 2,
+        duration: 2000,
     }).toActions(),
 
     // scene2.setBackgroundMusic(scene2Bgm).toActions(),
@@ -188,6 +189,7 @@ const scene1Actions = scene1.action([
     character1.say("你最近过的怎么样？")
         .toActions(),
 
+    image1.transitionSrc(kotoba_tcr_bingfu_lh_pm_xz, transition1).toActions(),
 
     new Menu("我最近过的怎么样？")
         .choose("我过的很好", [

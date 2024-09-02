@@ -34,7 +34,6 @@ export default function Main({
                     width = containerWidth;
                     height = containerWidth / aspectRatio;
                 }
-                width = width + 100;
 
                 setStyle({
                     width: `${width}px`,
@@ -49,7 +48,21 @@ export default function Main({
                     alignItems: "center",
                     justifyContent: "center"
                 });
-                setRatio({w: width, h: height, updateStyle});
+                setRatio({
+                    w: width,
+                    h: height,
+                    updateStyle,
+                    style: {
+                        width: `${width}px`,
+                        height: `${height}px`,
+                    },
+                    s: {
+                        style: {
+                            width: `${width}px`,
+                            height: `${height}px`,
+                        }
+                    }
+                });
             }
         };
 

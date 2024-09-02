@@ -1,10 +1,11 @@
 /**
  * @param obj1 source object
  * @param obj2 this object will overwrite the source object
+ * @param objs
  * @example
  * deepMerge(defaultConfig, config);
  */
-export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, obj2: Record<string, any>): T {
+export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, obj2: Record<string, any>, ...objs: Record<string, any>[]): T {
     const hasOwnProperty = (obj: Record<string, any>, key: string) => Object.prototype.hasOwnProperty.call(obj, key);
     const result: Record<string, any> = {};
 
@@ -46,6 +47,11 @@ export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, ob
                 result[key] = obj2[key];
             }
         }
+    }
+
+    if (objs.length) {
+        const [next, ...rest] = objs;
+        return deepMerge(result, next, ...rest);
     }
 
     return result as T;
@@ -136,6 +142,11 @@ export type EventTypes = {
     [key: string]: any[];
 }
 export type EventListener<T extends any[]> = (...args: T) => void | Promise<any>;
+export type EventToken = {
+    type: keyof EventTypes;
+    listener: EventListener<any>;
+    cancel: () => void;
+};
 
 export class EventDispatcher<T extends EventTypes, Type extends T & {
     "event:EventDispatcher.register": [keyof EventTypes, EventListener<any>];
@@ -151,6 +162,30 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
         this.events[event].push(listener);
         this.emit("event:EventDispatcher.register", event as any, listener as any);
         return listener;
+    }
+
+    public onEvents(events: {
+        type: keyof Type;
+        listener: EventListener<Type[keyof Type]>;
+    }[]): {
+        tokens: EventToken[];
+        cancel: () => void;
+    } {
+        const tokens = events.map(({type, listener}) => {
+            return {
+                type,
+                listener,
+                cancel: () => {
+                    this.off(type, listener);
+                }
+            };
+        }) as EventToken[];
+        return {
+            tokens,
+            cancel: () => {
+                tokens.forEach(token => token.cancel());
+            }
+        };
     }
 
     public off<K extends keyof Type>(event: K, listener: EventListener<Type[K]>): void {

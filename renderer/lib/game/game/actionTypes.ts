@@ -41,7 +41,7 @@ export type SceneActionContentType = {
     K extends typeof SceneActionTypes["action"] ? Scene :
         K extends typeof SceneActionTypes["sleep"] ? number | Promise<any> | Awaitable<any, any> :
             K extends typeof SceneActionTypes["setBackground"] ? [Background["background"]] :
-                K extends typeof SceneActionTypes["setTransition"] ? [ITransition] :
+                K extends typeof SceneActionTypes["setTransition"] ? [ITransition | null] :
                     K extends typeof SceneActionTypes["applyTransition"] ? [ITransition] :
                         K extends typeof SceneActionTypes["init"] ? [] :
                             K extends typeof SceneActionTypes["exit"] ? [] :
@@ -69,6 +69,8 @@ export const ImageActionTypes = {
     applyTransform: "image:applyTransform",
     init: "image:init",
     dispose: "image:dispose",
+    setTransition: "image:setTransition",
+    applyTransition: "image:applyTransition",
 } as const;
 export type ImageActionContentType = {
     [K in typeof ImageActionTypes[keyof typeof ImageActionTypes]]:
@@ -79,7 +81,9 @@ export type ImageActionContentType = {
                     K extends "image:applyTransform" ? [void, Transform<TransformDefinitions.ImageTransformProps>, string] :
                         K extends "image:init" ? [Scene?] :
                             K extends "image:dispose" ? [] :
-                                any;
+                                K extends "image:setTransition" ? [ITransition | null] :
+                                    K extends "image:applyTransition" ? [ITransition] :
+                                        any;
 }
 /* Condition */
 export const ConditionActionTypes = {
