@@ -1,8 +1,6 @@
 import {Scene} from "@lib/game/game/elements/scene";
 import mainMenuBackground from "@/public/static/images/main-menu-background.png";
 import mainMenuBackground2 from "@/public/static/images/main-menu-background2.jpg";
-import kotoba_tcr_bingfu_lh_pm_wx_xy from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png";
-import kotoba_tcr_bingfu_lh_pm_xz from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_xz.png";
 import {Character} from "@lib/game/game/elements/text";
 import {Sound, SoundType} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
@@ -10,7 +8,6 @@ import ImageSpeechless from "@/public/static/images/test_speechless.png";
 import {Control} from "@lib/game/game/elements/control";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
-import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
 import {Fade} from "@lib/game/game/elements/transition/fade";
 
 export const scene1 = new Scene("scene1", {
@@ -18,10 +15,10 @@ export const scene1 = new Scene("scene1", {
     invertY: true,
     invertX: false
 });
-export const transition1 = new Fade(kotoba_tcr_bingfu_lh_pm_xz);
+export const transition1 = new Fade("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png");
 
 export const image1 = new Image("test_sensei", {
-    src: kotoba_tcr_bingfu_lh_pm_wx_xy,
+    src: "/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png",
     position: {
         xalign: 0.3,
         yalign: 0.5

@@ -14,7 +14,6 @@ import {
 } from "@lib/game/game/common/core";
 import {GameState, LiveGame} from "@lib/game/game/common/game";
 import type {TransformDefinitions} from "@lib/game/game/common/types";
-import kotoba_tcr_bingfu_lh_pm_xz from "@/public/static/images/kotoba_tcr_bingfu_lh_pm_xz.png";
 
 import {
     character1,
@@ -189,7 +188,7 @@ const scene1Actions = scene1.action([
     character1.say("你最近过的怎么样？")
         .toActions(),
 
-    image1.transitionSrc(kotoba_tcr_bingfu_lh_pm_xz, transition1).toActions(),
+    image1.transitionSrc("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", transition1).toActions(),
 
     new Menu("我最近过的怎么样？")
         .choose("我过的很好", [
