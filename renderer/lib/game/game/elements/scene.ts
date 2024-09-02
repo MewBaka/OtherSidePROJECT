@@ -2,7 +2,7 @@ import {Constructable} from "../constructable";
 import {Game} from "../game";
 import {Awaitable, deepMerge, EventDispatcher, safeClone} from "@lib/util/data";
 import {Background, CommonImage} from "../show";
-import {ContentNode} from "../save/rollback";
+import {ContentNode} from "../save/actionTree";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {SceneAction} from "@lib/game/game/actions";
 import {Transform} from "@lib/game/game/elements/transform/transform";
@@ -115,6 +115,17 @@ export class Scene extends Constructable<
             ).setContent([
                 background,
             ])
+        ));
+        return this;
+    }
+
+    public applyTransform(transform: Transform<ImageTransformProps>) {
+        this._actions.push(new SceneAction(
+            this,
+            "scene:applyTransform",
+            new ContentNode(
+                Game.getIdManager().getStringId(),
+            ).setContent([transform])
         ));
         return this;
     }

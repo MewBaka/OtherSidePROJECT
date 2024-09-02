@@ -1,4 +1,4 @@
-import {ContentNode} from "@lib/game/game/save/rollback";
+import {ContentNode} from "@lib/game/game/save/actionTree";
 import {Awaitable} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {Image as GameImage, Image} from "@lib/game/game/elements/image";
@@ -179,6 +179,18 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
         } else if (this.type === SceneActionTypes.preUnmount) {
             this.callee.events.emit("event:scene.preUnmount");
             return super.executeAction(state);
+        } else if (this.type === SceneActionTypes.applyTransform) {
+            const [transform] = (this.contentNode as ContentNode<SceneActionContentType["scene:applyTransform"]>).getContent();
+            const awaitable = new Awaitable<CalledActionResult, any>(v => v);
+            this.callee.events.any("event:scene.applyTransform", transform)
+                .then(() => {
+                    awaitable.resolve({
+                        type: this.type,
+                        node: this.contentNode.child
+                    });
+                    state.stage.next();
+                });
+            return awaitable;
         }
 
         throw new Error("Unknown scene action type: " + this.type);
@@ -214,17 +226,7 @@ export class ImageAction<T extends typeof ImageActionTypes[keyof typeof ImageAct
             const scene = (this.contentNode as ContentNode<ImageActionContentType["image:init"]>).getContent()[0];
             state.createImage(this.callee, scene);
 
-            const awaitable = new Awaitable<CalledActionResult, any>(v => v);
-            const transform = new Transform<ImageTransformProps>([{
-                props: {
-                    ...this.callee.state,
-                },
-                options: {
-                    duration: 0,
-                }
-            }], {
-                sync: true
-            });
+            const awaitable = new Awaitable<CalledActionResult, any>(v => v)
 
             this.callee.events.once("event:image.mount", async () => {
                 if (!this.callee.getScope()?.current) {

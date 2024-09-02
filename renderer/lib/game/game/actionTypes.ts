@@ -35,6 +35,7 @@ export const SceneActionTypes = {
     jumpTo: "scene:jumpTo",
     setBackgroundMusic: "scene:setBackgroundMusic",
     preUnmount: "scene:preUnmount",
+    applyTransform: "scene:applyTransform",
 } as const;
 export type SceneActionContentType = {
     [K in typeof SceneActionTypes[keyof typeof SceneActionTypes]]:
@@ -48,7 +49,8 @@ export type SceneActionContentType = {
                                 K extends typeof SceneActionTypes["jumpTo"] ? [LogicAction.Actions[]] :
                                     K extends typeof SceneActionTypes["setBackgroundMusic"] ? [Sound, number?] :
                                         K extends typeof SceneActionTypes["preUnmount"] ? [] :
-                                            any;
+                                            K extends typeof SceneActionTypes["applyTransform"] ? [Transform<TransformDefinitions.ImageTransformProps>] :
+                                                any;
 }
 /* Story */
 export const StoryActionTypes = {

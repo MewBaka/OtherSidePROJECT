@@ -1,10 +1,9 @@
 import {EventDispatcher} from "@lib/util/data";
-import {EventTypes, ITransition, TransitionEventTypes} from "@lib/game/game/elements/transition/type";
+import {ElementProp, EventTypes, ITransition, TransitionEventTypes} from "@lib/game/game/elements/transition/type";
 import {animate, AnimationPlaybackControls, ValueAnimationTransition} from "framer-motion";
-import React from "react";
 
 
-export class Base<T extends React.JSX.IntrinsicAttributes & React.ClassAttributes<HTMLImageElement> & React.ImgHTMLAttributes<HTMLImageElement>> implements ITransition<T> {
+export class Base<T extends ElementProp> implements ITransition<T> {
     public events: EventDispatcher<EventTypes<[T[]]>> = new EventDispatcher();
 
     public start(onComplete?: () => void): void {

@@ -26,7 +26,6 @@ import {
     scene2Bgm,
     shake,
     sound1,
-    speechless,
     transition1
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
@@ -125,7 +124,7 @@ const scene2actions = scene2.action([
     ], {
         sync: true,
     })).toActions(),
-    scene2.sleep(1000).toActions(),
+
     new Character(null)
         .say("world")
         .toActions(),
@@ -157,6 +156,8 @@ scene1.transitionSceneBackground(undefined, new Dissolve(mainMenuBackground2, 20
     .toActions(),
 */
 
+// @todo: 在错误的场景上调用方法应该静态返回错误
+
 const scene1Actions = scene1.action([
     scene1.activate().toActions(),
 
@@ -174,12 +175,28 @@ const scene1Actions = scene1.action([
         .toActions(),
     Control.allAsync([
         shake(image1), // 通过自定义的函数返回操作
-        Control.do([
-            speechless(scene1, image2),
-            image2.dispose().toActions(),
-        ]).toActions(),
+        // Control.do([
+        // speechless(scene1, image2),
+        // image2.dispose().toActions(),
+        // ]).toActions(),
         sound1.play().toActions()
     ]).toActions(),
+
+    // scene1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+    //     {
+    //         props: {
+    //             position: {
+    //                 xoffset: -30
+    //             },
+    //         },
+    //         options: {
+    //             duration: 2000,
+    //             ease: "easeOut",
+    //         }
+    //     }
+    // ], {
+    //     sync: true,
+    // })).toActions(),
 
 
     character1.say("你最近过的怎么样？")

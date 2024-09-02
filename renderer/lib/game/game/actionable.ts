@@ -1,4 +1,4 @@
-import {HistoryData, Transaction, TransactionType} from "@lib/game/game/save/transaction";
+import {HistoryData, TransactionType} from "@lib/game/game/save/transaction";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {Game} from "@lib/game/game/game";
 
@@ -17,8 +17,8 @@ export class Actionable<
         Text: "$5",
         Menu: "$6",
     } as const;
-    protected actions: LogicAction.Actions[] = [];
     readonly id: string;
+    protected actions: LogicAction.Actions[] = [];
 
     constructor(idPrefix: string = Actionable.IdPrefixes.Actionable) {
         this.id = Game.getIdManager().prefix(idPrefix, Game.getIdManager().getStringId(), "-");

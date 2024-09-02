@@ -1,8 +1,7 @@
-import {ClientAPI} from "../api/ipc";
+import {ClientAPI, PreloadedWindow} from "../api/ipc";
 import {deepMerge} from "../util/data";
 import {Game} from "./game/game";
-import {RemoteFileStoreClient} from "./game/save/storeProvider";
-import {Window as IpcWindow} from "../../../main/preload";
+import {LocalFsSavedGameClient, LocalFsSettingsClient} from "./game/save/storeProvider";
 
 export type ClientGameConfig = {};
 export type ClientRequirement = {
@@ -44,12 +43,12 @@ export class ClientGame extends BaseGame {
         };
     }
 
-    init(window: IpcWindow) {
+    init(window: PreloadedWindow) {
         this.game = new Game({
             clientGame: this,
-            remoteStore: new RemoteFileStoreClient(window)
+            savedStore: new LocalFsSavedGameClient(window),
+            settingsStore: new LocalFsSettingsClient(window),
         });
-        this.game.init();
         this.game.createLiveGame();
         return this;
     }

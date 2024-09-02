@@ -1,9 +1,8 @@
 import {Game} from "./game";
-import {ContentNode, RenderableNode, RootNode} from "./save/rollback";
+import {ContentNode, RenderableNode, RootNode} from "./save/actionTree";
 import {LogicAction} from "@lib/game/game/logicAction";
 
 import {Action} from "@lib/game/game/action";
-import {Actionable} from "@lib/game/game/actionable";
 
 export class Constructable<
     T extends typeof Constructable = any,
@@ -49,6 +48,10 @@ export class Constructable<
         return this.actions[0];
     }
 
+    getActions() {
+        return this.actions;
+    }
+
     /**
      * Construct the actions into a tree
      */
@@ -62,10 +65,6 @@ export class Constructable<
             }
         }
         return (!!this.actions.length) ? this.actions[0].contentNode : null;
-    }
-
-    getActions() {
-        return this.actions;
     }
 }
 

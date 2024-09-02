@@ -1,26 +1,27 @@
-"use client";
-
 import React, {useEffect, useState} from 'react';
 import {Scene as GameScene} from "../../elements/scene";
-import {ElementProp, ITransition, TransitionEventTypes} from "./type";
+import {ElementProp, ImgElementProp, ITransition, TransitionEventTypes} from "./type";
 import {deepMerge} from "@lib/util/data";
 import Background from "@lib/ui/elements/Background";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {Utils} from "@lib/game/game/common/Utils";
 
-export default function BackgroundTransition({scene, props, state}: { scene: GameScene, props: Record<string, any>, state: GameState }) {
+export default function BackgroundTransition({scene, props, state}: {
+    scene: GameScene,
+    props: Record<string, any>,
+    state: GameState
+}) {
     const [scope, animate] = useAnimate();
     const [transition, setTransition] =
         useState<null | ITransition>(null);
     const [transitionProps, setTransitionProps] =
-        useState<Record<string, any>>({});
+        useState<ElementProp[]>([]);
     const [transform, setTransform] =
         useState<null | Transform<TransformDefinitions.ImageTransformProps>>(null);
     const [transformProps, setTransformProps] =
-        useState<Record<string, any>>({});
+        useState<ElementProp>({});
 
     useEffect(() => {
         const sceneEventTokens = scene.events.onEvents([
@@ -64,6 +65,8 @@ export default function BackgroundTransition({scene, props, state}: { scene: Gam
             }
         ]) : null;
 
+        assignTo(scene.backgroundImageState);
+
         return () => {
             sceneEventTokens.cancel();
             transitionEventTokens?.cancel?.();
@@ -96,26 +99,33 @@ export default function BackgroundTransition({scene, props, state}: { scene: Gam
     const defaultProps = {
         width: scene.backgroundImageState.width,
         height: scene.backgroundImageState.height,
+        style: {
+            border: "solid 5px red",
+        }
     };
 
     return (
         <>
             {
                 transition ? (() => {
-                    return transition.toElementProps().map((p, index) => {
+                    return transition.toElementProps().map((elementProps, index) => {
                         const mergedProps =
-                            deepMerge<ElementProp<HTMLImageElement>>(defaultProps, props, p, transitionProps);
+                            deepMerge<ImgElementProp>(defaultProps, props, elementProps, transformProps);
                         return (
                             <Background key={index}>
-                                <img {...mergedProps} onLoad={handleImageOnload} ref={scope}/>
+                                <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload}/>
                             </Background>
                         );
                     });
-                })() : (
-                    <Background>
-                        <img {...deepMerge(defaultProps, props)} onLoad={handleImageOnload} ref={scope}/>
-                    </Background>
-                )
+                })() : (() => {
+                    const mergedProps =
+                        deepMerge<ImgElementProp>(defaultProps, props, transformProps);
+                    return (
+                        <Background>
+                            <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload} ref={scope}/>
+                        </Background>
+                    )
+                })()
             }
         </>
     );

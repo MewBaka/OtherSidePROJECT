@@ -8,7 +8,13 @@ import {deepMerge} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {TransformDefinitions} from "@lib/game/game/common/types";
 import {Utils} from "@lib/game/game/common/core";
-import {CSSElementProp, ElementProp, ITransition, TransitionEventTypes} from "@lib/game/game/elements/transition/type";
+import {
+    CSSElementProp,
+    ElementProp,
+    ImgElementProp,
+    ITransition,
+    TransitionEventTypes
+} from "@lib/game/game/elements/transition/type";
 
 // @todo: 增加无障碍支持
 
@@ -30,7 +36,7 @@ export default function Image({
     const [transition, setTransition] =
         useState<null | ITransition>(null);
     const [transitionProps, setTransitionProps] =
-        useState<Record<string, any>>({});
+        useState<ImgElementProp[]>([]);
 
     useEffect(() => {
         image.setScope(scope);
@@ -151,14 +157,14 @@ export default function Image({
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {transition ? transition.toElementProps().map((p, index) => {
+                {transition ? transition.toElementProps().map((elementProps, index) => {
                     const mergedProps =
-                        deepMerge<ElementProp<HTMLImageElement>>(defaultProps, transformProps, p, transitionProps);
+                        deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
                     return (
-                        <img key={index} ref={scope} {...mergedProps}/>
+                        <img key={index} ref={scope} alt={mergedProps.alt} {...mergedProps}/>
                     );
                 }) : (
-                    <img ref={scope} {...deepMerge(defaultProps, transformProps)} />
+                    <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />
                 )}
             </div>
         </div>

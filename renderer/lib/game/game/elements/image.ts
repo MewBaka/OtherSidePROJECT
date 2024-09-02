@@ -1,6 +1,6 @@
 import type {CommonImage, CommonImagePosition, NextJSStaticImageData} from "../show";
 import {deepMerge, DeepPartial, EventDispatcher, getCallStack, safeClone} from "@lib/util/data";
-import {ContentNode} from "../save/rollback";
+import {ContentNode} from "../save/actionTree";
 import {Game} from "@lib/game/game/game";
 import {Transform} from "./transform/transform";
 import {ImageAction} from "@lib/game/game/actions";

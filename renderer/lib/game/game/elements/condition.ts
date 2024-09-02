@@ -1,6 +1,6 @@
 import {deepMerge} from "@lib/util/data";
 import {Game} from "../game";
-import {ContentNode, RenderableNode} from "../save/rollback";
+import {ContentNode, RenderableNode} from "../save/actionTree";
 import {HistoryData} from "../save/transaction";
 import {ScriptCleaner} from "./script";
 import {LogicAction} from "@lib/game/game/logicAction";

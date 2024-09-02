@@ -1,18 +1,14 @@
 import path from "path";
 import fs from "fs/promises";
-import { app } from "electron";
-
-import { getAlive, setAlive } from "../../helpers/alive";
-import { ExpectedHandler, ExpectedListener } from "../../preload";
-import { failure, Status, success } from "../../util/status";
-import { Prefix } from "../../util/type";
-import { FileStore } from "../../util/storeProvider";
-import { Handlers, Listeners } from "../mainHandler";
-import { ServerConstants } from "../../config";
+import {app} from "electron";
+import {ExpectedHandler, ExpectedListener} from "../../preload";
+import {failure, success} from "../../util/status";
+import {Prefix} from "../../util/type";
+import {FileStore} from "../../util/storeProvider";
+import {Handlers, Listeners} from "../mainHandler";
+import {ServerConstants} from "../../config";
 
 type GAME_KEY = "game";
-const GAME_KEY = "game" as const;
-
 export const handlers: Handlers<Prefix<ExpectedHandler, GAME_KEY>> = {
     "game:requestGame": async () => {
         return success();
@@ -21,9 +17,6 @@ export const handlers: Handlers<Prefix<ExpectedHandler, GAME_KEY>> = {
         return success();
     },
     "game:settings.set": async (_, key, value) => {
-        return success();
-    },
-    "game:settings.all": async function (): Promise<Status<any, Error>> {
         return success();
     },
     "game:store.write": async (_, name, data) => {

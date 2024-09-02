@@ -1,5 +1,5 @@
 import {Game} from "../game";
-import {ContentNode} from "../save/rollback";
+import {ContentNode} from "../save/actionTree";
 import {HistoryData} from "../save/transaction";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {ScriptAction} from "@lib/game/game/actions";
