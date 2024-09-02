@@ -1,5 +1,3 @@
-"use client";
-
 import {Sentence} from "@/lib/game/game/elements/text";
 import Isolated from "@/lib/ui/elements/isolated";
 import TypingEffect from "@/lib/ui/elements/player/typeing-effect";

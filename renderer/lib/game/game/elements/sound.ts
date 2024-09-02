@@ -2,7 +2,7 @@ import {Actionable} from "@lib/game/game/actionable";
 import {deepMerge, DeepPartial, safeClone} from "@lib/util/data";
 import {SoundAction} from "@lib/game/game/actions";
 import {Game} from "@lib/game/game/game";
-import {ContentNode} from "@lib/game/game/save/rollback";
+import {ContentNode} from "@lib/game/game/save/actionTree";
 import * as Howler from "howler";
 import {HowlOptions} from "howler";
 import _ from "lodash";

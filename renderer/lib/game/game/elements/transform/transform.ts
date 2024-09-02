@@ -1,4 +1,13 @@
-import {Align, Background, color, CommonImage, CommonImagePosition, Coord2D, Offset, NextJSStaticImageData} from "../../show";
+import {
+    Align,
+    Background,
+    color,
+    CommonImage,
+    CommonImagePosition,
+    Coord2D,
+    NextJSStaticImageData,
+    Offset
+} from "../../show";
 import type {AnimationPlaybackControls, DOMKeyframesDefinition, DynamicAnimationOptions} from "framer-motion";
 import {ImagePosition} from "../image";
 import {deepMerge, DeepPartial, sleep, toHex} from "@lib/util/data";
@@ -6,7 +15,6 @@ import {GameState} from "@lib/ui/components/player/gameState";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
 import SequenceProps = TransformDefinitions.SequenceProps;
-import {CSSElementProp, ElementProp} from "@lib/game/game/elements/transition/type";
 
 
 export class Transform<T extends TransformDefinitions.Types> {
@@ -35,7 +43,7 @@ export class Transform<T extends TransformDefinitions.Types> {
      * });
      * ```
      */
-    constructor(sequences: Sequence<T>[], sequenceOptions?: TransformDefinitions.SequenceOptions);
+    constructor(sequences: Sequence<T>[], sequenceOptions?: Partial<TransformDefinitions.TransformConfig>);
     constructor(props: DeepPartial<T>, options?: Partial<TransformDefinitions.CommonTransformProps>);
     constructor(arg0: Sequence<T>[] | DeepPartial<T>, arg1?: Partial<TransformDefinitions.CommonTransformProps> | TransformDefinitions.SequenceOptions) {
         if (Array.isArray(arg0)) {

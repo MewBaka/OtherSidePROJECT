@@ -2,14 +2,16 @@ import type {EventDispatcher} from "@lib/util/data";
 import React from "react";
 import {DOMKeyframesDefinition} from "framer-motion";
 
-export type ElementProp<T extends Element = Element> =
+export type ElementProp<T extends Element = Element, U extends React.HTMLAttributes<T> = React.HTMLAttributes<T>> =
     React.JSX.IntrinsicAttributes
     & React.ClassAttributes<T>
-    & React.ImgHTMLAttributes<T>;
+    & React.HTMLAttributes<T>
+    & U;
+export type ImgElementProp = ElementProp<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>;
 export type CSSElementProp<T extends React.CSSProperties | DOMKeyframesDefinition> = ElementProp & { style: T };
 
 export interface ITransition<T extends ElementProp = {}> {
-    events: EventDispatcher<EventTypes<[T]>>;
+    events: EventDispatcher<EventTypes<[T[]]>>;
 
     start(onComplete?: () => void): void;
 

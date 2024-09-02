@@ -8,7 +8,13 @@ import {deepMerge} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {TransformDefinitions} from "@lib/game/game/common/types";
 import {Utils} from "@lib/game/game/common/core";
-import {CSSElementProp, ElementProp, ITransition, TransitionEventTypes} from "@lib/game/game/elements/transition/type";
+import {
+    CSSElementProp,
+    ElementProp,
+    ImgElementProp,
+    ITransition,
+    TransitionEventTypes
+} from "@lib/game/game/elements/transition/type";
 
 // @todo: 增加无障碍支持
 
@@ -23,14 +29,14 @@ export default function Image({
 }>) {
     const {ratio} = useAspectRatio();
     const [scope, animate] = useAnimate();
-    const [processingTransform, setProcessingTransform] =
+    const [transform, setTransform] =
         useState<Transform<any> | null>(null);
     const [transformProps, setTransformProps] =
         useState<CSSElementProp<DOMKeyframesDefinition>>({style: {}});
     const [transition, setTransition] =
         useState<null | ITransition>(null);
     const [transitionProps, setTransitionProps] =
-        useState<Record<string, any>>({});
+        useState<ImgElementProp[]>([]);
 
     useEffect(() => {
         image.setScope(scope);
@@ -49,7 +55,7 @@ export default function Image({
 
                     transform.assignState(image.state);
 
-                    setProcessingTransform(transform);
+                    setTransform(transform);
                     await transform.animate({scope, animate}, state);
                     image.state = deepMerge(image.state, transform.state);
                     setTransformProps({
@@ -60,7 +66,7 @@ export default function Image({
                         onAnimationEnd();
                     }
 
-                    setProcessingTransform(null);
+                    setTransform(null);
                     return true;
                 }),
             };
@@ -108,11 +114,11 @@ export default function Image({
     }, [transition, image]);
 
     function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
-        if (processingTransform && processingTransform.getControl()) {
-            console.log("last transform", processingTransform.state, processingTransform.getControl().state);
+        if (transform && transform.getControl()) {
+            console.log("last transform", transform.state, transform.getControl().state);
             console.warn("processing transform not completed");
-            processingTransform.getControl().complete();
-            processingTransform.setControl(null);
+            transform.getControl().complete();
+            transform.setControl(null);
         }
         if (!scope.current) {
             console.warn("scope not ready");
@@ -131,6 +137,9 @@ export default function Image({
         src: Utils.staticImageDataToSrc(image.state.src),
         width: image.state.width,
         height: image.state.height,
+        style: {
+            border: "solid 5px red",
+        }
     };
 
     return (
@@ -148,14 +157,14 @@ export default function Image({
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {transition ? transition.toElementProps().map((p, index) => {
+                {transition ? transition.toElementProps().map((elementProps, index) => {
                     const mergedProps =
-                        deepMerge<ElementProp<HTMLImageElement>>(defaultProps, transformProps, p, transitionProps);
+                        deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
                     return (
-                        <img key={index} ref={scope} {...mergedProps}/>
+                        <img key={index} ref={scope} alt={mergedProps.alt} {...mergedProps}/>
                     );
-                }): (
-                    <img ref={scope} {...deepMerge(defaultProps, transformProps)} />
+                }) : (
+                    <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />
                 )}
             </div>
         </div>

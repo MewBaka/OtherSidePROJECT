@@ -1,21 +1,21 @@
 import {Constructable} from "../constructable";
 import {Game} from "../game";
 import {Awaitable, deepMerge, EventDispatcher, safeClone} from "@lib/util/data";
-import {Background} from "../show";
-import {ContentNode} from "../save/rollback";
+import {Background, CommonImage} from "../show";
+import {ContentNode} from "../save/actionTree";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {SceneAction} from "@lib/game/game/actions";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {ITransition} from "@lib/game/game/elements/transition/type";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {Sound, SoundDataRaw} from "@lib/game/game/elements/sound";
-import Actions = LogicAction.Actions;
 import _ from "lodash";
+import Actions = LogicAction.Actions;
+import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
+import ImageTransformProps = TransformDefinitions.ImageTransformProps;
 
 /**
  * @todo: 提前加载所需场景的资源
- * @todo: 允许场景切换过程中使用Transform
- * @todo: 允许图片使用Transition来变换
  */
 
 export type SceneConfig = {
@@ -37,10 +37,6 @@ export type SceneDataRaw = {
     };
 }
 
-export type SceneData = {};
-
-// @todo: scene生命周期管理
-
 export type SceneEventTypes = {
     "event:scene.setTransition": [ITransition | null];
     "event:scene.remove": [];
@@ -51,6 +47,7 @@ export type SceneEventTypes = {
     "event:scene.preUnmount": [],
     "event:scene.imageLoaded": [],
     "event:scene.setBackgroundMusic": [Sound | null, number];
+    "event:scene.applyTransform": [Transform<ImageTransformProps>];
 };
 
 export class Scene extends Constructable<
@@ -68,6 +65,7 @@ export class Scene extends Constructable<
         "event:scene.preUnmount": "event:scene.preUnmount",
         "event:scene.imageLoaded": "event:scene.imageLoaded",
         "event:scene.setBackgroundMusic": "event:scene.setBackgroundMusic",
+        "event:scene.applyTransform": "event:scene.applyTransform",
     }
     static defaultConfig: SceneConfig = {
         background: null,
@@ -83,6 +81,7 @@ export class Scene extends Constructable<
     state: SceneConfig & SceneState;
     srcManager: SrcManager = new SrcManager();
     events: EventDispatcher<SceneEventTypes> = new EventDispatcher();
+    backgroundImageState: Partial<CommonImage>;
     private _actions: SceneAction<any>[] = [];
 
     constructor(name: string, config: SceneConfig = Scene.defaultConfig) {
@@ -91,23 +90,23 @@ export class Scene extends Constructable<
         this.name = name;
         this.config = deepMerge<SceneConfig>(Scene.defaultConfig, config);
         this.state = deepMerge<SceneConfig & SceneState>(Scene.defaultState, this.config);
-    }
-
-    static backgroundToSrc(background: Background["background"]) {
-        return Transform.isStaticImageData(background) ? background.src : (
-            background["url"] || null
-        );
+        this.backgroundImageState = {
+            position: "center"
+        };
     }
 
     public activate(): this {
-        return this.init();
+        return this._init();
     }
 
     public deactivate(): this {
         return this._exit();
     }
 
-    public setSceneBackground(background: Background["background"]) {
+    public setBackground(background: Background["background"], transition?: ITransition) {
+        if (transition) {
+            this.transitionSceneBackground(undefined, transition);
+        }
         this._actions.push(new SceneAction(
             this,
             "scene:setBackground",
@@ -116,6 +115,17 @@ export class Scene extends Constructable<
             ).setContent([
                 background,
             ])
+        ));
+        return this;
+    }
+
+    public applyTransform(transform: Transform<ImageTransformProps>) {
+        this._actions.push(new SceneAction(
+            this,
+            "scene:applyTransform",
+            new ContentNode(
+                Game.getIdManager().getStringId(),
+            ).setContent([transform])
         ));
         return this;
     }
@@ -191,6 +201,36 @@ export class Scene extends Constructable<
         return this;
     }
 
+    public toActions(): SceneAction<any>[] {
+        let actions = this._actions;
+        this._actions = [];
+        return actions;
+    }
+
+    _$getBackgroundMusic() {
+        return this.state.backgroundMusic;
+    }
+
+    toData(): SceneDataRaw {
+        if (_.isEqual(this.state, this.config)) {
+            return null;
+        }
+        return {
+            state: {
+                ...safeClone(this.state),
+                backgroundMusic: this.state.backgroundMusic?.toData(),
+            },
+        }
+    }
+
+    fromData(data: SceneDataRaw): this {
+        this.state = deepMerge<SceneConfig & SceneState>(this.state, data.state);
+        if (data.state.backgroundMusic) {
+            this.state.backgroundMusic = new Sound().fromData(data.state.backgroundMusic);
+        }
+        return this;
+    }
+
     _setTransition(transition: ITransition) {
         this._actions.push(new SceneAction(
             this,
@@ -211,17 +251,6 @@ export class Scene extends Constructable<
             ).setContent([transition])
         ));
         return this;
-    }
-
-    public applyTransition(transition: ITransition) {
-        this._setTransition(transition)._applyTransition(transition);
-        return this;
-    }
-
-    public toActions(): SceneAction<any>[] {
-        let actions = this._actions;
-        this._actions = [];
-        return actions;
     }
 
     protected getSceneActions() {
@@ -265,7 +294,7 @@ export class Scene extends Constructable<
         return this;
     }
 
-    private init(): this {
+    private _init(): this {
         this._actions.push(new SceneAction(
             this,
             "scene:init",
@@ -273,30 +302,6 @@ export class Scene extends Constructable<
                 Game.getIdManager().getStringId(),
             ).setContent([])
         ));
-        return this;
-    }
-
-    $getBackgroundMusic() {
-        return this.state.backgroundMusic;
-    }
-
-    toData() : SceneDataRaw {
-        if (_.isEqual(this.state, this.config)) {
-            return null;
-        }
-        return {
-            state: {
-                ...safeClone(this.state),
-                backgroundMusic: this.state.backgroundMusic?.toData(),
-            },
-        }
-    }
-
-    fromData(data: SceneDataRaw): this {
-        this.state = deepMerge<SceneConfig & SceneState>(this.state, data.state);
-        if (data.state.backgroundMusic) {
-            this.state.backgroundMusic = new Sound().fromData(data.state.backgroundMusic);
-        }
         return this;
     }
 }

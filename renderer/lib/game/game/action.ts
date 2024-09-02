@@ -1,5 +1,5 @@
 import {LogicAction} from "@lib/game/game/logicAction";
-import {ContentNode} from "@lib/game/game/save/rollback";
+import {ContentNode} from "@lib/game/game/save/actionTree";
 import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {Awaitable, getCallStack} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";

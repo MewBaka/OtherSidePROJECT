@@ -1,5 +1,3 @@
-"use client";
-
 import {useEffect, useMemo, useReducer, useState} from "react";
 import {useGame} from "../../providers/game-state";
 import {Awaitable} from "@/lib/util/data";
@@ -13,7 +11,6 @@ import {GameState, PlayerAction} from "@lib/ui/components/player/gameState";
 import {cloneDeep} from "lodash";
 import {PreloadedProvider, usePreloaded} from "@lib/ui/providers/preloaded";
 import {Preload} from "@lib/ui/elements/player/Preload";
-import {Scene} from "@lib/game/game/elements/scene";
 import {Preloaded} from "@lib/ui/elements/player/Preloaded";
 import {useAspectRatio} from "@lib/ui/providers/ratio";
 
@@ -77,15 +74,14 @@ export default function Player({
         state.stage.forceUpdate();
         state.stage.next();
 
-        return () => {};
+        return () => {
+        };
     }, []);
 
     function handlePreloadLoaded() {
         state.stage.forceUpdate();
         next();
     }
-
-    // @todo: 改一下状态管理
 
     return (
         <>
@@ -148,7 +144,6 @@ export default function Player({
 function OnlyPreloaded({children, onLoaded}: Readonly<{ children: React.ReactNode, onLoaded: () => void }>) {
     const {preloaded} = usePreloaded();
     const [preloadedReady, setPreloadedReady] = useState(false);
-    const {ratio} = useAspectRatio();
     useEffect(() => {
         const listener = preloaded.events.on(Preloaded.EventTypes["event:preloaded.ready"], () => {
             setPreloadedReady(true);

@@ -3,6 +3,7 @@ import {Base} from "@lib/game/game/elements/transition/base";
 import {Scene} from "@lib/game/game/elements/scene";
 import {NextJSStaticImageData} from "@lib/game/game/show";
 import {Image} from "@lib/game/game/elements/image";
+import {Utils} from "@lib/game/game/common/Utils";
 
 
 export type DissolveElementProps = {
@@ -34,7 +35,7 @@ export class Dissolve extends Base<DissolveProps> implements ITransition {
         super();
         this.duration = duration;
         this.src = typeof src === "string" ? src :
-            src instanceof Scene ? Scene.backgroundToSrc(src.config.background) :
+            src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
                 Image.staticImageDataToSrc(src);
     }
 

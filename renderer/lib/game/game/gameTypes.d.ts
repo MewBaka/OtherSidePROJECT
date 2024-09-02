@@ -1,9 +1,9 @@
 import {ClientGame} from "../game";
-import {ContentNode, RawData} from "./save/rollback";
-import {StorableData} from "./save/store";
-import {RemoteFileStoreClient} from "./save/storeProvider";
+import {ContentNode, RawData} from "./save/actionTree";
+import {StorableData} from "./save/storable";
+import {ISavedGameProvider, ISettingsProvider} from "./save/storeProvider";
 import {LogicAction} from "@lib/game/game/logicAction";
-import {ElementStateRaw, NodeChildIdMap} from "@lib/game/game/elements/story";
+import {ElementStateRaw} from "@lib/game/game/elements/story";
 import {PlayerStateData} from "@lib/ui/components/player/gameState";
 
 
@@ -26,7 +26,9 @@ export interface SavedGame {
 
 export type GameConfig = {
     clientGame: ClientGame;
-    remoteStore: RemoteFileStoreClient;
+    savedStore: ISavedGameProvider;
+    settingsStore: ISettingsProvider;
+
 };
 export type GameSettings = {
     volume: number;

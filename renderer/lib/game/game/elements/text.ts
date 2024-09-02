@@ -1,5 +1,5 @@
 import {Game} from "../game";
-import {ContentNode} from "../save/rollback";
+import {ContentNode} from "../save/actionTree";
 import {Color} from "../show";
 import {deepMerge, safeClone} from "@lib/util/data";
 import {CharacterAction} from "@lib/game/game/actions";

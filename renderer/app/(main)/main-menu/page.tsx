@@ -1,7 +1,6 @@
 "use client";
 
-import { Constants } from "@/lib/api/config";
-import Image from "next/image";
+import {Constants} from "@/lib/api/config";
 import SideMenu, {MenuItem} from "@lib/ui/components/SideMenu";
 
 export default function Page() {
@@ -23,20 +22,18 @@ export default function Page() {
         },
         {
             title: "退出      EXIT",
-            action: () => {},
+            action: () => {
+            },
         }
     ];
-  return (
-      <>
+    return (
+        <>
 
-    <div className="flex items-center justify-center h-full w-1/2">
-      <div className="flex flex-col items-center justify-center p-4">
-
-        {/* <p className="text-white font-thin text-2xl">{Constants.info.app.name}</p> */}
-      </div>
-    </div
-    >
-
-          <SideMenu menu={sideMenuItems}/></>
-  );
+            <div className="flex items-center justify-center h-full w-1/2">
+                <div className="flex flex-col items-center justify-center p-4">
+                    {/* <p className="text-white font-thin text-2xl">{Constants.info.app.name}</p> */}
+                </div>
+            </div>
+            <SideMenu menu={sideMenuItems}/></>
+    );
 };

@@ -2,43 +2,34 @@ import {contextBridge, ipcRenderer} from 'electron';
 import {Status} from './util/status';
 import {ServerConstants} from './config';
 
-const api = {
-    hello(...args: any[]) {
-        return ipcRenderer.invoke("hello", ...args);
-    },
-    winFrame: {
-        minimize() {
-            ipcRenderer.send("window:minimize");
-        },
-        maximize() {
-            ipcRenderer.send("window:maximize");
-        },
-        close() {
-            ipcRenderer.send("window:close");
-        },
-    },
+const api: IpcWindowAPI["api"] = {
     game: {
-        async requestGame() {
-            return await ipcRenderer.invoke("game:requestGame");
-        },
-        store: {
-            async write(name: string, data: Record<string, any>) {
-                return await ipcRenderer.invoke("game:store.write", name, data);
+        store: {},
+        localFs: {
+            saved: {
+                async write(id: string, data: Record<string, any>) {
+                    return await ipcRenderer.invoke("game:saved.write", id, data);
+                },
+                async read(id: string) {
+                    return await ipcRenderer.invoke("game:saved.read", id);
+                },
+                async list() {
+                    return await ipcRenderer.invoke("game:saved.list");
+                }
             },
-            async read(name: string) {
-                return await ipcRenderer.invoke("game:store.read", name);
+            settings: {
+                async set(namespace: string, value: any) {
+                    return await ipcRenderer.invoke("game:settings.set", namespace, value);
+                },
+                async get(namespace: string) {
+                    return await ipcRenderer.invoke("game:settings.get", namespace);
+                }
             },
-            async list() {
-                return await ipcRenderer.invoke("game:store.list");
-            },
-            async isExists(name: string) {
-                return await ipcRenderer.invoke("game:store.isExists", name);
-            }
         }
     },
 }
 
-const app = {
+const app: IpcWindowAPI["app"] = {
     info: {
         version: ServerConstants.info.version,
         isProd: process.env.NODE_ENV === "production",
@@ -48,14 +39,14 @@ const app = {
 /**
  * This is the object that will be exposed to the renderer process.
  */
-const WindowWrapper: Window = {
+const WindowWrapper: IpcWindowAPI = {
     api: api,
     app: app,
 }
 
 !function () {
     Object.keys(WindowWrapper).forEach(key => {
-        contextBridge.exposeInMainWorld(key, WindowWrapper[key as keyof Window]);
+        contextBridge.exposeInMainWorld(key, WindowWrapper[key as keyof IpcWindowAPI]);
     });
     return void 0;
 }();
@@ -63,25 +54,24 @@ const WindowWrapper: Window = {
 /**
  * This is the object that will be exposed to the renderer process.
  */
-export interface Window {
+export interface IpcWindowAPI {
     api: {
-        /**
-         * @deprecated
-         */
-        hello: () => Promise<ExpectedHandler["hello"]>;
-        winFrame: {
-            minimize: () => void;
-            maximize: () => void;
-            close: () => void;
-        };
         game: {
+            // for safe access, we cannot let the renderer process to directly access the file system.
+            // do not use api.game.store
+            // use api.game.localFs.saved instead for saving/loading game data.
             /**@deprecated */
-            requestGame: () => Promise<ExpectedHandler["game:requestGame"]>;
-            store: {
-                write: (name: string, data: Record<string, any>) => Promise<ExpectedHandler["game:store.write"]>;
-                read: (name: string) => Promise<ExpectedHandler["game:store.read"]>;
-                list: () => Promise<ExpectedHandler["game:store.list"]>;
-                isExists: (name: string) => Promise<ExpectedHandler["game:store.isExists"]>;
+            store: {},
+            localFs: {
+                saved: {
+                    write: (id: string, data: Record<string, any>) => Promise<ExpectedHandler["game:saved.write"]>;
+                    read: (id: string) => Promise<ExpectedHandler["game:saved.read"]>;
+                    list: () => Promise<ExpectedHandler["game:saved.list"]>;
+                },
+                settings: {
+                    set: (namespace: string, value: any) => Promise<ExpectedHandler["game:settings.set"]>;
+                    get: (namespace: string) => Promise<ExpectedHandler["game:settings.get"]>;
+                }
             }
         };
     };
@@ -99,13 +89,16 @@ export interface Window {
 export interface ExpectedHandler {
     "hello": void;
     "game:requestGame": Status<any>;
-    "game:settings.set": Status<void, Error>;
-    "game:settings.get": Status<any, Error>;
-    "game:settings.all": Status<any, Error>;
-    "game:store.write": Status<void, Error>;
-    "game:store.read": Status<Record<string, any>, Error>;
-    "game:store.list": Status<string[], Error>;
-    "game:store.isExists": Status<boolean, Error>;
+    "game:settings.set": Status;
+    "game:settings.get": Status<any>;
+    "game:store.write": Status;
+    "game:store.read": Status<Record<string, any>>;
+    "game:store.list": Status<string[]>;
+    "game:store.isExists": Status<boolean>;
+    "game:saved.write": Status;
+    "game:saved.read": Status<Record<string, any>>;
+    "game:saved.list": Status<string[]>;
+
 }
 
 export interface ExpectedListener {

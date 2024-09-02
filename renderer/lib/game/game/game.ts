@@ -1,8 +1,6 @@
 import type {CalledActionResult, GameConfig, GameSettings, SavedGame} from "./gameTypes";
-
-import {RenderableNode, RootNode} from "./save/rollback";
-import {Awaitable, deepMerge, safeClone} from "@lib/util/data";
-import {Namespace, Storable, StorableData} from "./save/store";
+import {Awaitable} from "@lib/util/data";
+import {Namespace, Storable, StorableData} from "./save/storable";
 import {Singleton} from "@lib/util/singleton";
 import {Constants} from "@/lib/api/config";
 import {Story} from "./elements/story";
@@ -41,40 +39,30 @@ class GameIdManager {
     }
 }
 
+enum GameSettingsNamespace {
+    game = "game",
+}
+
 export class Game {
     static defaultSettings: GameSettings = {
         volume: 1,
     };
+    static GameSettingsNamespace = GameSettingsNamespace;
     config: GameConfig;
-    root: RootNode;
     liveGame: LiveGame | null = null;
-    /**
-     * Game settings
-     */
-    settings: GameSettings;
+    settings: Record<GameSettingsNamespace, Record<string, any>> = {
+        game: {}
+    };
 
     constructor(config: GameConfig) {
         this.config = config;
-        this.root = new RootNode();
-        this.settings = deepMerge({}, Game.defaultSettings);
     }
 
     static getIdManager() {
         return IdManager.getInstance();
     };
 
-    public init() {
-    }
-
-    public registerStory(story: Story) {
-        story.setRoot(this.getRootNode());
-        return this;
-    }
-
-    /* Tree */
-    public getRootNode() {
-        return this.root;
-    }
+    async init(): Promise<void> {}
 
     /* Live Game */
     public getLiveGame() {
@@ -90,24 +78,29 @@ export class Game {
     }
 
     /* Settings */
-    getSettingName() {
-        return this.config.remoteStore.getName("settings", Constants.app.store.settingFileSuffix);
+    private async fetchSettings(namespace: GameSettingsNamespace) {
+        this.settings[namespace] = await this.config.settingsStore.get(namespace);
     }
 
-    public async readSettings() {
-        if (!await this.config.remoteStore.isFileExists(this.getSettingName())) {
-            return await this.saveSettings();
+    private async fetchAllSettings() {
+        const namespaced = Object.keys(Game.GameSettingsNamespace);
+        for (const namespace of namespaced) {
+            await this.fetchSettings(namespace as GameSettingsNamespace);
         }
-        return await this.config.remoteStore.load<GameSettings>(this.getSettingName());
-    }
-
-    public async saveSettings() {
-        const settings = safeClone(this.settings);
-        await this.config.remoteStore.save(this.getSettingName(), settings);
-        return settings;
     }
 
     /* Save */
+    public async saveGame(savedGame: SavedGame) {
+        return await this.config.savedStore.save(savedGame.name, savedGame);
+    }
+
+    public async loadGame(name: string) {
+        return await this.config.savedStore.load(name);
+    }
+
+    public async listGames() {
+        return await this.config.savedStore.list();
+    }
 }
 
 export class LiveGame {
@@ -126,10 +119,6 @@ export class LiveGame {
     lockedAwaiting: Awaitable<CalledActionResult, any> | null = null;
     idManager: GameIdManager;
     _lockedCount = 0;
-    /**
-     * Possible future nodes
-     */
-    future: RenderableNode[] = [];
     private currentAction: LogicAction.Actions | null = null;
 
     constructor(game: Game) {
@@ -190,7 +179,7 @@ export class LiveGame {
         return this;
     }
 
-    public loadSavedGame(savedGame: SavedGame, {gameState}: {gameState: GameState}) {
+    public loadSavedGame(savedGame: SavedGame, {gameState}: { gameState: GameState }) {
         const story = this.story;
         if (!story) {
             console.warn("No story loaded");
@@ -201,8 +190,6 @@ export class LiveGame {
             throw new Error("Saved game version mismatch");
         }
 
-        this.currentSavedGame = savedGame;
-
         const actions = this.story.getAllActions();
         const {
             store,
@@ -212,12 +199,50 @@ export class LiveGame {
             currentAction,
             stage,
         } = savedGame.game;
+
+        // restore storable
         this.storable.load(store);
+
+        // restore action tree
         this.story.setAllElementState(elementState, actions);
         this.story.setNodeChildByMap(nodeChildIdMap, actions);
+
+        // restore game state
         this.setCurrentAction(this.story.findActionById(currentAction, actions) || null);
         this.currentSceneNumber = currentScene;
+        this.currentSavedGame = savedGame;
         gameState.loadData(stage, actions);
+    }
+
+    public generateSavedGame({gameState}: { gameState: GameState }): SavedGame {
+        const story = this.story;
+        if (!story) {
+            console.warn("No story loaded");
+            return null;
+        }
+
+        const actions = this.story.getAllActions();
+
+        const elementState = this.story.getAllElementState(actions);
+        const nodeChildIds = Object.fromEntries(this.story.getNodeChildIdMap(actions));
+        const stage = gameState.toData();
+
+        return {
+            name: this.currentSavedGame?.name || "_",
+            version: Constants.info.app.version,
+            meta: {
+                created: this.currentSavedGame?.meta.created || Date.now(),
+                updated: Date.now(),
+            },
+            game: {
+                store: this.storable.toData(),
+                elementState: elementState,
+                stage: stage,
+                nodeChildIdMap: nodeChildIds,
+                currentScene: this.currentSceneNumber || 0,
+                currentAction: this.getCurrentAction()?.getId() || null,
+            }
+        };
     }
 
     getCurrentAction(): LogicAction.Actions {
@@ -252,7 +277,7 @@ export class LiveGame {
 
         this.currentAction = this.currentAction || this.story.getActions()[++this.currentSceneNumber];
         if (!this.currentAction) {
-            console.log("No current action"); // Congrats, you've reached the end of the story
+            console.warn("No current action"); // Congrats, you've reached the end of the story
             return null;
         }
 
@@ -274,37 +299,6 @@ export class LiveGame {
             return nextAction;
         }
         return nextAction.node.child?.action;
-    }
-
-    generateSavedGame({gameState}: { gameState: GameState }): SavedGame {
-        const story = this.story;
-        if (!story) {
-            console.warn("No story loaded");
-            return null;
-        }
-
-        const actions = this.story.getAllActions();
-
-        const elementState = this.story.getAllElementState(actions);
-        const nodeChildIds = Object.fromEntries(this.story.getNodeChildIdMap(actions));
-        const stage = gameState.toData();
-
-        return {
-            name: this.currentSavedGame?.name || "_",
-            version: Constants.info.app.version,
-            meta: {
-                created: this.currentSavedGame?.meta.created || Date.now(),
-                updated: Date.now(),
-            },
-            game: {
-                store: this.storable.toData(),
-                elementState: elementState,
-                stage: stage,
-                nodeChildIdMap: nodeChildIds,
-                currentScene: this.currentSceneNumber || 0,
-                currentAction: this.getCurrentAction()?.getId() || null,
-            }
-        };
     }
 }
 

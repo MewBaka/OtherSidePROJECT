@@ -1,7 +1,7 @@
 import {Game} from "../game";
 import {deepMerge} from "@lib/util/data";
 import {Sentence, Word} from "./text";
-import {ContentNode, RenderableNode} from "../save/rollback";
+import {ContentNode, RenderableNode} from "../save/actionTree";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {MenuAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";

@@ -2,7 +2,7 @@ import {Constructable} from "../constructable";
 import {Game, LogicAction} from "../game";
 import {deepMerge} from "@lib/util/data";
 import {SceneAction, StoryAction} from "@lib/game/game/actions";
-import {ContentNode, RawData, RenderableNode} from "@lib/game/game/save/rollback";
+import {ContentNode, RawData, RenderableNode} from "@lib/game/game/save/actionTree";
 import {SceneActionTypes} from "@lib/game/game/actionTypes";
 
 export type StoryConfig = {};

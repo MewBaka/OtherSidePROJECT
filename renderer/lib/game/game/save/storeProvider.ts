@@ -1,71 +1,55 @@
-import type {Window as IpcWindow} from "../../../../../main/preload";
 import type {Status} from "../../../../../main/util/status";
+import {PreloadedWindow} from "@lib/api/ipc";
 
-export class RemoteFileStoreClient {
+export type StoreResponse<A, B = Error> = Status<A, B>;
+export interface ISavedGameProvider {
+    isAvailable(): Promise<StoreResponse<boolean>>;
+    save(name: string, data: Record<string, any>): Promise<StoreResponse<void>>;
+    load<T = Record<string, any>>(name: string): Promise<StoreResponse<T>>;
+    list(): Promise<StoreResponse<string[]>>;
+}
+export interface ISettingsProvider {
+    isAvailable(): Promise<StoreResponse<boolean>>;
+    get<T>(namespace: string): Promise<StoreResponse<T>>;
+    set<T>(namespace: string, value: T): Promise<StoreResponse<void>>;
+}
+
+export class LocalFsSavedGameClient implements ISavedGameProvider {
     static fileExt = "msgpack";
 
-    constructor(protected window: IpcWindow) {
+    constructor(protected window: PreloadedWindow) {
     }
 
-    public async save(name: string, data: Record<string, any>) {
-        return await this.window.api.game.store.write(name, data);
+    async isAvailable(): Promise<StoreResponse<boolean>> {
+        return {status: true, data: !!this.window?.api?.game?.localFs?.saved};
     }
 
-    async load<T = Record<string, any>>(name: string): Promise<Status<T, Error>> {
-        return await this.window.api.game.store.read(name) as any;
+    public async save(id: string, data: Record<string, any>) {
+        return await this.window.api.game.localFs.saved.write(id, data);
     }
 
-    async isFileExists(name: string) {
-        return await this.window.api.game.store.isExists(name);
+    async load<T = Record<string, any>>(id: string): Promise<Status<T, Error>> {
+        return await this.window.api.game.localFs.saved.read(id) as Status<T, Error>;
     }
 
-    async getFileNames() {
-        return await this.window.api.game.store.list();
-    }
-
-    getName(name: string, suffix?: string) {
-        return name + "." + (suffix ? (suffix + ".") : "") + RemoteFileStoreClient.fileExt;
+    async list() {
+        return await this.window.api.game.localFs.saved.list();
     }
 }
 
-type SafeFileSystem = typeof import("node:fs/promises");
-
-/**@deprecated */
-export class FileStore {
-    static fileExt = "msgpack";
-    fs: SafeFileSystem;
-    basePath: string;
-
-    /**
-     * for safety's sake, the fs module is not directly imported, but passed in as a parameter
-     * so only the caller who has the fs module can create an instance of this class
-     */
-    constructor(fs: SafeFileSystem, basePath: string) {
-        this.fs = fs;
-        this.basePath = basePath;
+export class LocalFsSettingsClient implements ISettingsProvider {
+    constructor(protected window: PreloadedWindow) {
     }
 
-    async save(_path: string, data: Record<string, any>): Promise<void> {
+    async isAvailable(): Promise<StoreResponse<boolean>> {
+        return {status: true, data: !!this.window?.api?.game?.localFs?.settings};
     }
 
-    async load<T = Record<string, any>>(_path: string): Promise<T> {
-        return null as any;
+    async get<T>(namespace: string): Promise<StoreResponse<T>> {
+        return await this.window.api.game.localFs.settings.get(namespace);
     }
 
-    async isFileExists(_path: string): Promise<boolean> {
-        return null as any;
-    }
-
-    async createFolder(_path: string): Promise<void> {
-        return null as any;
-    }
-
-    async getFileNames(_path: string): Promise<string[]> {
-        return null as any;
-    }
-
-    getName(_path: string, suffix?: string) {
-        return _path + "." + (suffix ? (suffix + ".") : "") + FileStore.fileExt;
+    async set<T>(namespace: string, value: T): Promise<StoreResponse<void>> {
+        return await this.window.api.game.localFs.settings.set(namespace, value);
     }
 }
-
