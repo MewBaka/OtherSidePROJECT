@@ -16,6 +16,18 @@ import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
 import SequenceProps = TransformDefinitions.SequenceProps;
 
+export type Transformers = "position" | "opacity" | "scale" | "rotation" | "display" | "src" | "backgroundColor" | "backgroundOpacity";
+export type TransformHandler<T> = (value: T) => DOMKeyframesDefinition;
+export type TransformersMap = {
+    "position": CommonImage["position"],
+    "opacity": number,
+    "scale": number,
+    "rotation": number,
+    "display": string,
+    "src": string,
+    "backgroundColor": Background["background"],
+    "backgroundOpacity": number,
+}
 
 export class Transform<T extends TransformDefinitions.Types> {
     static defaultSequenceOptions: Partial<TransformDefinitions.CommonSequenceProps> = {
@@ -30,6 +42,7 @@ export class Transform<T extends TransformDefinitions.Types> {
     private readonly sequenceOptions: Partial<TransformDefinitions.CommonSequenceProps>;
     private sequences: TransformDefinitions.Sequence<T>[] = [];
     private control: AnimationPlaybackControls | null = null;
+    private transformers: {[K in Transformers]?: Function} = {};
 
     /**
      * @example
@@ -264,6 +277,19 @@ export class Transform<T extends TransformDefinitions.Types> {
         return this;
     }
 
+    /**
+     * overwrite a transformer
+     * @example
+     * ```ts
+     * transform.overwrite("position", (value) => {
+     *   return {left: value.x, top: value.y};
+     * });
+     */
+    public overwrite<T extends keyof TransformersMap = any>(key: T, transformer: TransformHandler<TransformersMap[T]>) {
+        this.transformers[key] = transformer;
+        return this;
+    }
+
     propToCSS(state: GameState, prop: DeepPartial<T>): DOMKeyframesDefinition {
         const {invertY, invertX} = state.getLastScene()?.config || {}
         const FieldHandlers: Record<string, (v: any) => any> = {
@@ -280,7 +306,10 @@ export class Transform<T extends TransformDefinitions.Types> {
         const props = {} as DOMKeyframesDefinition;
         props.transform = this.propToCSSTransform(state, prop);
         for (const key in prop) {
-            if (FieldHandlers[key]) {
+            if (!prop.hasOwnProperty(key)) continue;
+            if (this.transformers[key as any]) {
+                Object.assign(props, this.transformers[key as any](prop[key]));
+            } else if (FieldHandlers[key]) {
                 Object.assign(props, FieldHandlers[key](prop[key]));
             }
         }

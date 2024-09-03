@@ -179,24 +179,24 @@ const scene1Actions = scene1.action([
         // speechless(scene1, image2),
         // image2.dispose().toActions(),
         // ]).toActions(),
-        sound1.play().toActions()
+        sound1.play().toActions(),
     ]).toActions(),
 
-    // scene1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
-    //     {
-    //         props: {
-    //             position: {
-    //                 xoffset: -30
-    //             },
-    //         },
-    //         options: {
-    //             duration: 2000,
-    //             ease: "easeOut",
-    //         }
-    //     }
-    // ], {
-    //     sync: true,
-    // })).toActions(),
+    scene1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
+        {
+            props: {
+                position: {
+                    xoffset: -30
+                },
+            },
+            options: {
+                duration: 2000,
+                ease: "easeOut",
+            }
+        }
+    ], {
+        sync: true,
+    })).toActions(),
 
 
     character1.say("你最近过的怎么样？")

@@ -46,6 +46,7 @@ export type SceneEventTypes = {
     "event:scene.unmount": [],
     "event:scene.preUnmount": [],
     "event:scene.imageLoaded": [],
+    "event:scene.initTransform": [Transform<ImageTransformProps>];
     "event:scene.setBackgroundMusic": [Sound | null, number];
     "event:scene.applyTransform": [Transform<ImageTransformProps>];
 };
@@ -64,6 +65,7 @@ export class Scene extends Constructable<
         "event:scene.unmount": "event:scene.unmount",
         "event:scene.preUnmount": "event:scene.preUnmount",
         "event:scene.imageLoaded": "event:scene.imageLoaded",
+        "event:scene.initTransform": "event:scene.initTransform",
         "event:scene.setBackgroundMusic": "event:scene.setBackgroundMusic",
         "event:scene.applyTransform": "event:scene.applyTransform",
     }
@@ -303,6 +305,17 @@ export class Scene extends Constructable<
             ).setContent([])
         ));
         return this;
+    }
+
+    toTransform(): Transform<ImageTransformProps> {
+        return new Transform<ImageTransformProps>([
+            {
+                props: this.backgroundImageState,
+                options: {
+                    duration: 0,
+                }
+            },
+        ]);
     }
 }
 

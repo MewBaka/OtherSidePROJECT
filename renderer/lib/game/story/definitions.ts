@@ -96,7 +96,7 @@ export function shake(image: Image) {
         },
     ], {
         sync: true
-    }).repeat(2)).toActions()
+    })).toActions()
 }
 
 export const scene2Bgm = new Sound({
