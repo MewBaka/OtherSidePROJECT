@@ -16,6 +16,27 @@ import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
 import SequenceProps = TransformDefinitions.SequenceProps;
 
+export type Transformers =
+    "position"
+    | "opacity"
+    | "scale"
+    | "rotation"
+    | "display"
+    | "src"
+    | "backgroundColor"
+    | "backgroundOpacity";
+export type TransformHandler<T> = (value: T) => DOMKeyframesDefinition;
+export type TransformersMap = {
+    "position": CommonImage["position"],
+    "opacity": number,
+    "scale": number,
+    "rotation": number,
+    "display": string,
+    "src": string,
+    "backgroundColor": Background["background"],
+    "backgroundOpacity": number,
+    "transform": TransformDefinitions.Types,
+}
 
 export class Transform<T extends TransformDefinitions.Types> {
     static defaultSequenceOptions: Partial<TransformDefinitions.CommonSequenceProps> = {
@@ -26,10 +47,11 @@ export class Transform<T extends TransformDefinitions.Types> {
         duration: 0,
         ease: "linear",
     }
-    state: SequenceProps<T> = {};
+
     private readonly sequenceOptions: Partial<TransformDefinitions.CommonSequenceProps>;
     private sequences: TransformDefinitions.Sequence<T>[] = [];
     private control: AnimationPlaybackControls | null = null;
+    private transformers: { [K in Transformers]?: Function } = {};
 
     /**
      * @example
@@ -58,10 +80,14 @@ export class Transform<T extends TransformDefinitions.Types> {
     }
 
     public static isAlign(align: any): align is Align {
-        const {xalign, yalign} = align;
-        return typeof xalign === "number" && typeof yalign === "number" &&
-            xalign >= 0 && xalign <= 1 &&
-            yalign >= 0 && yalign <= 1;
+        const {xalign, yalign, xoffset, yoffset} = align || {};
+        const alignValid =
+            (xalign === undefined || (xalign >= 0 && xalign <= 1))
+            && (yalign === undefined || (yalign >= 0 && yalign <= 1));
+        const offsetValid =
+            (xoffset === undefined || typeof xoffset === "number")
+            && (yoffset === undefined || typeof yoffset === "number");
+        return alignValid && offsetValid;
     }
 
     public static isCommonImagePosition(position: any): position is CommonImagePosition {
@@ -96,8 +122,8 @@ export class Transform<T extends TransformDefinitions.Types> {
         if (this.isAlign(position)) {
             const {xalign, yalign, ...rest} = position;
             return {
-                x: this.alignToCSS(xalign),
-                y: this.alignToCSS(yalign),
+                x: xalign ? this.alignToCSS(xalign) : undefined,
+                y: yalign ? this.alignToCSS(yalign) : undefined,
                 ...rest
             };
         }
@@ -187,6 +213,17 @@ export class Transform<T extends TransformDefinitions.Types> {
         return src.src !== undefined;
     }
 
+    static stateToCommonImageProps<T>(state: DeepPartial<T>): any {
+        return {
+            ...state,
+            position: state["position"] ? Transform.toCoord2D(state["position"]) : undefined,
+        }
+    }
+
+    static mergeState<T>(state: DeepPartial<T>, props: DeepPartial<T>): DeepPartial<T> {
+        return deepMerge(Transform.stateToCommonImageProps<T>(state), Transform.stateToCommonImageProps<T>(props));
+    }
+
     /**
      * @example
      * ```ts
@@ -195,19 +232,28 @@ export class Transform<T extends TransformDefinitions.Types> {
      * return <div ref={scope} />
      * ```
      */
-    public async animate<T extends Element = any>(
+    public async animate<U extends Element = any>(
         {scope, animate}:
-            { scope: TransformDefinitions.FramerAnimationScope<T>, animate: TransformDefinitions.FramerAnimate },
-        state: GameState,
+            { scope: TransformDefinitions.FramerAnimationScope<U>, animate: TransformDefinitions.FramerAnimate },
+        gameState: GameState,
+        state: SequenceProps<T>,
+        after?: (state: DeepPartial<T>) => void
     ) {
         console.debug("Animating", this); // @debug
+
+        // unsafe
+        state = deepMerge<DeepPartial<T>>(state, {});
+
         return new Promise<void>(async (resolve) => {
             if (!this.sequenceOptions.sync) {
                 resolve();
+                if (after) {
+                    after(state);
+                }
             }
             for (let i = 0; i < this.sequenceOptions.repeat; i++) {
                 for (const {props, options} of this.sequences) {
-                    const initState = deepMerge({}, this.propToCSS(state, this.state));
+                    const initState = deepMerge({}, this.propToCSS(gameState, state));
 
                     if (!scope.current) {
                         throw new Error("No scope found when animating.");
@@ -215,21 +261,21 @@ export class Transform<T extends TransformDefinitions.Types> {
                     const current = scope.current as Element;
                     Object.assign(current["style"], initState);
 
-                    this.state = deepMerge(this.state, props);
+                    state = Transform.mergeState(state, props);
                     const animation = animate(
                         current,
-                        this.propToCSS(state, this.state),
+                        this.propToCSS(gameState, state),
                         this.optionsToFramerMotionOptions(options)
                     );
                     this.setControl(animation);
 
                     if (options?.sync !== false) {
                         await new Promise<void>(r => animation.then(() => r()));
-                        Object.assign(current["style"], this.propToCSS(state, this.state));
+                        Object.assign(current["style"], this.propToCSS(gameState, state));
                         this.setControl(null);
                     } else {
                         animation.then(() => {
-                            Object.assign(current["style"], this.propToCSS(state, this.state));
+                            Object.assign(current["style"], this.propToCSS(gameState, state));
                             this.setControl(null);
                         });
                     }
@@ -244,6 +290,9 @@ export class Transform<T extends TransformDefinitions.Types> {
 
             if (this.sequenceOptions.sync) {
                 resolve();
+                if (after) {
+                    after(state);
+                }
             }
         });
     }
@@ -264,6 +313,20 @@ export class Transform<T extends TransformDefinitions.Types> {
         return this;
     }
 
+    /**
+     * overwrite a transformer
+     * @example
+     * ```ts
+     * transform.overwrite("position", (value) => {
+     *   return {left: value.x, top: value.y};
+     * });
+     * ```
+     */
+    public overwrite<T extends keyof TransformersMap = any>(key: T, transformer: TransformHandler<TransformersMap[T]>) {
+        this.transformers[key as any] = transformer;
+        return this;
+    }
+
     propToCSS(state: GameState, prop: DeepPartial<T>): DOMKeyframesDefinition {
         const {invertY, invertX} = state.getLastScene()?.config || {}
         const FieldHandlers: Record<string, (v: any) => any> = {
@@ -279,8 +342,15 @@ export class Transform<T extends TransformDefinitions.Types> {
 
         const props = {} as DOMKeyframesDefinition;
         props.transform = this.propToCSSTransform(state, prop);
+        if (this.transformers["transform"]) {
+            Object.assign(props, this.transformers["transform"](prop));
+        }
+
         for (const key in prop) {
-            if (FieldHandlers[key]) {
+            if (!prop.hasOwnProperty(key)) continue;
+            if (this.transformers[key as any]) {
+                Object.assign(props, this.transformers[key as any](prop[key]));
+            } else if (FieldHandlers[key]) {
                 Object.assign(props, FieldHandlers[key](prop[key]));
             }
         }
@@ -307,13 +377,8 @@ export class Transform<T extends TransformDefinitions.Types> {
             `translate(${invertX ? "" : "-"}50%, ${invertY ? "" : "-"}50%)`,
             (prop["scale"] !== undefined) && `scale(${prop["scale"]})`,
             (prop["rotation"] !== undefined) && `rotate(${prop["rotation"]}deg)`,
-        ]
+        ];
         return Transforms.filter(Boolean).join(" ");
-    }
-
-    assignState(state: SequenceProps<T>) {
-        this.state = deepMerge(state, this.state);
-        return this;
     }
 
     setControl(control: AnimationPlaybackControls) {
@@ -323,6 +388,10 @@ export class Transform<T extends TransformDefinitions.Types> {
 
     getControl() {
         return this.control;
+    }
+
+    public copy(): Transform<T> {
+        return new Transform<T>(this.sequences, this.sequenceOptions);
     }
 }
 

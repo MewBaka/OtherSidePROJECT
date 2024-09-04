@@ -20,19 +20,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build application
         run: npm run build
-
-      - name: Install electron-builder
-        run: npm install electron-builder
-
-      - name: Build Windows release
-        run: npx electron-builder --win
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v3
@@ -51,19 +45,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build application
         run: npm run build
-
-      - name: Install electron-builder
-        run: npm install electron-builder
-
-      - name: Build macOS release
-        run: npx electron-builder --mac
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v3

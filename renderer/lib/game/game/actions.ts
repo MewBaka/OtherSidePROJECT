@@ -141,11 +141,14 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             });
 
             this.callee.events.once("event:scene.imageLoaded", () => {
-                awaitable.resolve({
-                    type: this.type,
-                    node: this.contentNode.child
+                const initTransform = this.callee.toTransform();
+                this.callee.events.any("event:scene.initTransform", initTransform).then(() => {
+                    awaitable.resolve({
+                        type: this.type,
+                        node: this.contentNode.child
+                    });
+                    state.stage.next();
                 });
-                state.stage.next();
             });
             return awaitable;
         } else if (this.type === SceneActionTypes.exit) {
@@ -375,6 +378,7 @@ export class SoundAction<T extends typeof SoundActionTypes[keyof typeof SoundAct
     public executeAction(state: GameState): CalledActionResult | Awaitable<CalledActionResult, any> {
         if (this.type === SoundActionTypes.play) {
             SoundAction.initSound(state, this.callee);
+            console.log("[sound] played", this.callee.$getHowl());
             if (this.callee.config.sync && !this.callee.config.loop) {
                 const awaitable = new Awaitable<CalledActionResult, any>(v => v);
                 const token = state.playSound(this.callee.$getHowl(), () => {
@@ -429,6 +433,10 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
     extends TypedAction<ControlActionContentType, T, Control> {
     static ActionTypes = ControlActionTypes;
 
+    /**
+     * Execute all actions in the content node
+     * will wait for awaitable actions to resolve
+     */
     public async executeAllActions(state: GameState, action: LogicAction.Actions) {
         let exited = false;
         let current = action;
@@ -452,6 +460,33 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
         }
     }
 
+    public async executeSingleAction(state: GameState, action: LogicAction.Actions) {
+        const next = state.clientGame.game.getLiveGame().executeAction(state, action);
+        if (Awaitable.isAwaitable(next)) {
+            const {node} = await new Promise<CalledActionResult>((r) => {
+                next.then((_) => r(next.result));
+            });
+            return node;
+        } else {
+            return next;
+        }
+    }
+
+    public execute(state: GameState, awaitable: Awaitable<any, any>, content: LogicAction.Actions[]) {
+        if (content.length > 0) {
+            this.executeAllActions(state, content[0])
+                .then(() => {
+                    awaitable.resolve({
+                        type: this.type,
+                        node: this.contentNode.child
+                    });
+                });
+            return awaitable;
+        } else {
+            return super.executeAction(state);
+        }
+    }
+
     public executeAction(state: GameState): CalledActionResult | Awaitable<CalledActionResult, CalledActionResult> {
         const contentNode = this.contentNode as ContentNode<ControlActionContentType[T]>;
         const [content] = contentNode.getContent() as [LogicAction.Actions[]];
@@ -465,36 +500,29 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
             return super.executeAction(state);
         } else if (this.type === ControlActionTypes.doAsync) {
             (async () => {
-                for (const action of content) {
-                    await this.executeAllActions(state, action);
+                if (content.length > 0) {
+                    await this.executeAllActions(state, content[0]);
                 }
             })();
             return super.executeAction(state);
         } else if (this.type === ControlActionTypes.any) {
             const awaitable = new Awaitable<CalledActionResult, CalledActionResult>(v => v);
-            for (const action of content) {
-                this.executeAllActions(state, action).then(() => {
-                    awaitable.resolve({
-                        type: this.type as any,
-                        node: this.contentNode.child
-                    });
-                });
-            }
-            return awaitable;
-        } else if (this.type === ControlActionTypes.all) {
-            const awaitable = new Awaitable<CalledActionResult, CalledActionResult>(v => v);
-            const promises = content.map(action => this.executeAllActions(state, action));
-            Promise.all(promises).then(() => {
+            const promises = content.map(action => this.executeSingleAction(state, action));
+            Promise.any(promises).then(() => {
                 awaitable.resolve({
-                    type: this.type as any,
+                    type: this.type,
                     node: this.contentNode.child
                 });
             });
             return awaitable;
+        } else if (this.type === ControlActionTypes.all) {
+            const awaitable = new Awaitable<CalledActionResult, CalledActionResult>(v => v);
+            return this.execute(state, awaitable, content);
         } else if (this.type === ControlActionTypes.allAsync) {
             (async () => {
-                const promises = content.map(action => this.executeAllActions(state, action));
-                await Promise.all(promises);
+                if (content.length > 0) {
+                    await this.executeAllActions(state, content[0]);
+                }
             })();
             return super.executeAction(state);
         } else if (this.type === ControlActionTypes.repeat) { // @todo: test this
@@ -502,8 +530,8 @@ export class ControlAction<T extends typeof ControlActionTypes[keyof typeof Cont
                 (this.contentNode as ContentNode<ControlActionContentType["control:repeat"]>).getContent();
             (async () => {
                 for (let i = 0; i < times; i++) {
-                    for (const action of actions) {
-                        await this.executeAllActions(state, action);
+                    if (actions.length > 0) {
+                        await this.executeAllActions(state, actions[0]);
                     }
                 }
             })();

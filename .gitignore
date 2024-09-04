@@ -12,6 +12,8 @@ next-env.d.ts
 /app
 dist
 /.idea
+tsconfig.tsbuildinfo
+
 
 # macOS
 .DS_Store

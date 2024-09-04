@@ -1,6 +1,6 @@
-appId: com.example.nextron
-productName: My Nextron App
-copyright: Copyright © 2018 Yoshihide Shiono
+appId: top.mewbaka.othersideproject
+productName: Other Side PROJECT
+copyright: Copyright © 2024 MewBaka&OtherSideProject, All Rights Reserved.
 directories:
   output: dist
   buildResources: resources
@@ -8,5 +8,14 @@ files:
   - from: .
     filter:
       - package.json
-      - app
+      - "app/**/*"
+      - "!doc"
+      - "!main"
+      - "!renderer"
 publish: null
+win:
+  target:
+    - target: dir
+mac:
+  target:
+    - target: zip

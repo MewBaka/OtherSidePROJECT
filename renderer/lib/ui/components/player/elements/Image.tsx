@@ -10,7 +10,6 @@ import {TransformDefinitions} from "@lib/game/game/common/types";
 import {Utils} from "@lib/game/game/common/core";
 import {
     CSSElementProp,
-    ElementProp,
     ImgElementProp,
     ITransition,
     TransitionEventTypes
@@ -53,28 +52,31 @@ export default function Image({
                 listener: image.events.on(type, async (transform) => {
                     assignTo(transform.propToCSS(state, image.state));
 
-                    transform.assignState(image.state);
-
                     setTransform(transform);
-                    await transform.animate({scope, animate}, state);
-                    image.state = deepMerge(image.state, transform.state);
-                    setTransformProps({
-                        style: transform.propToCSS(state, image.state) as any,
+                    await transform.animate({scope, animate}, state, image.state, (after) => {
+                        image.state = deepMerge(image.state, after);
+                        setTransformProps({
+                            style: transform.propToCSS(state, image.state) as any,
+                        });
+
+                        if (onAnimationEnd) {
+                            onAnimationEnd();
+                        }
+
+                        setTransform(null);
                     });
-
-                    if (onAnimationEnd) {
-                        onAnimationEnd();
-                    }
-
-                    setTransform(null);
                     return true;
                 }),
             };
         }), {
             type: GameImage.EventTypes["event:image.init"],
             listener: image.events.on(GameImage.EventTypes["event:image.init"], async () => {
-                await image.toTransform().animate({scope, animate}, state);
-                image.state = deepMerge(image.state, image.toTransform().state);
+                await image.toTransform().animate({scope, animate}, state, image.state, (after) => {
+                    image.state = deepMerge(image.state, after);
+                    setTransformProps({
+                        style: image.toTransform().propToCSS(state, image.state) as any,
+                    });
+                });
             })
         }]);
 
@@ -115,7 +117,6 @@ export default function Image({
 
     function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
         if (transform && transform.getControl()) {
-            console.log("last transform", transform.state, transform.getControl().state);
             console.warn("processing transform not completed");
             transform.getControl().complete();
             transform.setControl(null);
@@ -125,7 +126,6 @@ export default function Image({
             return;
         }
         if (arg0 instanceof Transform) {
-            arg0.assignState(image.state);
             Object.assign(scope.current.style, arg0.propToCSS(state, image.state));
         } else {
             Object.assign(scope.current.style, arg0);
@@ -138,7 +138,7 @@ export default function Image({
         width: image.state.width,
         height: image.state.height,
         style: {
-            border: "solid 5px red",
+            border: "dashed 5px red",
         }
     };
 

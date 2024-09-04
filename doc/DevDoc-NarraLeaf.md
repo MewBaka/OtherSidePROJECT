@@ -4,7 +4,8 @@
 这是一个拟定的NarraLeaf语义规定，用于描述NarraLeaf的语法和语义。  
 如果你有更好的建议，请直接修改该文档
 
-
+该文档并非最终开发成果或可靠的API文档  
+如果你需要完整的API文档，我还没写呢
 
 ## 1. 综述
 
@@ -28,12 +29,13 @@ NarraLeaf语法参考了Java, JavaScript, C#, Python等语言的语法，
 [条件(Condition)](../renderer/lib/game/game/elements/condition.ts)、
 [流程控制(Control)](../renderer/lib/game/game/elements/control.ts)
 
-> 场景具有如下子级抽象元素：`转场(Transition)`和接口[ITransition](../renderer/lib/game/game/elements/transition/type.ts)  
 > 角色具有如下子级抽象元素：`句子(Sentence)`、`文本(Text)`  
-> 图片具有如下子级抽象元素：[变换(Transform)](../renderer/lib/game/game/elements/transform/transform.ts)  
 > 脚本具有如下子级抽象元素：`Lambda表达式(Lambda)`
 
-需要注意的是，角色控制故事概念中的角色的**文本**和**配音**行为，而图片控制故事中的图片显示行为
+两个特殊的类为[变换(Transform)](../renderer/lib/game/game/elements/transform/transform.ts)
+和[过渡(Transition)](../renderer/lib/game/game/elements/transition/type.ts)
+
+在NarraLeaf后续版本中，`转场(Transition)`将改名为`过渡(Transition)`，并且过渡和变换都能用在图片和场景上
 
 ### 1.0 Core基础调用
 
@@ -103,7 +105,7 @@ story.action([
 
 场景不同于 Ren'Py 中的场景(Scene)，而是类似于 Ren'Py 中的标签(Label)，用于控制游戏流程  
 场景本身也可以控制背景、背景音乐等场景应该有的行为  
-这意味着，我们使用多个具有相同参数的场景来表演同一背景下不同故事的情节
+这意味着，我们可以使用多个具有相同参数的场景来表演同一背景下不同故事的情节
 
 ### 1.2 声音(Sound)
 
@@ -111,15 +113,24 @@ story.action([
 而不同类型的声音的行为则由不同的元素控制  
 背景音乐由场景控制，音乐和音效全局控制，配音则由角色控制
 
-### 1.3 变换(Transform)和转场(Transition)
+### 1.3 变换(Transform)和过渡(Transition)
 
 变换用于为图片创建动画，理论支持几乎所有[Framer Motion](https://www.framer.com/motion/)支持的动画效果  
 这包括了大多数的CSS属性，例如`transform`、`opacity`、`scale`等，
 不过这意味着NarraLeaf无法在无渲染库的情况下支持更复杂的效果
 
-转场用于控制场景之间的切换效果，例如淡入淡出等  
-通常来讲，用户可以使用接口[ITransition](../renderer/lib/game/game/elements/transition/type.ts)来自定义转场效果  
-不过，NarraLeaf也提供了一些内置的转场效果，例如`fade`、`dissolve`等
+过渡用于控制图片之间的切换效果，例如淡入淡出等  
+通常来讲，用户可以使用接口[ITransition](../renderer/lib/game/game/elements/transition/type.ts)来自定义过渡效果  
+不过，NarraLeaf也提供了一些内置的过渡效果，例如`fade`、`dissolve`等
+
+例如，为图片
+- 应用过渡：切换角色形态（图片）时，使用淡入淡出效果  
+- 应用变换：应用图片动画，例如位移和抖动
+
+为场景
+- 应用过渡：切换场景时，使用淡入淡出效果  
+- 应用变换：特殊背景效果，例如抖动背景图片
+
 
 ### 1.4 脚本(Script)
 
@@ -298,13 +309,15 @@ Condition实例本身不应该复用，但是其调用toActions()方法返回的
 NarraLeaf清楚，使用NarraLeaf Core对于非开发者来说是一件困难的事情  
 因此，我们预定义了一些语法规范，并且在未来通过语法解析器来帮助非开发者编写游戏
 
+这些规定都是虚拟的，仅用作初版规范，可能会在未来版本中更改
+
 ### 2.1 文件名
 
 NarraLeaf脚本文件（NarraLeaf Script）的文件名应该以`.nleaf`结尾
 
 ### 2.2 缩进
 
-在缩进方面，解析器参考了JavaScript，没有缩进要求，不过我们建议使用4个空格作为缩进
+在缩进方面，解析器参考了JavaScript，没有缩进要求，不以缩进来判断代码块
 
 ### 2.3 基础语法
 
@@ -313,5 +326,73 @@ NarraLeaf脚本文件（NarraLeaf Script）的文件名应该以`.nleaf`结尾
 
 例如，`{}`表示作用域，`()`表示表达式，`;`表示语句
 
-nleaf不强制要求在句尾使用`;`，不过我们建议使用`;`来分隔语句
+nleaf强制要求使用`;`来结束语句
+
+### 2.4 注释
+
+nleaf支持单行注释和多行注释
+
+单行注释使用`//`，多行注释使用`/* */`
+
+```javascript
+// 这是一个单行注释
+
+/*
+这是一个多行注释
+*/
+```
+
+### 2.5 定义
+
+nleaf在定义变量时，使用`define`关键字，并且在define之前可以使用修饰符
+
+例如，定义一个角色
+
+```nleaf
+const define character1 = new Character("角色1");
+```
+
+没有修饰符意味着这个变量是可变的
+
+一个拟定的修饰符列表如下：
+
+- `const`：表示这个变量是不可变的
+
+### 2.6 赋值
+
+nleaf在赋值时，使用`=`来赋值
+
+例如，给一个变量赋值
+
+```nleaf
+character1 = new Character("角色1");
+character1 = new Character("角色2"); // 这是合法的
+```
+
+对于不可变变量，不应该尝试赋值
+
+### 2.7 表达式
+
+nleaf支持多种表达式，例如算术表达式、逻辑表达式、关系表达式等
+
+例如，一个简单的算术表达式
+
+```nleaf
+const define a = 1 + 2;
+```
+
+### 2.8 控制流
+
+nleaf支持多种控制流，例如if语句、for语句、while语句等
+
+例如，一个简单的if语句
+
+```nleaf
+if (a > 0) {
+    // do something
+} else {
+    // do something
+}
+```
+
 

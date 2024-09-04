@@ -21,7 +21,8 @@ export const image1 = new Image("test_sensei", {
     src: "/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png",
     position: {
         xalign: 0.3,
-        yalign: 0.5
+        yalign: 0.5,
+        yoffset: -20
     },
     scale: 0.3,
 });
@@ -70,6 +71,32 @@ export function speechless(scene: Scene, image: Image) {
     ]).toActions()
 }
 
+export const transformShake = new Transform<TransformDefinitions.ImageTransformProps>([
+    {
+        props: {
+            position: {
+                xoffset: 5,
+            }
+        },
+        options: {
+            duration: 100,
+            ease: "easeOut",
+        }
+    },
+    {
+        props: {
+            position: {
+                xoffset: -5,
+            }
+        },
+        options: {
+            duration: 100,
+            ease: "easeOut",
+        }
+    },
+], {
+    sync: true
+}).repeat(2);
 export function shake(image: Image) {
     return image.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
@@ -96,7 +123,7 @@ export function shake(image: Image) {
         },
     ], {
         sync: true
-    }).repeat(2)).toActions()
+    })).toActions()
 }
 
 export const scene2Bgm = new Sound({
