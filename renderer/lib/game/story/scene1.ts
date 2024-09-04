@@ -30,7 +30,7 @@ import {
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
 import {FadeIn} from "@lib/game/game/elements/transition/fadeIn";
-import {CommonPosition, CommonPositions, CommonPositionType, Coord2D} from "@lib/game/game/elements/transform/position";
+import {Align, CommonPosition, CommonPositionType} from "@lib/game/game/elements/transform/position";
 
 const story = new Story("test");
 
@@ -114,8 +114,8 @@ const scene2actions = scene2.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: new Coord2D({
-                    x: 0.7
+                position: new Align({
+                    xalign: 0.7
                 }),
                 opacity: 1,
             },

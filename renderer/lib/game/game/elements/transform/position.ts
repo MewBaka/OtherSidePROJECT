@@ -155,8 +155,8 @@ export class Coord2D implements IPosition {
 
     static fromAlignPosition(position: AlignPosition): Coord2D {
         return new Coord2D({
-            x: `${position.xalign * 100}%`,
-            y: `${position.yalign * 100}%`,
+            x: (!PositionUtils.isUnknown(position.xalign)) ? `${position.xalign * 100}%` : PositionUtils.Unknown,
+            y: (!PositionUtils.isUnknown(position.yalign)) ? `${position.yalign * 100}%` : PositionUtils.Unknown,
             xoffset: position.xoffset,
             yoffset: position.yoffset
         });
@@ -164,10 +164,10 @@ export class Coord2D implements IPosition {
 
     static merge(a: Coord2D, b: Coord2D): Coord2D {
         return new Coord2D({
-            x: (!PositionUtils.isUnknown(a.x)) ? a.x : b.x,
-            y: (!PositionUtils.isUnknown(a.y)) ? a.y : b.y,
-            xoffset: (!PositionUtils.isUnknown(a.xoffset)) ? a.xoffset : b.xoffset,
-            yoffset: (!PositionUtils.isUnknown(a.yoffset)) ? a.yoffset : b.yoffset,
+            x: ((!PositionUtils.isUnknown(b.x)) ? b.x : a.x),
+            y: ((!PositionUtils.isUnknown(b.y)) ? b.y : a.y),
+            xoffset: ((!PositionUtils.isUnknown(b.xoffset)) ? b.xoffset : a.xoffset),
+            yoffset: ((!PositionUtils.isUnknown(b.yoffset)) ? b.yoffset : a.yoffset),
         });
     }
 
