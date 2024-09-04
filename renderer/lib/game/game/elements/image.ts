@@ -1,4 +1,4 @@
-import type {CommonImage, CommonImagePosition, NextJSStaticImageData} from "../show";
+import {CommonImage, ImagePosition, NextJSStaticImageData} from "../show";
 import {deepMerge, DeepPartial, EventDispatcher, getCallStack, safeClone} from "@lib/util/data";
 import {ContentNode} from "../save/actionTree";
 import {Game} from "@lib/game/game/game";
@@ -14,6 +14,7 @@ import _ from "lodash";
 import {ImageActionContentType} from "@lib/game/game/actionTypes";
 import {StaticImageData} from "next/image";
 import {ITransition} from "@lib/game/game/elements/transition/type";
+import {CommonPosition, CommonPositionType} from "@lib/game/game/elements/transform/position";
 
 export type ImageConfig = {
     src: string | NextJSStaticImageData;
@@ -25,14 +26,6 @@ export type ImageConfig = {
 export type ImageDataRaw = {
     state: ImageConfig;
 };
-
-export const ImagePosition: {
-    [K in CommonImagePosition]: K;
-} = {
-    center: "center",
-    left: "left",
-    right: "right"
-} as const;
 
 const ImageTransactionTypes = {
     set: "set",
@@ -67,7 +60,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     static defaultConfig: ImageConfig = {
         src: "",
         display: false,
-        position: ImagePosition.center,
+        position: new CommonPosition(CommonPositionType.Center),
         scale: 1,
         rotation: 0,
         opacity: 0,

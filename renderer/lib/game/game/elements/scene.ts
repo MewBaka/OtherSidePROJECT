@@ -13,6 +13,7 @@ import _ from "lodash";
 import Actions = LogicAction.Actions;
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import ImageTransformProps = TransformDefinitions.ImageTransformProps;
+import {CommonPosition, CommonPositionType} from "@lib/game/game/elements/transform/position";
 
 /**
  * @todo: 提前加载所需场景的资源
@@ -93,7 +94,7 @@ export class Scene extends Constructable<
         this.config = deepMerge<SceneConfig>(Scene.defaultConfig, config);
         this.state = deepMerge<SceneConfig & SceneState>(Scene.defaultState, this.config);
         this.backgroundImageState = {
-            position: "center"
+            position: new CommonPosition(CommonPositionType.Center),
         };
     }
 

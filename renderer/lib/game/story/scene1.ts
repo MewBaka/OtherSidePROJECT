@@ -30,6 +30,7 @@ import {
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
 import {FadeIn} from "@lib/game/game/elements/transition/fadeIn";
+import {CommonPosition, CommonPositions, CommonPositionType, Coord2D} from "@lib/game/game/elements/transform/position";
 
 const story = new Story("test");
 
@@ -57,7 +58,7 @@ const scene3actions = scene3.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: "left",
+                position: new CommonPosition(CommonPositionType.Left),
                 opacity: 1,
             },
             options: {
@@ -72,7 +73,7 @@ const scene3actions = scene3.action([
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: "right",
+                position: new CommonPosition(CommonPositionType.Right),
                 opacity: 1,
             },
             options: {
@@ -113,7 +114,9 @@ const scene2actions = scene2.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: "right",
+                position: new Coord2D({
+                    x: 0.7
+                }),
                 opacity: 1,
             },
             options: {
@@ -169,7 +172,7 @@ const scene1Actions = scene1.action([
         duration: 500,
         sync: true,
     }).toActions(),
-    scene1.sleep(1000).toActions(),
+    // scene1.sleep(1000).toActions(),
     character1
         .say("你好！")
         .toActions(),
@@ -217,10 +220,10 @@ const scene1Actions = scene1.action([
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
-                position: "right"
+                position: new CommonPosition(CommonPositionType.Right)
             },
             options: {
-                duration: 2,
+                duration: 2000,
                 ease: "easeOut",
             }
         },

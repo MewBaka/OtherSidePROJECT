@@ -107,6 +107,12 @@ export default function Image({
                     setTransitionProps(progress);
                 })
             },
+            {
+                type: TransitionEventTypes.end,
+                listener: transition.events.on(TransitionEventTypes.end, () => {
+                    setTransition(null);
+                })
+            }
         ]) : null;
 
         return () => {
@@ -122,8 +128,7 @@ export default function Image({
             transform.setControl(null);
         }
         if (!scope.current) {
-            console.warn("scope not ready");
-            return;
+            throw new Error("scope not ready");
         }
         if (arg0 instanceof Transform) {
             Object.assign(scope.current.style, arg0.propToCSS(state, image.state));
@@ -152,16 +157,16 @@ export default function Image({
             height: '100vh',
             position: 'fixed'
         }}>
-            <div style={{
+            <div className={"overflow-hidden"} style={{
                 width: `${ratio.w}px`,
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {transition ? transition.toElementProps().map((elementProps, index) => {
+                {transition ? transition.toElementProps().map((elementProps, index, arr) => {
                     const mergedProps =
                         deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
                     return (
-                        <img key={index} ref={scope} alt={mergedProps.alt} {...mergedProps}/>
+                        <img key={index} alt={mergedProps.alt} {...mergedProps} ref={index === (arr.length -1) ? scope : undefined}/>
                     );
                 }) : (
                     <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />

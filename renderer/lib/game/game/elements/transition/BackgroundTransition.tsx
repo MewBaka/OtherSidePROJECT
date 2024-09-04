@@ -96,8 +96,7 @@ export default function BackgroundTransition({scene, props, state}: {
             transform.setControl(null);
         }
         if (!scope.current) {
-            console.warn("scope not ready");
-            return;
+            throw new Error("scope not ready");
         }
         if (arg0 instanceof Transform) {
             Object.assign(scope.current.style, arg0.propToCSS(state, scene.backgroundImageState));
@@ -119,12 +118,12 @@ export default function BackgroundTransition({scene, props, state}: {
         <>
             {
                 transition ? (() => {
-                    return transition.toElementProps().map((elementProps, index) => {
+                    return transition.toElementProps().map((elementProps, index, arr) => {
                         const mergedProps =
                             deepMerge<ImgElementProp>(defaultProps, props, elementProps, transformProps);
                         return (
                             <Background key={index}>
-                                <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload}/>
+                                <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload} ref={index === (arr.length -1) ? scope : undefined}/>
                             </Background>
                         );
                     });

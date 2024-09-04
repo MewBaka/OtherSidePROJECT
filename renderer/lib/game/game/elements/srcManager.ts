@@ -60,7 +60,7 @@ export class SrcManager {
         } else if (arg0 instanceof Sound) {
             if (this.isSrcRegistered(arg0.getSrc())) return this;
             this.src.push({type: "audio", src: arg0});
-        } else if (arg0 instanceof Image || Transform.isStaticImageData(arg0)) {
+        } else if (arg0 instanceof Image || Utils.isStaticImageData(arg0)) {
             if (arg0 instanceof Image) {
                 if (this.isSrcRegistered(Utils.srcToString(arg0.state.src))) return this;
             } else {
