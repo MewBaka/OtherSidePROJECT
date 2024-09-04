@@ -36,25 +36,28 @@ export default function BackgroundTransition({scene, props, state}: {
                 listener: scene.events.on(GameScene.EventTypes["event:scene.applyTransform"], async (transform) => {
                     assignTo(transform.propToCSS(state, scene.backgroundImageState));
 
-                    transform.assignState(scene.backgroundImageState);
+                    console.debug("[BackgroundTransition] applyTransform", transform.propToCSS(state, scene.backgroundImageState), transform); // @debug
 
                     setTransform(transform);
-                    await transform.animate({scope, animate}, state);
-                    scene.backgroundImageState = deepMerge(scene.backgroundImageState, transform.state);
-                    setTransformProps({
-                        style: transform.propToCSS(state, scene.backgroundImageState) as any,
-                    });
+                    await transform.animate({scope, animate}, state, scene.backgroundImageState, (after) => {
 
-                    setTransform(null);
+                        scene.backgroundImageState = deepMerge(scene.backgroundImageState, after);
+
+                        setTransformProps({
+                            style: transform.propToCSS(state, scene.backgroundImageState) as any,
+                        });
+
+                        setTransform(null);
+                    });
                 })
             },
             {
                 type: GameScene.EventTypes["event:scene.initTransform"],
                 listener: scene.events.on(GameScene.EventTypes["event:scene.initTransform"], async (transform) => {
-                    console.log("[BackgroundTransition] initTransform", transform);
-                    await transform.animate({scope, animate}, state);
-                    scene.backgroundImageState = deepMerge(scene.backgroundImageState, transform.state);
-                    console.log("[BackgroundTransition] initTransform", transform.propToCSS(state, scene.backgroundImageState));
+                    console.debug("[BackgroundTransition] initTransform", transform); // @debug
+                    await transform.animate({scope, animate}, state, scene.backgroundImageState, (after) => {
+                        scene.backgroundImageState = deepMerge(scene.backgroundImageState, after);
+                    });
                 })
             }
         ]);
@@ -88,7 +91,6 @@ export default function BackgroundTransition({scene, props, state}: {
 
     function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
         if (transform && transform.getControl()) {
-            console.log("last transform", transform.state, transform.getControl().state);
             console.warn("processing transform not completed");
             transform.getControl().complete();
             transform.setControl(null);
@@ -98,7 +100,6 @@ export default function BackgroundTransition({scene, props, state}: {
             return;
         }
         if (arg0 instanceof Transform) {
-            arg0.assignState(scene.backgroundImageState);
             Object.assign(scope.current.style, arg0.propToCSS(state, scene.backgroundImageState));
         } else {
             Object.assign(scope.current.style, arg0);
@@ -109,8 +110,9 @@ export default function BackgroundTransition({scene, props, state}: {
         width: scene.backgroundImageState.width,
         height: scene.backgroundImageState.height,
         style: {
-            border: "solid 5px red",
-        }
+            border: "solid 5px yellow",
+            position: "absolute",
+        },
     };
 
     return (

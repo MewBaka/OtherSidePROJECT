@@ -24,8 +24,8 @@ import {
     mainMenuBackground2,
     scene1,
     scene2Bgm,
-    shake,
     sound1,
+    transformShake,
     transition1
 } from "@lib/game/story/definitions";
 import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
@@ -174,29 +174,16 @@ const scene1Actions = scene1.action([
         .say("你好！")
         .toActions(),
     Control.allAsync([
-        shake(image1), // 通过自定义的函数返回操作
+        // shake(image1), // 通过自定义的函数返回操作
         // Control.do([
         // speechless(scene1, image2),
         // image2.dispose().toActions(),
         // ]).toActions(),
+        // image1.applyTransform(transformShake).toActions(),
         sound1.play().toActions(),
     ]).toActions(),
 
-    scene1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
-        {
-            props: {
-                position: {
-                    xoffset: -30
-                },
-            },
-            options: {
-                duration: 2000,
-                ease: "easeOut",
-            }
-        }
-    ], {
-        sync: true,
-    })).toActions(),
+    scene1.applyTransform(transformShake).toActions(),
 
 
     character1.say("你最近过的怎么样？")
