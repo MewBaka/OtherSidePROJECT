@@ -61,13 +61,13 @@ export type DeepPartial<T> = {
     [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-export class Awaitable<T, U> {
+export class Awaitable<T, U = T> {
     receiver: (value: U) => T;
     result: T;
     solved = false;
     listeners: ((value: T) => void)[] = [];
 
-    constructor(receiver: (value: U) => T) {
+    constructor(receiver: (value: U) => T = (value) => value as any) {
         this.receiver = receiver;
     }
 

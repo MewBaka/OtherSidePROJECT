@@ -2,8 +2,8 @@ import {Constructable} from "../constructable";
 import {Game, LogicAction} from "../game";
 import {deepMerge} from "@lib/util/data";
 import {SceneAction, StoryAction} from "@lib/game/game/actions";
-import {ContentNode, RawData, RenderableNode} from "@lib/game/game/save/actionTree";
-import {SceneActionTypes} from "@lib/game/game/actionTypes";
+import {RawData, RenderableNode} from "@lib/game/game/save/actionTree";
+import {Scene} from "@lib/game/game/elements/scene";
 
 export type StoryConfig = {};
 export type ElementStateRaw = Record<string, any>;
@@ -25,98 +25,6 @@ export class Story extends Constructable<
         this.id = Game.getIdManager().getStringId();
         this.name = name;
         this.config = deepMerge<StoryConfig>(Story.defaultConfig, config);
-    }
-
-    /**@internal */
-    getAllActions(): LogicAction.Actions[] {
-        const set = new Set<LogicAction.Actions>();
-        this.forEachAction(action => set.add(action));
-
-        return Array.from(set);
-    }
-
-    /**@internal */
-    forEachAction(callback: (action: LogicAction.Actions) => void) {
-        const seen: string[] = [];
-        this.getActions().forEach(sceneAction => {
-            const queue: LogicAction.Actions[] = [];
-            queue.push(sceneAction);
-
-            while (queue.length > 0) {
-                const action = queue.shift();
-                if (action.type === SceneActionTypes.jumpTo) {
-                    if (seen.includes(action.getId())) {
-                        continue;
-                    }
-                    seen.push(action.getId());
-                }
-
-                callback(action);
-                const actions = action.getFutureActions();
-                queue.push(...actions);
-            }
-        });
-    }
-
-    /**@internal */
-    findActionById(id: string, actions?: LogicAction.Actions[]): LogicAction.Actions | null {
-        if (actions) {
-            const action = actions.find(action => action.getId() === id);
-            return action || null;
-        }
-
-        const futureActions = this.getActions();
-        const queue: LogicAction.Actions[] = [];
-        const seen: string[] = [];
-        queue.push(...futureActions);
-
-        while (queue.length > 0) {
-            const action = queue.shift();
-            if (action.getId() === id) {
-                return action;
-            }
-
-            if (action.type === SceneActionTypes.jumpTo) {
-                if (seen.includes(action.getId())) {
-                    continue;
-                }
-                seen.push(action.getId());
-            }
-
-            queue.push(...action.getFutureActions());
-        }
-
-        return null;
-    }
-
-    /**@internal */
-    getAllElements(actions?: LogicAction.Actions[]): LogicAction.GameElement[] {
-        const action = actions || this.getAllActions();
-        const set = new Set<LogicAction.GameElement>(
-            action.map(action => action.callee)
-        );
-        return Array.from(set);
-    }
-
-    /**@internal */
-    getActionsByType(type: LogicAction.ActionTypes, actions?: LogicAction.Actions[]): LogicAction.Actions[] {
-        const action = actions || this.getAllActions();
-        return action.filter(action => action.type === type);
-    }
-
-    /**@internal */
-    getAllNodes(actions?: LogicAction.Actions[]): ContentNode[] {
-        const action = actions || this.getAllActions();
-        const set = new Set<ContentNode>(
-            action.map(action => action.contentNode)
-        );
-        return Array.from(set);
-    }
-
-    /**@internal */
-    findNodeById(id: string, actions?: LogicAction.Actions[]): ContentNode | null {
-        const action = actions || this.getAllActions();
-        return action.find(action => action.contentNode.id === id)?.contentNode || null;
     }
 
     /**@internal */
@@ -143,21 +51,6 @@ export class Story extends Constructable<
             id: callee.id,
             data: callee.toData()
         })).filter(data => data.data !== null);
-    }
-
-    /**@internal */
-    findElementById(id: string, elements: LogicAction.GameElement[]): LogicAction.GameElement | null {
-        return elements.find(element => element.id === id) || null;
-    }
-
-    /**
-     * @internal
-     * 通过多个ID查找多个元素
-     */
-    findElementsByIds(ids: string[], elements: LogicAction.GameElement[]): LogicAction.GameElement[] {
-        const map = new Map<string, LogicAction.GameElement>();
-        elements.forEach(element => map.set(element.id, element));
-        return ids.map(id => map.get(id)).filter(Boolean);
     }
 
     /**
@@ -217,6 +110,18 @@ export class Story extends Constructable<
     }
 
     fromData(_: any) {
+        return this;
+    }
+
+    public action(scene: Scene[] | Scene): this {
+        const scenes = Array.isArray(scene) ? scene : [scene];
+        const actions = scenes.map(s => s._sceneRoot);
+        this._action(actions);
+
+        scenes.forEach(scene => {
+            scene.registerSrc();
+        });
+
         return this;
     }
 }

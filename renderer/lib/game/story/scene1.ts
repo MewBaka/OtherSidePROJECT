@@ -3,7 +3,6 @@ import {
     Condition,
     Control,
     Image,
-    Lambda,
     Menu,
     Scene,
     Script,
@@ -39,9 +38,9 @@ const YouAreCorrect = character2.say("恭喜你！")
     .toActions();
 
 const checkNumber = (n: number) => new Condition()
-    .If(new Lambda(({gameState, resolve}) => {
-            resolve(isNumberCorrect(gameState, n));
-        }),
+    .If(({gameState}) => {
+            return isNumberCorrect(gameState, n);
+        },
         YouAreCorrect
     ).Else(character2.say("很遗憾，你猜错了").toActions())
     .toActions();
@@ -51,10 +50,7 @@ const scene3 = new Scene("scene3", {
     invertY: true,
 });
 
-const scene3actions = scene3.action([
-    // scene3.activate().toActions(),
-    // scene3.deactivate().toActions(),
-    image1.init().toActions(),
+scene3.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
@@ -102,8 +98,7 @@ const scene2 = new Scene("scene2", {
     backgroundMusicFade: 1000,
 });
 
-const scene2actions = scene2.action([
-    image1.init().toActions(),
+scene2.action([
     new Character(null)
         .say("hello")
         .toActions(),
@@ -138,7 +133,7 @@ const scene2actions = scene2.action([
 
     // scene2.setBackgroundMusic(scene2Bgm).toActions(),
 
-    scene2.jumpTo(scene3actions, {
+    scene2.jumpTo(scene3, {
         transition: new Dissolve(mainMenuBackground, 2000)
     }).toActions(),
 ]);
@@ -161,12 +156,7 @@ scene1.transitionSceneBackground(undefined, new Dissolve(mainMenuBackground2, 20
 
 // @todo: 在错误的场景上调用方法应该静态返回错误
 
-const scene1Actions = scene1.action([
-    scene1.activate().toActions(),
-
-    image1.init().toActions(),
-    image2.init().toActions(),
-
+scene1.action([
     image1.show({
         ease: "circOut",
         duration: 500,
@@ -208,7 +198,7 @@ const scene1Actions = scene1.action([
             image1.hide().toActions(),
 
             scene1.jumpTo(
-                scene2actions,
+                scene2,
                 {
                     transition: new FadeIn(mainMenuBackground2, 2000, "left", 30)
                 }
@@ -286,49 +276,23 @@ const scene1Actions = scene1.action([
     // 直接通过jumpTo方法跳转到下一个场景
     // 该方法会卸载当前场景，这意味着该方法之后的所有操作都不会被执行
     scene1.jumpTo(
-        scene2actions,
+        scene2,
         {
             transition: new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000)
         }
     ).toActions(),
 ]);
 
-// @todo: 自动注册资源
-scene1.srcManager.register(sound1)
-    .register(new Image("_", {
-        src: mainMenuBackground
-    }))
-    .register(new Image("_", {
-        src: mainMenuBackground2
-    }))
-    .register(image1)
-    .register(image2)
-
-scene2.srcManager.register(image1)
-    .register(new Image("_", {
-        src: mainMenuBackground2
-    }))
-    .register(image1)
-
-scene3.srcManager.register(image1)
-    .register(new Image("_", {
-        src: mainMenuBackground
-    }))
-    .register(image1)
-
 function isNumberCorrect(gameState: GameState, number: number) {
     const namespace =
-        gameState.clientGame.game
-            .getLiveGame()
-            .storable
-            .getNamespace(LiveGame.GameSpacesKey.game)
+        gameState.getStorable().getNamespace("game");
     return namespace.get("number") === number;
 }
 
 // @todo: 测试多场景
 
 story.action([
-    scene1Actions
+    scene1
 ]);
 
 export {

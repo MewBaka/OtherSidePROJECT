@@ -2,7 +2,6 @@ import {deepMerge} from "@lib/util/data";
 import {Game} from "../game";
 import {ContentNode, RenderableNode} from "../save/actionTree";
 import {HistoryData} from "../save/transaction";
-import {ScriptCleaner} from "./script";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {ConditionAction} from "@lib/game/game/actions";
 import {Actionable} from "@lib/game/game/actionable";
@@ -12,10 +11,9 @@ export type ConditionConfig = {};
 
 interface LambdaCtx {
     gameState: GameState;
-    resolve: (value?: any) => void;
 }
 
-type LambdaHandler = (ctx: LambdaCtx) => ScriptCleaner | void;
+type LambdaHandler<T = any> = (ctx: LambdaCtx) => T;
 
 export class Lambda {
     handler: LambdaHandler;
@@ -26,19 +24,15 @@ export class Lambda {
 
     evaluate({gameState}: { gameState: GameState }): {
         value: any;
-        cleaner: ScriptCleaner | void;
     } {
-        let value: any;
-        let cleaner = this.handler(this.getCtx((v) => value = v, {gameState}));
+        const value = this.handler(this.getCtx({gameState}));
         return {
             value,
-            cleaner
         };
     }
 
-    getCtx(resolve: (value: any) => void, {gameState}: { gameState: GameState }): LambdaCtx {
+    getCtx({gameState}: { gameState: GameState }): LambdaCtx {
         return {
-            resolve,
             gameState
         };
     }
@@ -90,15 +84,15 @@ export class Condition extends Actionable {
         }
     }
 
-    public If(condition: Lambda, action: LogicAction.Actions | LogicAction.Actions[]): this {
-        this.conditions.If.condition = condition;
+    public If(condition: Lambda | LambdaHandler<boolean>, action: LogicAction.Actions | LogicAction.Actions[]): this {
+        this.conditions.If.condition = condition instanceof Lambda ? condition : new Lambda(condition);
         this.conditions.If.action = this.construct(Array.isArray(action) ? action : [action]);
         return this;
     }
 
-    public ElseIf(condition: Lambda, action: (LogicAction.Actions | LogicAction.Actions[])): this {
+    public ElseIf(condition: Lambda | LambdaHandler<boolean>, action: (LogicAction.Actions | LogicAction.Actions[])): this {
         this.conditions.ElseIf.push({
-            condition,
+            condition: condition instanceof Lambda ? condition : new Lambda(condition),
             action: this.construct(Array.isArray(action) ? action : [action])
         });
         return this;

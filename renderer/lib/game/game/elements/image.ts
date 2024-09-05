@@ -74,15 +74,23 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
     events: EventDispatcher<ImageEventTypes> = new EventDispatcher();
     ref: React.RefObject<HTMLImageElement> | undefined = undefined;
 
-    constructor(name: string, config: DeepPartial<ImageConfig> = {}) {
+    constructor(name: string, config: DeepPartial<ImageConfig>);
+    constructor(config: DeepPartial<ImageConfig>);
+    constructor(arg0: string | DeepPartial<ImageConfig>, config?: DeepPartial<ImageConfig>) {
         super(Actionable.IdPrefixes.Image);
-        this.name = name;
-        this.config = deepMerge<ImageConfig>(Image.defaultConfig, config);
+        if (typeof arg0 === "string") {
+            this.name = arg0;
+            this.config = deepMerge<ImageConfig>(Image.defaultConfig, config);
+        } else {
+            this.name = "";
+            this.config = deepMerge<ImageConfig>(Image.defaultConfig, arg0);
+        }
         this.state = deepMerge<ImageConfig>({}, this.config);
         this.actions = [];
 
         this.checkConfig();
     }
+
 
     public static staticImageDataToSrc(image: NextJSStaticImageData | string): string {
         return typeof image === "string" ? image : image.src;

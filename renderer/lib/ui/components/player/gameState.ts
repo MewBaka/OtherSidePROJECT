@@ -9,6 +9,7 @@ import {Sound} from "@lib/game/game/elements/sound";
 import * as Howler from "howler";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {LogicAction} from "@lib/game/game/logicAction";
+import {Storable} from "@lib/game/game/save/storable";
 
 type Clickable<T, U = undefined> = {
     action: T;
@@ -201,6 +202,10 @@ export class GameState {
     public offSrcManager(srcManager: SrcManager) {
         this.state.srcManagers = this.state.srcManagers.filter(s => s !== srcManager);
         return this
+    }
+
+    public getStorable(): Storable {
+        return this.clientGame.game.getLiveGame().getStorable();
     }
 
     private getElementMap() {

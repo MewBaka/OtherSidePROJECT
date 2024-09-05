@@ -1,6 +1,6 @@
 import {Sound} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
-import {Transform, Utils} from "@lib/game/game/common/core";
+import {Utils} from "@lib/game/game/common/core";
 import {Constants} from "@lib/api/config";
 import {StaticImageData} from "next/image";
 
@@ -25,6 +25,7 @@ export class SrcManager {
         audio: "audio",
     } as const;
     src: Src[] = [];
+    future: SrcManager[] = [];
 
     static cacheablize(url: string, base: string): string {
         if (
@@ -110,6 +111,16 @@ export class SrcManager {
 
     getSrcByType(type: SrcType): Src[] {
         return this.src.filter(src => src.type === type);
+    }
+
+    registerFuture(srcManager: SrcManager): this {
+        if (this.future.includes(srcManager) || this.hasFuture(srcManager)) return this;
+        this.future.push(srcManager);
+        return this;
+    }
+
+    hasFuture(s: SrcManager): boolean {
+        return this.future.includes(s);
     }
 }
 

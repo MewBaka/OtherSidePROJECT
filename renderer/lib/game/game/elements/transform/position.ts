@@ -88,6 +88,7 @@ export class PositionUtils {
 }
 
 export class CommonPosition implements IPosition {
+    static CommonPositionType = CommonPositionType;
     readonly position: CommonPositionType;
 
     constructor(position: CommonPositionType) {
