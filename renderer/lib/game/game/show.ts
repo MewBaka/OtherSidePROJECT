@@ -1,5 +1,5 @@
 import {StaticImageData as _NextJSStaticImageData} from 'next/image';
-import {CommonPosition, Coord2D, Align, IPosition} from "@lib/game/game/elements/transform/position";
+import {IPosition} from "@lib/game/game/elements/transform/position";
 
 
 export type color = string | {
@@ -18,9 +18,6 @@ export type RGBColor = {
 export type RGBAColor = RGBColor & {
     a: number;
 }
-
-
-
 
 export type Color = {
     color: color;

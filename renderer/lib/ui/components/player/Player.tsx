@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useReducer, useState} from "react";
+import React, {useEffect, useMemo, useReducer, useState} from "react";
 import {useGame} from "../../providers/game-state";
 import {Awaitable} from "@/lib/util/data";
 

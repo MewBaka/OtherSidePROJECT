@@ -20,7 +20,7 @@ interface Transaction {
     history: NamespaceHistory[];
 }
 
-export class Namespace<T extends StorableData<string>> {
+export class Namespace<T extends StorableData> {
     name: string;
     key: string;
     content: T;
@@ -206,16 +206,16 @@ export class Storable {
     constructor() {
     }
 
-    addNamespace<T extends StorableData<string>>(namespace: Namespace<T>) {
+    addNamespace<T extends StorableData>(namespace: Namespace<T>) {
         this.namespaces[namespace.key] = namespace;
         return this;
     }
 
-    getNamespace<T extends StorableData<string>>(key: string): Namespace<T> {
+    getNamespace<T extends StorableData>(key: string): Namespace<T> {
         return this.namespaces[key];
     }
 
-    setNamespace<T extends StorableData<string>>(key: string, namespace: Namespace<T>) {
+    setNamespace<T extends StorableData>(key: string, namespace: Namespace<T>) {
         this.namespaces[key] = namespace;
         return this;
     }

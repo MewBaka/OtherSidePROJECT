@@ -3,7 +3,6 @@ import type {Story} from "@lib/game/game/elements/story";
 import type {ConditionData} from "@lib/game/game/elements/condition";
 import {Background, CommonImage} from "@lib/game/game/show";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import type {Scene} from "@lib/game/game/elements/scene";
 import type {Sentence} from "@lib/game/game/elements/text";
 import type {MenuData} from "@lib/game/game/elements/menu";
@@ -49,7 +48,7 @@ export type SceneActionContentType = {
                                 K extends typeof SceneActionTypes["jumpTo"] ? [Scene] :
                                     K extends typeof SceneActionTypes["setBackgroundMusic"] ? [Sound, number?] :
                                         K extends typeof SceneActionTypes["preUnmount"] ? [] :
-                                            K extends typeof SceneActionTypes["applyTransform"] ? [Transform<TransformDefinitions.ImageTransformProps>] :
+                                            K extends typeof SceneActionTypes["applyTransform"] ? [Transform] :
                                                 any;
 }
 /* Story */
@@ -77,10 +76,10 @@ export const ImageActionTypes = {
 export type ImageActionContentType = {
     [K in typeof ImageActionTypes[keyof typeof ImageActionTypes]]:
     K extends "image:setSrc" ? [string] :
-        K extends "image:setPosition" ? [CommonImage["position"], Transform<TransformDefinitions.ImageTransformProps>] :
-            K extends "image:show" ? [void, Transform<TransformDefinitions.ImageTransformProps>] :
-                K extends "image:hide" ? [void, Transform<TransformDefinitions.ImageTransformProps>] :
-                    K extends "image:applyTransform" ? [void, Transform<TransformDefinitions.ImageTransformProps>, string] :
+        K extends "image:setPosition" ? [CommonImage["position"], Transform] :
+            K extends "image:show" ? [void, Transform] :
+                K extends "image:hide" ? [void, Transform] :
+                    K extends "image:applyTransform" ? [void, Transform, string] :
                         K extends "image:init" ? [Scene?] :
                             K extends "image:dispose" ? [] :
                                 K extends "image:setTransition" ? [ITransition | null] :

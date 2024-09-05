@@ -2,6 +2,7 @@
 
 import QuickMenu from "@lib/ui/components/player/QuickMenu";
 import Isolated from "@/lib/ui/elements/isolated";
+import React from "react";
 
 export default function Layout({
                                    children,

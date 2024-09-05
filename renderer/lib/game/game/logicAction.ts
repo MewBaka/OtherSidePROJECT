@@ -1,4 +1,4 @@
-import type {Character, Sentence} from "@lib/game/game/elements/text";
+import type {Character} from "@lib/game/game/elements/text";
 import type {Scene} from "@lib/game/game/elements/scene";
 import type {Story} from "@lib/game/game/elements/story";
 import type {Image} from "@lib/game/game/elements/image";
@@ -9,7 +9,8 @@ import {Values} from "@lib/util/data";
 import {
     CharacterAction,
     ConditionAction,
-    ControlAction, ImageAction,
+    ControlAction,
+    ImageAction,
     MenuAction,
     SceneAction,
     ScriptAction,
@@ -20,27 +21,37 @@ import {
 import {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
 import {
-    CharacterActionContentType, CharacterActionTypes,
-    ConditionActionContentType, ConditionActionTypes,
-    ControlActionContentType, ImageActionContentType, ImageActionTypes,
+    CharacterActionContentType,
+    CharacterActionTypes,
+    ConditionActionContentType,
+    ConditionActionTypes,
+    ControlActionContentType,
+    ImageActionContentType,
+    ImageActionTypes,
     MenuActionContentType,
-    MenuActionTypes, SceneActionContentType, SceneActionTypes, ScriptActionContentType, ScriptActionTypes,
-    SoundActionContentType, StoryActionContentType, StoryActionTypes
+    MenuActionTypes,
+    SceneActionContentType,
+    SceneActionTypes,
+    ScriptActionContentType,
+    ScriptActionTypes,
+    SoundActionContentType,
+    StoryActionContentType,
+    StoryActionTypes
 } from "@lib/game/game/actionTypes";
 
 export namespace LogicAction {
     export type GameElement = Character | Scene | Story | Image | Condition | Script | Menu | Sound | Control;
     export type Actions =
         (TypedAction
-        | CharacterAction
-        | ConditionAction
-        | ImageAction
-        | SceneAction
-        | ScriptAction
-        | StoryAction
-        | MenuAction
-        | SoundAction
-        | ControlAction) ;
+            | CharacterAction
+            | ConditionAction
+            | ImageAction
+            | SceneAction
+            | ScriptAction
+            | StoryAction
+            | MenuAction
+            | SoundAction
+            | ControlAction);
     export type ActionTypes =
         Values<typeof CharacterActionTypes>
         | Values<typeof ConditionActionTypes>

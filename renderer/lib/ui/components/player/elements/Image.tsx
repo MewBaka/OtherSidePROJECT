@@ -6,7 +6,6 @@ import {DOMKeyframesDefinition, useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {deepMerge} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {TransformDefinitions} from "@lib/game/game/common/types";
 import {Utils} from "@lib/game/game/common/core";
 import {
     CSSElementProp,
@@ -121,7 +120,7 @@ export default function Image({
         };
     }, [transition, image]);
 
-    function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
+    function assignTo(arg0: Transform | Record<string, any>) {
         if (transform && transform.getControl()) {
             console.warn("processing transform not completed");
             transform.getControl().complete();
@@ -166,7 +165,8 @@ export default function Image({
                     const mergedProps =
                         deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
                     return (
-                        <img key={index} alt={mergedProps.alt} {...mergedProps} ref={index === (arr.length -1) ? scope : undefined}/>
+                        <img key={index} alt={mergedProps.alt} {...mergedProps}
+                             ref={index === (arr.length - 1) ? scope : undefined}/>
                     );
                 }) : (
                     <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />

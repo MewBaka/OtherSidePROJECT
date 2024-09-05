@@ -5,7 +5,6 @@ import {Character} from "@lib/game/game/elements/text";
 import {Sound, SoundType} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
 import ImageSpeechless from "@/public/static/images/test_speechless.png";
-import {Control} from "@lib/game/game/elements/control";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {Fade} from "@lib/game/game/elements/transition/fade";

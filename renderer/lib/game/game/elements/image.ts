@@ -40,10 +40,10 @@ const ImageTransactionTypes = {
 } as const;
 
 export type ImageEventTypes = {
-    "event:image.show": [Transform<TransformDefinitions.ImageTransformProps>];
-    "event:image.hide": [Transform<TransformDefinitions.ImageTransformProps>];
+    "event:image.show": [Transform];
+    "event:image.hide": [Transform];
     "event:image.init": [];
-    "event:image.applyTransform": [Transform<TransformDefinitions.ImageTransformProps>];
+    "event:image.applyTransform": [Transform];
     "event:image.mount": [];
     "event:image.unmount": [];
     "event:image.ready": [AnimationScope];
