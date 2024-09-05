@@ -68,13 +68,17 @@ export class PositionUtils {
         })
     }
 
-    static toCoord2D(pos: IPosition): Coord2D {
+    static toCoord2D(pos: IPosition | D2Position): Coord2D {
         if (CommonPosition.isCommonPositionType(pos)) {
             return Coord2D.fromCommonPosition(pos);
         } else if (Coord2D.isCoord2DPosition(pos)) {
             return pos;
         } else if (Align.isAlignPosition(pos)) {
             return Coord2D.fromAlignPosition(pos);
+        } else if (typeof pos === "object"
+            && ["x", "y", "xoffset", "yoffset"].some(key => key in pos)) {
+            const position = pos as D2Position;
+            return new Coord2D(position);
         } else {
             throw new Error("Invalid position type");
         }
@@ -84,6 +88,16 @@ export class PositionUtils {
         const aPos = this.toCoord2D(a);
         const bPos = this.toCoord2D(b);
         return Coord2D.merge(aPos, bPos);
+    }
+
+    static serializePosition(pos: IPosition): D2Position {
+        const coord = this.toCoord2D(pos);
+        return {
+            x: PositionUtils.isUnknown(coord.x) ? 0 : coord.x,
+            y: PositionUtils.isUnknown(coord.y) ? 0 : coord.y,
+            xoffset: PositionUtils.isUnknown(coord.xoffset) ? 0 : coord.xoffset,
+            yoffset: PositionUtils.isUnknown(coord.yoffset) ? 0 : coord.yoffset,
+        };
     }
 }
 
@@ -143,7 +157,7 @@ export class Coord2D implements IPosition {
         }
     }
 
-    static isCoord2DPosition(arg: any): arg is Coord2DPosition {
+    static isCoord2DPosition(arg: any): arg is Coord2D {
         return arg instanceof Coord2D;
     }
 

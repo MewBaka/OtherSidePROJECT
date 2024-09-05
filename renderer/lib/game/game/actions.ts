@@ -13,7 +13,6 @@ import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {GameState} from "@lib/ui/components/player/gameState";
 import type {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
-import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {
     CharacterActionContentType,
     CharacterActionTypes,

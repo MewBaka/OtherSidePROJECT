@@ -38,7 +38,7 @@ export class Story extends Constructable<
         allCallee.forEach(callee => {
             const state = map.get(callee.id);
             if (state) {
-                callee.fromData(state);
+                (callee).fromData(state);
             }
         });
     }

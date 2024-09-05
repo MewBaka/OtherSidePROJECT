@@ -70,7 +70,7 @@ export class SrcManager {
             this.src.push({
                 type: "image", src:
                     arg0 instanceof Image ? arg0 : new Image("", {
-                        src: Image.staticImageDataToSrc(arg0),
+                        src: Utils.staticImageDataToSrc(arg0),
                     })
             });
         } else if (typeof arg0 === "object") {

@@ -23,10 +23,6 @@ import Actions = LogicAction.Actions;
 import ImageTransformProps = TransformDefinitions.ImageTransformProps;
 import {Utils} from "@lib/game/game/common/core";
 
-/**
- * @todo: 提前加载所需场景的资源
- */
-
 export type SceneConfig = {
     invertY?: boolean;
     invertX?: boolean;
@@ -43,6 +39,8 @@ export type JumpConfig = {
 export type SceneDataRaw = {
     state: {
         backgroundMusic?: SoundDataRaw | null;
+        background?: Background["background"];
+        backgroundImageState?: Partial<CommonImage>;
     };
 }
 
@@ -230,6 +228,8 @@ export class Scene extends Constructable<
             state: {
                 ...safeClone(this.state),
                 backgroundMusic: this.state.backgroundMusic?.toData(),
+                background: this.state.background,
+                backgroundImageState: Image.serializeImageState(this.backgroundImageState),
             },
         }
     }
@@ -238,6 +238,8 @@ export class Scene extends Constructable<
         this.state = deepMerge<SceneConfig & SceneState>(this.state, data.state);
         if (data.state.backgroundMusic) {
             this.state.backgroundMusic = new Sound().fromData(data.state.backgroundMusic);
+            this.state.background = data.state.background;
+            this.backgroundImageState = Image.deserializeImageState(data.state.backgroundImageState);
         }
         return this;
     }
@@ -378,18 +380,13 @@ export class Scene extends Constructable<
         return this;
     }
 
-    _unshiftAction(actions: (Actions | Actions[])[]): this {
-        this.getActions().unshift(...actions.flat(2));
-        return this;
-    }
-
     public action(actions: (Actions | Actions[])[]): this {
         const userActions = actions.flat(2);
         const images = this.getAllElements(this.getAllActions(false, userActions))
             .filter(element => element instanceof Image);
         const futureActions = [
             ...this.activate().toActions(),
-            ...images.map(image => image.init().toActions()).flat(2),
+            ...images.map(image => (image as Image).init().toActions()).flat(2),
             ...userActions,
         ];
 

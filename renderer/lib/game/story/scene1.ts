@@ -2,13 +2,13 @@ import {
     Character,
     Condition,
     Control,
-    Image,
     Menu,
     Scene,
     Script,
     Sentence,
     Story,
     Transform,
+    Utils,
     Word
 } from "@lib/game/game/common/core";
 import {GameState, LiveGame} from "@lib/game/game/common/game";
@@ -278,7 +278,7 @@ scene1.action([
     scene1.jumpTo(
         scene2,
         {
-            transition: new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000)
+            transition: new Dissolve(Utils.staticImageDataToSrc(mainMenuBackground2), 2000)
         }
     ).toActions(),
 ]);
