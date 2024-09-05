@@ -1,6 +1,6 @@
 import {Sound} from "@lib/game/game/elements/sound";
 import {Image} from "@lib/game/game/elements/image";
-import {Transform, Utils} from "@lib/game/game/common/core";
+import {Utils} from "@lib/game/game/common/core";
 import {Constants} from "@lib/api/config";
 import {StaticImageData} from "next/image";
 
@@ -25,6 +25,7 @@ export class SrcManager {
         audio: "audio",
     } as const;
     src: Src[] = [];
+    future: SrcManager[] = [];
 
     static cacheablize(url: string, base: string): string {
         if (
@@ -60,7 +61,7 @@ export class SrcManager {
         } else if (arg0 instanceof Sound) {
             if (this.isSrcRegistered(arg0.getSrc())) return this;
             this.src.push({type: "audio", src: arg0});
-        } else if (arg0 instanceof Image || Transform.isStaticImageData(arg0)) {
+        } else if (arg0 instanceof Image || Utils.isStaticImageData(arg0)) {
             if (arg0 instanceof Image) {
                 if (this.isSrcRegistered(Utils.srcToString(arg0.state.src))) return this;
             } else {
@@ -69,7 +70,7 @@ export class SrcManager {
             this.src.push({
                 type: "image", src:
                     arg0 instanceof Image ? arg0 : new Image("", {
-                        src: Image.staticImageDataToSrc(arg0),
+                        src: Utils.staticImageDataToSrc(arg0),
                     })
             });
         } else if (typeof arg0 === "object") {
@@ -110,6 +111,16 @@ export class SrcManager {
 
     getSrcByType(type: SrcType): Src[] {
         return this.src.filter(src => src.type === type);
+    }
+
+    registerFuture(srcManager: SrcManager): this {
+        if (this.future.includes(srcManager) || this.hasFuture(srcManager)) return this;
+        this.future.push(srcManager);
+        return this;
+    }
+
+    hasFuture(s: SrcManager): boolean {
+        return this.future.includes(s);
     }
 }
 

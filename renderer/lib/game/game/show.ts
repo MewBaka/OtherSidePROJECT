@@ -1,4 +1,5 @@
 import {StaticImageData as _NextJSStaticImageData} from 'next/image';
+import {IPosition} from "@lib/game/game/elements/transform/position";
 
 
 export type color = string | {
@@ -16,21 +17,6 @@ export type RGBColor = {
 
 export type RGBAColor = RGBColor & {
     a: number;
-}
-
-export type Coord2D = {
-    x: number | `${'-' | ''}${number}%`;
-    y: number | `${'-' | ''}${number}%`;
-} & Offset;
-
-export type Align = {
-    xalign: number;
-    yalign: number;
-} & Offset;
-
-export type Offset = {
-    xoffset: number;
-    yoffset: number;
 }
 
 export type Color = {
@@ -55,7 +41,14 @@ export type CommonImage = {
     width?: number;
     scale?: number;
     rotation?: number;
-    position?: CommonImagePosition | Coord2D | Align;
+    position?: IPosition;
     opacity: number;
 }
 
+export const ImagePosition: {
+    [K in CommonImagePosition]: K;
+} = {
+    center: "center",
+    left: "left",
+    right: "right"
+} as const;

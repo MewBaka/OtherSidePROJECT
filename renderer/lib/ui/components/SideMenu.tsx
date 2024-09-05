@@ -1,9 +1,8 @@
 "use client";
 
-import {motion, useAnimation} from "framer-motion";
+import {motion} from "framer-motion";
 import {PrefetchKind} from "next/dist/client/components/router-reducer/router-reducer-types";
-import Link from "next/link";
-import {usePathname, useRouter} from "next/navigation";
+import {useRouter} from "next/navigation";
 import {useEffect} from "react";
 import MenuItem from "@/app/(main)/main-menu/MenuItem";
 import {Constants} from "@lib/api/config";
@@ -23,15 +22,9 @@ export default function SideMenu({
                                  }: Readonly<{
     menu: MenuItem[];
 }>) {
-    const controls = useAnimation();
     const router = useRouter();
-    const path = usePathname();
 
     const requiredPrefetch = menu.filter(item => item.prefetch && item["href"]).map(item => item["href"]);
-
-    const isCurrentPage = (href: string) => {
-        return (href.endsWith("/") ? href : href + "/") === path;
-    };
 
     const handleClick = (href?: string, action?: Function) => {
         if (action) {
@@ -63,7 +56,7 @@ export default function SideMenu({
                 <div className="relative z-10"></div>
                 <div className="flex flex-col h-full items-end w-full">
                     <div className="p-4">
-                        <Image src={Constants.src.images.LOGO} className="h-16 w-auto" alt="Logo" />
+                        <Image src={Constants.src.images.LOGO} className="h-16 w-auto" alt="Logo"/>
                     </div>
                     <div
                         className="flex-1 overflow-y-auto text-black z-10 items-end flex flex-col w-full overflow-x-hidden">

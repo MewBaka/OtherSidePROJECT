@@ -13,7 +13,7 @@ export function deepMerge<T = Record<string, any>>(obj1: Record<string, any>, ob
         if (typeof value1 === 'object' && value1 !== null && !Array.isArray(value1) &&
             typeof value2 === 'object' && value2 !== null && !Array.isArray(value2)) {
             if (value1.constructor !== Object || value2.constructor !== Object) {
-                return value1 || value2;
+                return value2 || value1;
             }
             return deepMerge(value1, value2);
         } else if (Array.isArray(value1) && Array.isArray(value2)) {
@@ -61,13 +61,13 @@ export type DeepPartial<T> = {
     [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-export class Awaitable<T, U> {
+export class Awaitable<T, U = T> {
     receiver: (value: U) => T;
     result: T;
     solved = false;
     listeners: ((value: T) => void)[] = [];
 
-    constructor(receiver: (value: U) => T) {
+    constructor(receiver: (value: U) => T = (value) => value as any) {
         this.receiver = receiver;
     }
 

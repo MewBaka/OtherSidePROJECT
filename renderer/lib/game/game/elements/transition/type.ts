@@ -9,6 +9,7 @@ export type ElementProp<T extends Element = Element, U extends React.HTMLAttribu
     & U;
 export type ImgElementProp = ElementProp<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>;
 export type CSSElementProp<T extends React.CSSProperties | DOMKeyframesDefinition> = ElementProp & { style: T };
+export type CSSProps = React.CSSProperties;
 
 export interface ITransition<T extends ElementProp = {}> {
     events: EventDispatcher<EventTypes<[T[]]>>;

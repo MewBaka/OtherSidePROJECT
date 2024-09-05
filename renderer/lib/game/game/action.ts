@@ -5,17 +5,17 @@ import {Awaitable, getCallStack} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {Game} from "@lib/game/game/game";
 
-export class Action<ContentNodeType = any> {
+export class Action<ContentNodeType = any, Callee = LogicAction.GameElement> {
     static ActionTypes = {
         action: "action",
     };
-    callee: LogicAction.GameElement;
+    callee: Callee;
     type: ContentNodeType;
     contentNode: ContentNode<ContentNodeType>;
     _id: string;
     private readonly __stack: string;
 
-    constructor(callee: LogicAction.GameElement, type: ContentNodeType, contentNode: ContentNode<ContentNodeType>) {
+    constructor(callee: Callee, type: ContentNodeType, contentNode: ContentNode<ContentNodeType>) {
         this.callee = callee;
         this.type = type;
         this.contentNode = contentNode;

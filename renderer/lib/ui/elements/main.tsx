@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import {useTheme} from "@lib/ui/providers/theme-mode";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAspectRatio} from "../providers/ratio";
 
 export default function Main({

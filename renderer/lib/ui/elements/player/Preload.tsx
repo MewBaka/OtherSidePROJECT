@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import {GameState} from "@lib/ui/components/player/gameState";
-import {Scene as GameScene} from "@lib/game/game/elements/scene";
 import {Sound} from "@lib/game/game/elements/sound";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {usePreloaded} from "@lib/ui/providers/preloaded";
@@ -17,7 +16,6 @@ export function Preload({
     srcManager: SrcManager;
 }>) {
     const {preloaded} = usePreloaded();
-    const [imgs, setImgs] = React.useState<any[]>([]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -26,7 +24,12 @@ export function Preload({
         }
 
         const currentSceneSrc = state.getLastScene()?.srcManager;
-        const combinedSrc = [...srcManager.src, ...(currentSceneSrc ? currentSceneSrc.src : [])];
+        const futureSceneSrc = state.getLastScene()?.srcManager.future;
+        const combinedSrc = [
+            ...srcManager.src,
+            ...(currentSceneSrc ? currentSceneSrc.src : []),
+            ...(futureSceneSrc.map(v => v.src)).flat(2),
+        ];
 
         const src = {
             image: new Set<GameImage>(),

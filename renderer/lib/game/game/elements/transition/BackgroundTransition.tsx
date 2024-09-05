@@ -4,7 +4,6 @@ import {ElementProp, ImgElementProp, ITransition, TransitionEventTypes} from "./
 import {deepMerge} from "@lib/util/data";
 import Background from "@lib/ui/elements/Background";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
 
@@ -16,10 +15,10 @@ export default function BackgroundTransition({scene, props, state}: {
     const [scope, animate] = useAnimate();
     const [transition, setTransition] =
         useState<null | ITransition>(null);
-    const [transitionProps, setTransitionProps] =
+    const [_transitionProps, setTransitionProps] =
         useState<ElementProp[]>([]);
     const [transform, setTransform] =
-        useState<null | Transform<TransformDefinitions.ImageTransformProps>>(null);
+        useState<null | Transform>(null);
     const [transformProps, setTransformProps] =
         useState<ElementProp>({});
 
@@ -89,15 +88,14 @@ export default function BackgroundTransition({scene, props, state}: {
         scene.events.emit(GameScene.EventTypes["event:scene.imageLoaded"]);
     }
 
-    function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
+    function assignTo(arg0: Transform | Record<string, any>) {
         if (transform && transform.getControl()) {
             console.warn("processing transform not completed");
             transform.getControl().complete();
             transform.setControl(null);
         }
         if (!scope.current) {
-            console.warn("scope not ready");
-            return;
+            throw new Error("scope not ready");
         }
         if (arg0 instanceof Transform) {
             Object.assign(scope.current.style, arg0.propToCSS(state, scene.backgroundImageState));
@@ -119,12 +117,13 @@ export default function BackgroundTransition({scene, props, state}: {
         <>
             {
                 transition ? (() => {
-                    return transition.toElementProps().map((elementProps, index) => {
+                    return transition.toElementProps().map((elementProps, index, arr) => {
                         const mergedProps =
                             deepMerge<ImgElementProp>(defaultProps, props, elementProps, transformProps);
                         return (
                             <Background key={index}>
-                                <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload}/>
+                                <img alt={mergedProps.alt} {...mergedProps} onLoad={handleImageOnload}
+                                     ref={index === (arr.length - 1) ? scope : undefined}/>
                             </Background>
                         );
                     });

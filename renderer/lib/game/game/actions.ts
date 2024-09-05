@@ -1,6 +1,5 @@
 import {ContentNode} from "@lib/game/game/save/actionTree";
 import {Awaitable} from "@lib/util/data";
-import {Transform} from "@lib/game/game/elements/transform/transform";
 import {Image as GameImage, Image} from "@lib/game/game/elements/image";
 import {LogicAction} from "@lib/game/game/logicAction";
 import {Action} from "@lib/game/game/action";
@@ -14,7 +13,6 @@ import type {CalledActionResult} from "@lib/game/game/gameTypes";
 import {GameState} from "@lib/ui/components/player/gameState";
 import type {Sound} from "@lib/game/game/elements/sound";
 import {Control} from "@lib/game/game/elements/control";
-import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import {
     CharacterActionContentType,
     CharacterActionTypes,
@@ -35,13 +33,12 @@ import {
     StoryActionContentType,
     StoryActionTypes
 } from "@lib/game/game/actionTypes";
-import ImageTransformProps = TransformDefinitions.ImageTransformProps;
 
 export class TypedAction<
     ContentType extends Record<string, any> = Record<string, any>,
     T extends keyof ContentType & string = keyof ContentType & string,
     Callee extends LogicAction.GameElement = LogicAction.GameElement
-> extends Action<ContentType[T]> {
+> extends Action<ContentType[T], Callee> {
     declare callee: Callee;
 
     constructor(callee: Callee, type: any, contentNode: ContentNode<ContentType[T]>) {
@@ -121,6 +118,11 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             });
             return awaitable;
         } else if (this.type === SceneActionTypes.init) {
+            if (this.callee._liveState.active) {
+                return super.executeAction(state);
+            }
+            this.callee._liveState.active = true;
+
             const awaitable = new Awaitable<CalledActionResult, any>(v => v);
             state
                 .registerSrcManager(this.callee.srcManager)
@@ -152,6 +154,8 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             });
             return awaitable;
         } else if (this.type === SceneActionTypes.exit) {
+            this.callee._liveState.active = false;
+
             state
                 .offSrcManager(this.callee.srcManager)
                 .removeScene(this.callee);
@@ -166,11 +170,11 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
             });
             return awaitable;
         } else if (this.type === SceneActionTypes.jumpTo) {
-            const actions = (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
+            const scene = (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
             const current = this.contentNode;
 
-            const future = actions[0]?.contentNode;
-            current.addChild(future);
+            const future = scene.getActions()?.[0]?.contentNode;
+            if (future) current.addChild(future);
 
             return super.executeAction(state);
         } else if (this.type === SceneActionTypes.setBackgroundMusic) { // @todo: test this
@@ -203,7 +207,7 @@ export class SceneAction<T extends typeof SceneActionTypes[keyof typeof SceneAct
         if (this.type === SceneActionTypes.jumpTo) {
             // We don't care about the actions after jumpTo
             // because they won't be executed
-            return (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
+            return (this.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0]?.getActions();
         }
         const action = this.contentNode.child?.action;
         return action ? [action] : [];

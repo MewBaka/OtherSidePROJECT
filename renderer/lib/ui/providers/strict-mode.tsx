@@ -1,6 +1,6 @@
 "use client";
 
-import {createContext, StrictMode, useContext, useState} from "react";
+import React, {createContext, StrictMode, useContext, useState} from "react";
 
 const StateContext = createContext<null | {
     strict: boolean;

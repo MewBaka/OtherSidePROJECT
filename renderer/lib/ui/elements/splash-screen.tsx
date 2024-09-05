@@ -21,7 +21,7 @@ const SplashScreen = () => {
             // total time: 10s
         };
 
-        timerHandler();
+        timerHandler().then(r => r);
 
         return () => {
             setShowLogo(false);

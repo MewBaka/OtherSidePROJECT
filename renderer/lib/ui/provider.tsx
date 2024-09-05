@@ -2,6 +2,7 @@ import {NextUIProviders} from "./providers/nextui"
 import {StrictProvider} from "./providers/strict-mode"
 import {ThemeProvider} from "./providers/theme-mode"
 import {AspectRatioProvider} from "./providers/ratio";
+import React from "react";
 
 export default function Provider({children, className}: {
     children: React.ReactNode,

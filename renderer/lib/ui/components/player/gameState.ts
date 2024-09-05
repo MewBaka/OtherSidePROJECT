@@ -9,6 +9,7 @@ import {Sound} from "@lib/game/game/elements/sound";
 import * as Howler from "howler";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {LogicAction} from "@lib/game/game/logicAction";
+import {Storable} from "@lib/game/game/save/storable";
 
 type Clickable<T, U = undefined> = {
     action: T;
@@ -132,20 +133,30 @@ export class GameState {
     }
 
     public createText(id: string, sentence: Sentence, afterClick?: () => void, scene?: Scene) {
-        const waitableAction = this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts, {
+        const texts = this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.texts;
+        const action = this.createWaitableAction({
             character: sentence.character,
             sentence,
             id
-        }, afterClick);
-        this.stage.forceUpdate();
-        return waitableAction;
+        }, () => {
+            texts.splice(texts.indexOf(action as any), 1);
+            if (afterClick) afterClick();
+        });
+        texts.push(action);
+        return Promise.resolve(action);
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
         if (!menu.choices.length) {
             throw new Error("Menu must have at least one choice");
         }
-        return this.createWaitableAction(this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.menus, menu, afterChoose);
+        const menus = this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.menus;
+        const action = this.createWaitableAction(menu, () => {
+            menus.splice(menus.indexOf(action as any), 1);
+            if (afterChoose) afterChoose(menu.choices[0]);
+        });
+        menus.push(action);
+        return Promise.resolve(action);
     }
 
     public createImage(image: Image, scene?: Scene) {
@@ -203,6 +214,10 @@ export class GameState {
         return this
     }
 
+    public getStorable(): Storable {
+        return this.clientGame.game.getLiveGame().getStorable();
+    }
+
     private getElementMap() {
         return {
             texts: [],
@@ -236,21 +251,14 @@ export class GameState {
         return void 0;
     }
 
-    private createWaitableAction(target: any[], action: Record<string, any>, after?: (...args: unknown[]) => void) {
-        let resolve: any = null;
-        const item = {
+    private createWaitableAction(action: Record<string, any>, after?: (...args: unknown[]) => void) {
+        const item: Clickable<any> = {
             action,
             onClick: (...args: unknown[]) => {
-                target.splice(target.indexOf(item), 1);
                 if (after) after(...args);
-                resolve();
             }
         };
-        target.push(item);
-        this.stage.forceUpdate();
-        return new Promise<void>((r) => {
-            resolve = r;
-        });
+        return item;
     }
 
     toData(): PlayerStateData {

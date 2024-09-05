@@ -64,16 +64,7 @@ const character1 = new Character("Sensei");
 // 这是合法并且建议的做法
 
 // 为这个流程添加行为
-const scene1Actions = scene1.action([
-    scene1
-        // 在某些情况下，这是必要的，不过NarraLeaf会帮助你管理这些状态
-        .activate()
-
-        // 在每个链式调用的操作结尾都要使用toActions()方法来返回操作
-        // 这对于脚本至关重要，因为我们无法跟踪链式调用的返回值
-        // 因此，几乎所有的链式调用都需要以toActions()方法结尾
-        .toActions(),
-    
+scene1.action([
     // 为角色添加行为
     character1
         // 说一句纯文本
@@ -84,14 +75,16 @@ const scene1Actions = scene1.action([
             new Word("23点", {color: "#f00"}),
             new Word("的时候护士姐姐们会再来检查一下身体，都没问题就可以休息啦！")
         ]) // 对于更高级的操作，可以手动构建Sentence对象
-        
-        // 同理
+
+        // 在每个链式调用的操作结尾都要使用toActions()方法来返回操作
+        // 这对于脚本至关重要，因为我们无法跟踪链式调用的返回值
+        // 因此，几乎所有的链式调用都需要以toActions()方法结尾
         .toActions(),
 ]);
 
 // 将流程添加到故事中
 story.action([
-    scene1Actions
+    scene1,
 ]);
 ```
 
@@ -145,16 +138,15 @@ story.action([
 这是一个简单的例子，让用户从三个数字中选择一个数字，正确数字每次不一样
 
 ```typescript
-new Script((ctx) => {
+new Script(({gameState}) => {
     // 由于游戏脚本创建必须没有副作用，所以这里不能直接修改游戏状态
     // 使用Script来更新状态，使用Storable来管理状态
 
     // 从当前游戏状态中获取储存空间
     const namespace =
-        ctx.gameState.clientGame.game
-            .getLiveGame()
+        gameState
             .getStorable()
-            .getNamespace(LiveGame.GameSpacesKey.game)
+            .getNamespace("game")
 
     // 选择一个数字
     const availableNumbers = [3, 6, 8];
@@ -164,10 +156,6 @@ new Script((ctx) => {
     // 在之后的脚本中通过读取这个数字来判断玩家是否猜对
     // 通常不建议直接在脚本文件中创建变量，因为这会导致脚本行为不可预测
     namespace.set("answer", number);
-
-    // 带有副作用的脚本必须返回一个清理函数
-    // 清理函数会在某种情况下被调用，以清理脚本中的副作用
-    return () => namespace.set("answer", void 0);
 }).toActions()
 ```
 
@@ -176,8 +164,7 @@ new Script((ctx) => {
 ```typescript
 const checkNumber = (n: number) => new Condition()
     // 使用Lambda来检测数字是否正确
-    .If(new Lambda(({gameState, resolve}) => {
-        
+    .If(({gameState, resolve}) => {
             // 从当前游戏状态中获取储存空间
             const namespace =
                 gameState.clientGame.game
@@ -187,7 +174,7 @@ const checkNumber = (n: number) => new Condition()
 
             // 通过读取储存空间中的数字来判断玩家是否猜对
             resolve(namespace.get("answer") === n);
-        }),
+        },
         
         character2.say("恭喜你！")
             .say("你猜对了！")
@@ -215,8 +202,7 @@ const checkNumber = (n: number) => new Condition()
     Control.allAsync([ // 同时异步执行
         
         // 某些复合动画
-        shake(image1),
-        speechless(scene1, image2),
+        shake(image1), // 可以通过自定义函数来创建复合动画
 
         // 需要注意的是，声音播放默认是同步的，我们需要在Sound构造函数中传入参数来异步播放
         sound1.play().toActions()

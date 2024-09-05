@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import {useAspectRatio} from "../providers/ratio";
+import React from "react";
 
 
 export default function Related({

@@ -1,20 +1,21 @@
-import {
-    Align,
+import type {
     Background,
     color,
     CommonImage,
     CommonImagePosition,
-    Coord2D,
-    NextJSStaticImageData,
-    Offset
+} from "../../show";
+import {
+    ImagePosition,
 } from "../../show";
 import type {AnimationPlaybackControls, DOMKeyframesDefinition, DynamicAnimationOptions} from "framer-motion";
-import {ImagePosition} from "../image";
 import {deepMerge, DeepPartial, sleep, toHex} from "@lib/util/data";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
 import Sequence = TransformDefinitions.Sequence;
 import SequenceProps = TransformDefinitions.SequenceProps;
+import {Align, CommonPosition, Coord2D, IPosition, PositionUtils} from "@lib/game/game/elements/transform/position";
+import {CSSProps} from "@lib/game/game/elements/transition/type";
+import {Utils} from "@lib/game/game/common/Utils";
 
 export type Transformers =
     "position"
@@ -38,7 +39,13 @@ export type TransformersMap = {
     "transform": TransformDefinitions.Types,
 }
 
-export class Transform<T extends TransformDefinitions.Types> {
+const CommonImagePositionMap = {
+    [ImagePosition.left]: "25.33%",
+    [ImagePosition.center]: "50%",
+    [ImagePosition.right]: "75.66%"
+} as const;
+
+export class Transform<T extends TransformDefinitions.Types = TransformDefinitions.ImageTransformProps> {
     static defaultSequenceOptions: Partial<TransformDefinitions.CommonSequenceProps> = {
         sync: true,
         repeat: 1,
@@ -47,6 +54,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         duration: 0,
         ease: "linear",
     }
+    static CommonImagePositionMap = CommonImagePositionMap;
 
     private readonly sequenceOptions: Partial<TransformDefinitions.CommonSequenceProps>;
     private sequences: TransformDefinitions.Sequence<T>[] = [];
@@ -79,116 +87,16 @@ export class Transform<T extends TransformDefinitions.Types> {
         }
     }
 
-    public static isAlign(align: any): align is Align {
-        const {xalign, yalign, xoffset, yoffset} = align || {};
-        const alignValid =
-            (xalign === undefined || (xalign >= 0 && xalign <= 1))
-            && (yalign === undefined || (yalign >= 0 && yalign <= 1));
-        const offsetValid =
-            (xoffset === undefined || typeof xoffset === "number")
-            && (yoffset === undefined || typeof yoffset === "number");
-        return alignValid && offsetValid;
-    }
-
-    public static isCommonImagePosition(position: any): position is CommonImagePosition {
-        return Object.values(ImagePosition).includes(position);
-    }
-
-    public static isCoord2D(coord: any): coord is Coord2D {
-        const coordRegex = /-?\d+%/;
-        return (typeof coord.x === "number" || coordRegex.test(coord.x))
-            && (typeof coord.y === "number" || coordRegex.test(coord.y));
-    }
-
     public static isPosition(position: any): position is (CommonImagePosition | Coord2D | Align) {
-        return this.isCommonImagePosition(position) || this.isCoord2D(position) || this.isAlign(position);
-    }
-
-    public static commonPositionToCoord2D(position: CommonImagePosition): Coord2D {
-        const base: Coord2D = {x: "50%", y: "50%", xoffset: 0, yoffset: 0};
-        switch (position) {
-            case ImagePosition.left:
-                return {...base, x: "0%"};
-            case ImagePosition.center:
-                return base;
-            case ImagePosition.right:
-                return {...base, x: "100%"};
-        }
-    }
-
-    public static toCoord2D(position: Coord2D | Align | CommonImagePosition): Coord2D {
-        if (this.isCommonImagePosition(position)) return this.commonPositionToCoord2D(position);
-        if (this.isCoord2D(position)) return position;
-        if (this.isAlign(position)) {
-            const {xalign, yalign, ...rest} = position;
-            return {
-                x: xalign ? this.alignToCSS(xalign) : undefined,
-                y: yalign ? this.alignToCSS(yalign) : undefined,
-                ...rest
-            };
-        }
+        return CommonPosition.isCommonPositionType(position) || Coord2D.isCoord2DPosition(position) || Align.isAlignPosition(position);
     }
 
     public static positionToCSS(
         position: CommonImage["position"],
         invertY?: boolean | undefined,
         invertX?: boolean | undefined
-    ): { left?: string | number, right?: string | number, top?: string | number, bottom?: string | number } {
-        const CommonImagePositionMap = {
-            [ImagePosition.left]: "25.33%",
-            [ImagePosition.center]: "50%",
-            [ImagePosition.right]: "75.66%"
-        }
-        const x = this.offsetToCSS(
-            Transform.isCommonImagePosition(position)
-                ? (CommonImagePositionMap[position] || undefined)
-                : Transform.isCoord2D(position)
-                    ? this.coord2DToCSS(position.x)
-                    : Transform.isAlign(position)
-                        ? this.alignToCSS(position.xalign)
-                        : undefined
-            ,
-            (!this.isCommonImagePosition(position) && position["xoffset"])
-        );
-
-        const y = this.offsetToCSS(
-            Transform.isCommonImagePosition(position)
-                ? "50%"
-                : Transform.isCoord2D(position)
-                    ? this.coord2DToCSS(position.y)
-                    : Transform.isAlign(position)
-                        ? this.alignToCSS(position.yalign)
-                        : undefined,
-            (!this.isCommonImagePosition(position) && position["yoffset"])
-        );
-
-        const yRes = invertY ? {bottom: y} : {top: y};
-        const xRes = invertX ? {right: x} : {left: x};
-
-        return {
-            left: "auto",
-            right: "auto",
-            top: "auto",
-            bottom: "auto",
-            ...yRes,
-            ...xRes
-        };
-    }
-
-    public static offsetToCSS(origin: string | number, offset: Offset[keyof Offset] | undefined | false = 0): string | number {
-        if (offset === false || !offset) return origin;
-        return typeof origin === "number" ? origin + offset : `calc(${origin} + ${offset}px)`;
-    }
-
-    public static coord2DToCSS(coord: Coord2D[keyof Coord2D]): string {
-        if (typeof coord === "number") return coord + "px";
-        return coord;
-    }
-
-    public static alignToCSS(align: number): (
-        `${number}%`
-        ) {
-        return `${align * 100}%`;
+    ): CSSProps {
+        return PositionUtils.D2PositionToCSS(position.toCSS(), invertX, invertY);
     }
 
     public static backgroundToCSS(background: Background["background"]): {
@@ -196,7 +104,7 @@ export class Transform<T extends TransformDefinitions.Types> {
         backgroundColor?: string
     } {
         if (background === null || background === undefined) return {};
-        if (this.isStaticImageData(background)) {
+        if (Utils.isStaticImageData(background)) {
             return {backgroundImage: `url(${background.src})`};
         }
         const backgroundImage = background?.["url"] ? (
@@ -209,19 +117,22 @@ export class Transform<T extends TransformDefinitions.Types> {
         return {backgroundImage, backgroundColor};
     }
 
-    static isStaticImageData(src: any): src is NextJSStaticImageData {
-        return src.src !== undefined;
-    }
-
-    static stateToCommonImageProps<T>(state: DeepPartial<T>): any {
-        return {
-            ...state,
-            position: state["position"] ? Transform.toCoord2D(state["position"]) : undefined,
+    static mergePosition<T>(a: IPosition | undefined, b: IPosition | undefined): Coord2D {
+        if (!a && !b) {
+            throw new Error("No position found.");
         }
+        if (!a || !b) {
+            return PositionUtils.toCoord2D(a || b);
+        }
+        return PositionUtils.mergePosition(a, b);
     }
 
     static mergeState<T>(state: DeepPartial<T>, props: DeepPartial<T>): DeepPartial<T> {
-        return deepMerge(Transform.stateToCommonImageProps<T>(state), Transform.stateToCommonImageProps<T>(props));
+        const position = this.mergePosition(state["position"], props["position"]);
+        return {
+            ...deepMerge(state, props),
+            position,
+        };
     }
 
     /**
@@ -268,6 +179,9 @@ export class Transform<T extends TransformDefinitions.Types> {
                         this.optionsToFramerMotionOptions(options)
                     );
                     this.setControl(animation);
+
+                    console.log("animation start", this.propToCSS(gameState, state), state); // @debug
+                    console.debug("animate from", initState, "to", this.propToCSS(gameState, state)); // @debug
 
                     if (options?.sync !== false) {
                         await new Promise<void>(r => animation.then(() => r()));

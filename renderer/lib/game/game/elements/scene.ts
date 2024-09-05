@@ -4,19 +4,24 @@ import {Awaitable, deepMerge, EventDispatcher, safeClone} from "@lib/util/data";
 import {Background, CommonImage} from "../show";
 import {ContentNode} from "../save/actionTree";
 import {LogicAction} from "@lib/game/game/logicAction";
-import {SceneAction} from "@lib/game/game/actions";
+import {ControlAction, ImageAction, SceneAction, SoundAction} from "@lib/game/game/actions";
 import {Transform} from "@lib/game/game/elements/transform/transform";
 import {ITransition} from "@lib/game/game/elements/transition/type";
 import {SrcManager} from "@lib/game/game/elements/srcManager";
 import {Sound, SoundDataRaw} from "@lib/game/game/elements/sound";
 import _ from "lodash";
-import Actions = LogicAction.Actions;
 import {TransformDefinitions} from "@lib/game/game/elements/transform/type";
+import {CommonPosition, CommonPositionType} from "@lib/game/game/elements/transform/position";
+import {
+    ImageActionContentType,
+    ImageActionTypes,
+    SceneActionContentType,
+    SceneActionTypes
+} from "@lib/game/game/actionTypes";
+import {Image} from "@lib/game/game/elements/image";
+import Actions = LogicAction.Actions;
 import ImageTransformProps = TransformDefinitions.ImageTransformProps;
-
-/**
- * @todo: 提前加载所需场景的资源
- */
+import {Utils} from "@lib/game/game/common/core";
 
 export type SceneConfig = {
     invertY?: boolean;
@@ -34,6 +39,8 @@ export type JumpConfig = {
 export type SceneDataRaw = {
     state: {
         backgroundMusic?: SoundDataRaw | null;
+        background?: Background["background"];
+        backgroundImageState?: Partial<CommonImage>;
     };
 }
 
@@ -84,6 +91,10 @@ export class Scene extends Constructable<
     srcManager: SrcManager = new SrcManager();
     events: EventDispatcher<SceneEventTypes> = new EventDispatcher();
     backgroundImageState: Partial<CommonImage>;
+    _liveState = {
+        active: false,
+    }
+    _sceneRoot: SceneAction<"scene:action">;
     private _actions: SceneAction<any>[] = [];
 
     constructor(name: string, config: SceneConfig = Scene.defaultConfig) {
@@ -93,7 +104,7 @@ export class Scene extends Constructable<
         this.config = deepMerge<SceneConfig>(Scene.defaultConfig, config);
         this.state = deepMerge<SceneConfig & SceneState>(Scene.defaultState, this.config);
         this.backgroundImageState = {
-            position: "center"
+            position: new CommonPosition(CommonPositionType.Center),
         };
     }
 
@@ -105,6 +116,11 @@ export class Scene extends Constructable<
         return this._exit();
     }
 
+    /**
+     * 设置背景图片，如果提供了 {@link transition} 参数，则会应用过渡效果
+     * @param background 目标背景
+     * @param transition 过渡效果
+     */
     public setBackground(background: Background["background"], transition?: ITransition) {
         if (transition) {
             this.transitionSceneBackground(undefined, transition);
@@ -121,6 +137,10 @@ export class Scene extends Constructable<
         return this;
     }
 
+    /**
+     * 为背景图片应用变换
+     * @param transform
+     */
     public applyTransform(transform: Transform<ImageTransformProps>) {
         this._actions.push(new SceneAction(
             this,
@@ -137,9 +157,7 @@ export class Scene extends Constructable<
      * 调用方法后，将无法回到当前调用该跳转的场景上下文，因此该场景会被卸载
      * 任何在跳转操作之后的操作都不会被执行
      */
-    public jumpTo(actions: SceneAction<"scene:action">[] | SceneAction<"scene:action">, config?: JumpConfig): this;
-    public jumpTo(scene: Scene, config?: JumpConfig): this;
-    public jumpTo(arg0: SceneAction<"scene:action">[] | SceneAction<"scene:action"> | Scene, config?: JumpConfig): this {
+    public jumpTo(arg0: Scene, config?: JumpConfig): this {
         this._actions.push(new SceneAction(
             this,
             "scene:preUnmount",
@@ -149,23 +167,12 @@ export class Scene extends Constructable<
         ));
 
         const jumpConfig: Partial<JumpConfig> = config || {};
-        if (arg0 instanceof Scene) {
-            const actions = arg0.getSceneActions();
-            this._transitionToScene(arg0, jumpConfig.transition)
-                ._exit();
-            return this._jumpTo(actions);
-        }
-
-        const actions = Array.isArray(arg0) ? arg0 : [arg0];
-        const scene = actions[0]?.callee;
-        if (scene) {
-            this._transitionToScene(scene, jumpConfig.transition)
-                ._exit();
-        }
-        return this._jumpTo(actions);
+        this._transitionToScene(arg0, jumpConfig.transition)
+            ._exit();
+        return this._jumpTo(arg0);
     }
 
-    public transitionSceneBackground(scene?: Scene, transition?: ITransition) {
+    transitionSceneBackground(scene?: Scene, transition?: ITransition) {
         this._transitionToScene(scene, transition);
         return this;
     }
@@ -221,6 +228,8 @@ export class Scene extends Constructable<
             state: {
                 ...safeClone(this.state),
                 backgroundMusic: this.state.backgroundMusic?.toData(),
+                background: this.state.background,
+                backgroundImageState: Image.serializeImageState(this.backgroundImageState),
             },
         }
     }
@@ -229,6 +238,8 @@ export class Scene extends Constructable<
         this.state = deepMerge<SceneConfig & SceneState>(this.state, data.state);
         if (data.state.backgroundMusic) {
             this.state.backgroundMusic = new Sound().fromData(data.state.backgroundMusic);
+            this.state.background = data.state.background;
+            this.backgroundImageState = Image.deserializeImageState(data.state.backgroundImageState);
         }
         return this;
     }
@@ -255,18 +266,80 @@ export class Scene extends Constructable<
         return this;
     }
 
+    toTransform(): Transform<ImageTransformProps> {
+        return new Transform<ImageTransformProps>([
+            {
+                props: this.backgroundImageState,
+                options: {
+                    duration: 0,
+                }
+            },
+        ]);
+    }
+
     protected getSceneActions() {
         return this.toActions();
     }
 
-    private _jumpTo(actions: SceneAction<"scene:action">[] | SceneAction<"scene:action">) {
+    registerSrc(seen: Set<Scene> = new Set<Scene>()) {
+        if (!this.getActions().length) {
+            return;
+        }
+
+        const seenJump = new Set<SceneAction<typeof SceneActionTypes["jumpTo"]>>();
+        const queue: Actions[] = [this.getActions()[0]];
+        const futureScene = new Set<Scene>();
+
+        while (queue.length) {
+            const action = queue.shift();
+            if (action instanceof SceneAction) {
+                if (action.type === SceneActionTypes.jumpTo) {
+                    const jumpTo = action as SceneAction<typeof SceneActionTypes["jumpTo"]>;
+                    const scene = jumpTo.contentNode.getContent()[0];
+
+                    if (seenJump.has(jumpTo) || seen.has(scene)) {
+                        continue;
+                    }
+
+                    seenJump.add(jumpTo);
+                    futureScene.add(scene);
+                    seen.add(scene);
+                } else if (action.type === SceneActionTypes.setBackground) {
+                    const content = (action.contentNode as ContentNode<SceneActionContentType[typeof SceneActionTypes["setBackground"]]>).content[0];
+                    this.srcManager.register(new Image({src: Utils.backgroundToSrc(content)}));
+                }
+            } else if (action instanceof ImageAction) {
+                const imageAction = action as ImageAction;
+                this.srcManager.register(imageAction.callee);
+                if (action.type === ImageActionTypes.setSrc) {
+                    const content = (action.contentNode as ContentNode<ImageActionContentType[typeof ImageActionTypes["setSrc"]]>).content[0];
+                    this.srcManager.register(new Image({src: content}));
+                }
+            } else if (action instanceof SoundAction) {
+                this.srcManager.register(action.callee);
+            } else if (action instanceof ControlAction) {
+                const controlAction = action as ControlAction;
+                const actions = controlAction.getFutureActions();
+
+                queue.push(...actions);
+            }
+            queue.push(...action.getFutureActions());
+        }
+
+        futureScene.forEach(scene => {
+            scene.registerSrc(seen);
+            this.srcManager.registerFuture(scene.srcManager);
+        });
+    }
+
+    private _jumpTo(scene: Scene) {
         this._actions.push(new SceneAction(
             this,
             "scene:jumpTo",
-            new ContentNode<[Actions[]]>(
+            new ContentNode<[Scene]>(
                 Game.getIdManager().getStringId(),
             ).setContent([
-                Array.isArray(actions) ? actions.flat(2) : [actions]
+                scene
             ])
         ));
         return this;
@@ -307,15 +380,18 @@ export class Scene extends Constructable<
         return this;
     }
 
-    toTransform(): Transform<ImageTransformProps> {
-        return new Transform<ImageTransformProps>([
-            {
-                props: this.backgroundImageState,
-                options: {
-                    duration: 0,
-                }
-            },
-        ]);
+    public action(actions: (Actions | Actions[])[]): this {
+        const userActions = actions.flat(2);
+        const images = this.getAllElements(this.getAllActions(false, userActions))
+            .filter(element => element instanceof Image);
+        const futureActions = [
+            ...this.activate().toActions(),
+            ...images.map(image => (image as Image).init().toActions()).flat(2),
+            ...userActions,
+        ];
+
+        this._sceneRoot = this._action(futureActions);
+        return this;
     }
 }
 

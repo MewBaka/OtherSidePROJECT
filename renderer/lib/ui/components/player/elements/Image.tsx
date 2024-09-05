@@ -6,7 +6,6 @@ import {DOMKeyframesDefinition, useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
 import {deepMerge} from "@lib/util/data";
 import {Transform} from "@lib/game/game/elements/transform/transform";
-import {TransformDefinitions} from "@lib/game/game/common/types";
 import {Utils} from "@lib/game/game/common/core";
 import {
     CSSElementProp,
@@ -107,6 +106,12 @@ export default function Image({
                     setTransitionProps(progress);
                 })
             },
+            {
+                type: TransitionEventTypes.end,
+                listener: transition.events.on(TransitionEventTypes.end, () => {
+                    setTransition(null);
+                })
+            }
         ]) : null;
 
         return () => {
@@ -115,15 +120,14 @@ export default function Image({
         };
     }, [transition, image]);
 
-    function assignTo(arg0: Transform<TransformDefinitions.ImageTransformProps> | Record<string, any>) {
+    function assignTo(arg0: Transform | Record<string, any>) {
         if (transform && transform.getControl()) {
             console.warn("processing transform not completed");
             transform.getControl().complete();
             transform.setControl(null);
         }
         if (!scope.current) {
-            console.warn("scope not ready");
-            return;
+            throw new Error("scope not ready");
         }
         if (arg0 instanceof Transform) {
             Object.assign(scope.current.style, arg0.propToCSS(state, image.state));
@@ -152,16 +156,17 @@ export default function Image({
             height: '100vh',
             position: 'fixed'
         }}>
-            <div style={{
+            <div className={"overflow-hidden"} style={{
                 width: `${ratio.w}px`,
                 height: `${ratio.h}px`,
                 position: 'relative'
             }}>
-                {transition ? transition.toElementProps().map((elementProps, index) => {
+                {transition ? transition.toElementProps().map((elementProps, index, arr) => {
                     const mergedProps =
                         deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
                     return (
-                        <img key={index} ref={scope} alt={mergedProps.alt} {...mergedProps}/>
+                        <img key={index} alt={mergedProps.alt} {...mergedProps}
+                             ref={index === (arr.length - 1) ? scope : undefined}/>
                     );
                 }) : (
                     <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />
