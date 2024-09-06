@@ -16,6 +16,9 @@ export default function Main({
     const [style, setStyle] = useState({});
     const {setRatio} = useAspectRatio();
 
+    const MIN_WIDTH = 1600 * 0.5;
+    const MIN_HEIGHT = 900 * 0.5;
+
     useEffect(() => {
         let resizeTimeout: NodeJS.Timeout;
 
@@ -34,6 +37,10 @@ export default function Main({
                     width = containerWidth;
                     height = containerWidth / aspectRatio;
                 }
+
+                // Apply minimum width and height
+                if (width < MIN_WIDTH) width = MIN_WIDTH;
+                if (height < MIN_HEIGHT) height = MIN_HEIGHT;
 
                 setStyle({
                     width: `${width}px`,
@@ -61,6 +68,10 @@ export default function Main({
                             width: `${width}px`,
                             height: `${height}px`,
                         }
+                    },
+                    min: {
+                        w: MIN_WIDTH,
+                        h: MIN_HEIGHT
                     }
                 });
             }
@@ -68,7 +79,7 @@ export default function Main({
 
         const handleResize = () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateStyle, 200);
+            resizeTimeout = setTimeout(updateStyle, 500);
         };
 
         updateStyle();

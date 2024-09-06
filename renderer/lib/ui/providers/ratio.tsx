@@ -10,6 +10,10 @@ type Ratio = {
     s: {
         style: React.CSSProperties;
     };
+    min: {
+        w: number;
+        h: number;
+    };
 }
 type ThemeContextType = {
     ratio: Ratio;
@@ -23,7 +27,11 @@ const DefaultValue = {
     style: {},
     s: {
         style: {}
-    }
+    },
+    min: {
+        w: 800,
+        h: 450
+    },
 };
 const Context = createContext<null | ThemeContextType>(null);
 

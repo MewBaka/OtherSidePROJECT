@@ -88,7 +88,9 @@ export default function QuickMenu() {
                                 "bg-primary-400 hover:bg-primary-500 active:bg-primary-600 text-white": afmEnabled,
                                 "bg-white": !afmEnabled,
                             })}>
-                                <span className="text-black font-medium">Auto</span>
+                                <span className={clsx("text-black font-medium transition-color", {
+                                    "text-white": afmEnabled
+                                })}>Auto</span>
                             </QuickButton>
                             <QuickButton className="bg-white">
                                 <Save size={IconSize}/>

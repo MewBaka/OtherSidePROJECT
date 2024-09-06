@@ -156,7 +156,7 @@ scene1.action([
         sound1.play().toActions(),
     ]).toActions(),
 
-    image2.show().toActions(),
+    // image2.show().toActions(),
 
     scene1.applyTransform(transformShake).toActions(),
 

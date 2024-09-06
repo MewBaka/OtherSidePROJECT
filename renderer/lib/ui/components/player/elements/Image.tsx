@@ -154,7 +154,9 @@ export default function Image({
         } style={{
             width: '100vw',
             height: '100vh',
-            position: 'fixed'
+            position: 'fixed',
+            minWidth: `${ratio.min.w}px`,
+            minHeight: `${ratio.min.h}px`,
         }}>
             <div className={"overflow-hidden"} style={{
                 width: `${ratio.w}px`,

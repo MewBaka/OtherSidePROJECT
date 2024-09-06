@@ -87,25 +87,7 @@ export class StaticChecker {
         while (queue.length) {
             const action = queue.shift()!;
 
-            if (action instanceof ImageAction) {
-                if (!imageStates.has(action.callee)) {
-                    imageStates.set(action.callee, {
-                        isDisposed: false,
-                        usedExternalSrc: false,
-                    });
-                }
-                this.checkImage(imageStates.get(action.callee)!, action);
-            } else if (action instanceof SceneAction) {
-                if (action.type === SceneActionTypes.jumpTo) {
-                    const scene =
-                        (action.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
-                    if (!seen.has(scene)) {
-                        seen.add(scene);
-                    } else {
-                        continue;
-                    }
-                }
-            }
+            this.checkAction(action, imageStates, seen);
 
             const child = action.contentNode.child;
             if (child) {
@@ -116,7 +98,29 @@ export class StaticChecker {
         return imageStates;
     }
 
-    checkImage(state: ImageState, action: ImageAction) {
+    private checkAction(action: LogicAction.Actions, imageStates: Map<Image, ImageState>, seen: Set<Scene>) {
+        if (action instanceof ImageAction) {
+            if (!imageStates.has(action.callee)) {
+                imageStates.set(action.callee, {
+                    isDisposed: false,
+                    usedExternalSrc: false,
+                });
+            }
+            this.checkImage(imageStates.get(action.callee)!, action);
+        } else if (action instanceof SceneAction) {
+            if (action.type === SceneActionTypes.jumpTo) {
+                const scene =
+                    (action.contentNode as ContentNode<SceneActionContentType["scene:jumpTo"]>).getContent()[0];
+                if (!seen.has(scene)) {
+                    seen.add(scene);
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+
+    private checkImage(state: ImageState, action: ImageAction) {
         if (action.type === ImageActionTypes.dispose) {
             if (state.isDisposed) {
                 const message = `Image is disposed multiple times before action: ${action.type}\nImage: ${action.callee.name}\nAction: ${action.type}\n\nAt: ${action.__stack}`;
