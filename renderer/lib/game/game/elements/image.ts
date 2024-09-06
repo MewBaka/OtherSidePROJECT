@@ -305,7 +305,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return this;
     }
 
-    _$setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
+    _$setDispose() {
         this.state.disposed = true;
         return this;
     }

@@ -61,7 +61,7 @@ export class CharacterAction<T extends typeof CharacterActionTypes[keyof typeof 
                     type: this.type as any,
                     node: this.contentNode.child
                 });
-            }).then();
+            });
             return awaitable;
         }
         return super.executeAction(state);
@@ -357,7 +357,7 @@ export class MenuAction<T extends typeof MenuActionTypes[keyof typeof MenuAction
                 type: this.type as any,
                 node: v.action[0].contentNode
             });
-        }).then(r => r)
+        });
         return awaitable;
     }
 

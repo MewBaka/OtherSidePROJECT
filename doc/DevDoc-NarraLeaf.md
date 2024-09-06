@@ -162,18 +162,15 @@ new Script(({gameState}) => {
 然后，通过Lambda等方式来检测数字
 
 ```typescript
-const checkNumber = (n: number) => new Condition()
-    // 使用Lambda来检测数字是否正确
-    .If(({gameState, resolve}) => {
-            // 从当前游戏状态中获取储存空间
+new Condition()
+    .If(({gameState}) => {
             const namespace =
-                gameState.clientGame.game
-                    .getLiveGame()
-                    .storable
-                    .getNamespace(LiveGame.GameSpacesKey.game);
+                gameState
+                    .getStorable()
+                    .getNamespace("game")
 
             // 通过读取储存空间中的数字来判断玩家是否猜对
-            resolve(namespace.get("answer") === n);
+            return namespace.get("answer") === n;
         },
         
         character2.say("恭喜你！")

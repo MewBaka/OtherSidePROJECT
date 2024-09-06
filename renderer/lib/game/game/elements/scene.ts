@@ -380,8 +380,10 @@ export class Scene extends Constructable<
         return this;
     }
 
-    public action(actions: (Actions | Actions[])[]): this {
-        const userActions = actions.flat(2);
+    public action(actions: (Actions | Actions[])[]): this;
+    public action(actions: ((scene: Scene) => Actions[])): this;
+    public action(actions: (Actions | Actions[])[] | ((scene: Scene) => Actions[])): this {
+        const userActions = Array.isArray(actions) ? actions.flat(2) : actions(this).flat(2);
         const images = this.getAllElements(this.getAllActions(false, userActions))
             .filter(element => element instanceof Image);
         const futureActions = [
