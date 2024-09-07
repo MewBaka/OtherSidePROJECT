@@ -114,7 +114,7 @@ export default function BackgroundTransition({scene, props, state}: {
     };
 
     return (
-        <>
+        <div>
             {
                 transition ? (() => {
                     return transition.toElementProps().map((elementProps, index, arr) => {
@@ -137,7 +137,7 @@ export default function BackgroundTransition({scene, props, state}: {
                     )
                 })()
             }
-        </>
+        </div>
     );
 }
 

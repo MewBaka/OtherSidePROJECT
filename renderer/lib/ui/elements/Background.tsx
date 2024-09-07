@@ -24,10 +24,10 @@ export default function Background({
                     height: `${ratio.h}px`,
                     ...(clientWidth > ratio.min.w ? {
                         left: "50%",
-                    }: {}),
+                    } : {}),
                     ...(clientHeight > ratio.min.h ? {
                         top: "50%",
-                    }: {}),
+                    } : {}),
                     transform: `translate(${clientWidth > ratio.min.w ? "-50%" : "0"}, ${clientHeight > ratio.min.h ? "-50%" : "0"})`,
                 }}
             >

@@ -8,7 +8,6 @@ import {
     Sentence,
     Story,
     Transform,
-    Utils,
     Word
 } from "@lib/game/game/common/core";
 import {GameState, LiveGame} from "@lib/game/game/common/game";
@@ -50,8 +49,6 @@ const scene3 = new Scene("scene3", {
     invertY: true,
 });
 
-
-// @fixme: 舞台演出异常
 
 scene3.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
@@ -156,7 +153,7 @@ scene1.action([
     character1
         .say("你好！")
         .toActions(),
-    scene1.sleep(200000).toActions(),
+    // scene1.sleep(200000).toActions(),
     Control.allAsync([
         sound1.play().toActions(),
     ]).toActions(),
@@ -261,7 +258,7 @@ scene1.action([
     scene1.jumpTo(
         scene2,
         {
-            transition: new Dissolve(2000, Utils.staticImageDataToSrc(mainMenuBackground2))
+            transition: new Dissolve(2000)
         }
     ).toActions(),
 ]);
