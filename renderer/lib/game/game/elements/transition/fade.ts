@@ -23,7 +23,7 @@ export class Fade extends Base<FadeProps> implements ITransition {
     private state: FadeElementProps = {
         opacity: 1,
     };
-    private readonly src: string;
+    private src: string;
 
     constructor(src: Scene | StaticImageData | string, duration: number = 1000) {
         super();
@@ -31,6 +31,10 @@ export class Fade extends Base<FadeProps> implements ITransition {
         this.src = typeof src === "string" ? src :
             src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
                 Utils.staticImageDataToSrc(src);
+    }
+
+    setSrc(src: string) {
+        this.src = src;
     }
 
     public start(onComplete?: () => void): void {

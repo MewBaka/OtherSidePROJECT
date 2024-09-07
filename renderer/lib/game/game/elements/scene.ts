@@ -123,6 +123,7 @@ export class Scene extends Constructable<
      */
     public setBackground(background: Background["background"], transition?: ITransition) {
         if (transition) {
+            transition.setSrc(Utils.backgroundToSrc(background));
             this.transitionSceneBackground(undefined, transition);
         }
         this._actions.push(new SceneAction(
@@ -358,6 +359,7 @@ export class Scene extends Constructable<
 
     private _transitionToScene(scene?: Scene, transition?: ITransition): this {
         if (transition) {
+            if(scene) transition.setSrc(Utils.backgroundToSrc(scene.config.background));
             this._setTransition(transition)
                 ._applyTransition(transition)
         }

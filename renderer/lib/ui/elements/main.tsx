@@ -4,6 +4,7 @@ import clsx from "clsx";
 import {useTheme} from "@lib/ui/providers/theme-mode";
 import React, {useEffect, useState} from "react";
 import {useAspectRatio} from "../providers/ratio";
+import {Constants} from "@lib/api/config";
 
 export default function Main({
                                  children,
@@ -23,7 +24,7 @@ export default function Main({
         let resizeTimeout: NodeJS.Timeout;
 
         const updateStyle = () => {
-            const container = document.getElementById("__content-container");
+            const container = document.getElementById(Constants.app.game.contentContainerId);
             if (container) {
                 const containerWidth = container.clientWidth;
                 const containerHeight = container.clientHeight;
@@ -79,7 +80,8 @@ export default function Main({
 
         const handleResize = () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateStyle, 500);
+            // resizeTimeout = setTimeout(updateStyle, 50);
+            updateStyle();
         };
 
         updateStyle();
@@ -91,7 +93,7 @@ export default function Main({
     }, [theme, setRatio]);
 
     return (
-        <div id="__content-container" style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
+        <div id={Constants.app.game.contentContainerId} style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
             <main className={clsx("text-foreground bg-background", theme, className)} style={style}>
                 {children}
             </main>

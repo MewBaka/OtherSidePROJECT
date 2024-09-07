@@ -1,6 +1,5 @@
 import {Image as GameImage} from "@/lib/game/game/elements/image";
 import {useAspectRatio} from "@/lib/ui/providers/ratio";
-import clsx from "clsx";
 import React, {useEffect, useState} from "react";
 import {DOMKeyframesDefinition, useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
@@ -13,6 +12,7 @@ import {
     ITransition,
     TransitionEventTypes
 } from "@lib/game/game/elements/transition/type";
+import Isolated from "@lib/ui/elements/isolated";
 
 // @todo: 增加无障碍支持
 
@@ -147,33 +147,17 @@ export default function Image({
     };
 
     return (
-        <div className={
-            clsx("fixed inset-0 flex items-center justify-center z-0", {
-                "opacity-0": !image.state.display,
-            })
-        } style={{
-            width: '100vw',
-            height: '100vh',
-            position: 'fixed',
-            minWidth: `${ratio.min.w}px`,
-            minHeight: `${ratio.min.h}px`,
-        }}>
-            <div className={"overflow-hidden"} style={{
-                width: `${ratio.w}px`,
-                height: `${ratio.h}px`,
-                position: 'relative'
-            }}>
-                {transition ? transition.toElementProps().map((elementProps, index, arr) => {
-                    const mergedProps =
-                        deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
-                    return (
-                        <img key={index} alt={mergedProps.alt} {...mergedProps}
-                             ref={index === (arr.length - 1) ? scope : undefined}/>
-                    );
-                }) : (
-                    <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />
-                )}
-            </div>
-        </div>
+        <Isolated className={"absolute"}>
+            {transition ? transition.toElementProps().map((elementProps, index, arr) => {
+                const mergedProps =
+                    deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});
+                return (
+                    <img key={index} alt={mergedProps.alt} {...mergedProps}
+                         ref={index === (arr.length - 1) ? scope : undefined}/>
+                );
+            }) : (
+                <img ref={scope} alt={"image"} {...deepMerge(defaultProps, transformProps)} />
+            )}
+        </Isolated>
     );
 };

@@ -50,6 +50,9 @@ const scene3 = new Scene("scene3", {
     invertY: true,
 });
 
+
+// @fixme: 舞台演出异常
+
 scene3.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
@@ -134,7 +137,7 @@ scene2.action([
     // scene2.setBackgroundMusic(scene2Bgm).toActions(),
 
     scene2.jumpTo(scene3, {
-        transition: new Dissolve(mainMenuBackground, 2000)
+        transition: new Dissolve(2000, mainMenuBackground)
     }).toActions(),
 ]);
 
@@ -146,12 +149,14 @@ scene1.action([
         sync: true,
     }).toActions(),
 
+
     // 我们不再需要这个图片，所以我们需要释放其资源
     // 在释放之后调用其任何方法都是不合法并且不安全的
     image2.dispose().toActions(),
     character1
         .say("你好！")
         .toActions(),
+    scene1.sleep(200000).toActions(),
     Control.allAsync([
         sound1.play().toActions(),
     ]).toActions(),
@@ -182,7 +187,7 @@ scene1.action([
             scene1.jumpTo(
                 scene2,
                 {
-                    transition: new FadeIn(mainMenuBackground2, 2000, "left", 30)
+                    transition: new FadeIn("left", 30, 2000)
                 }
             ).toActions(),
         ])
@@ -256,7 +261,7 @@ scene1.action([
     scene1.jumpTo(
         scene2,
         {
-            transition: new Dissolve(Utils.staticImageDataToSrc(mainMenuBackground2), 2000)
+            transition: new Dissolve(2000, Utils.staticImageDataToSrc(mainMenuBackground2))
         }
     ).toActions(),
 ]);

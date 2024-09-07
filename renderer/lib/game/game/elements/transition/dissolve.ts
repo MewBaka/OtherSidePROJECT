@@ -28,14 +28,20 @@ export class Dissolve extends Base<DissolveProps> implements ITransition {
     private state: DissolveElementProps = {
         opacity: 0,
     };
-    private readonly src: string;
+    private src: string;
 
-    constructor(src: string | NextJSStaticImageData | Scene, duration: number = 1000) {
+    constructor(duration: number = 1000, src?: string | NextJSStaticImageData | Scene) {
         super();
         this.duration = duration;
-        this.src = typeof src === "string" ? src :
-            src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
-                Utils.staticImageDataToSrc(src);
+        if (src) {
+            this.src = typeof src === "string" ? src :
+                src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
+                    Utils.staticImageDataToSrc(src);
+        }
+    }
+
+    setSrc(src: string) {
+        this.src = src;
     }
 
     public start(onComplete?: () => void): void {
