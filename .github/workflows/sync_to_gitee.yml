@@ -1,0 +1,28 @@
+name: Sync to Gitee
+
+on:
+  push:
+    branches:
+      - dev_nomen
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up git config
+        run: |
+          git config --global user.name "helloyork"
+          git config --global user.email "helloyork@icloud.com"
+
+      - name: Mirror push to Gitee
+        env:
+          GT_TOKEN: ${{ secrets.GT_TOKEN }}
+        run: |
+          git remote add gitee https://oauth2:${GT_TOKEN}@gitee.com/Wangs-official/OtherSideProject.git
+          git push -f gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
