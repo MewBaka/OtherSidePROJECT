@@ -5,15 +5,18 @@ on:
     branches:
       - dev_nomen
       - main
+  pull_request:
+    types: [closed]  # 当PR关闭时触发，包括合并
 
 jobs:
   sync:
+    if: github.event.pull_request.merged == true || github.event_name == 'push'  # 监听push事件和PR合并事件
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 克隆完整的历史记录
 
       - name: Set up git config
         run: |
@@ -25,4 +28,4 @@ jobs:
           GT_TOKEN: ${{ secrets.GT_TOKEN }}
         run: |
           git remote add gitee https://oauth2:${GT_TOKEN}@gitee.com/Wangs-official/OtherSideProject.git
-          git push -f gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
+          git push gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
