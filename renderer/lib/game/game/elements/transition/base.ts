@@ -50,6 +50,10 @@ export class Base<T extends ElementProp> implements ITransition<T> {
             ...options,
         });
     }
+
+    copy(): ITransition<T> {
+        return new Base<T>();
+    }
 }
 
 

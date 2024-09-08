@@ -153,7 +153,9 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
      */
     public setSrc(src: string | StaticImageData, transition?: ITransition): this {
         if (transition) {
-            this._transitionSrc(transition);
+            const copy = transition.copy();
+            copy.setSrc(Utils.srcToString(src));
+            this._transitionSrc(copy);
         }
         const action = new ImageAction<typeof ImageAction.ActionTypes.setSrc>(
             this,

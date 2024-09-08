@@ -1,8 +1,6 @@
 import type {EventDispatcher} from "@lib/util/data";
 import React from "react";
 import {DOMKeyframesDefinition} from "framer-motion";
-import {StaticImageData} from "next/image";
-import {Scene} from "@lib/game/game/elements/scene";
 
 export type ElementProp<T extends Element = Element, U extends React.HTMLAttributes<T> = React.HTMLAttributes<T>> =
     React.JSX.IntrinsicAttributes
@@ -21,6 +19,8 @@ export interface ITransition<T extends ElementProp = {}> {
     toElementProps(): T[];
 
     setSrc(src: string): void;
+
+    copy(): ITransition<T>;
 }
 
 export type EventTypes<T extends any[]> = {

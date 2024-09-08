@@ -123,8 +123,9 @@ export class Scene extends Constructable<
      */
     public setBackground(background: Background["background"], transition?: ITransition) {
         if (transition) {
-            transition.setSrc(Utils.backgroundToSrc(background));
-            this.transitionSceneBackground(undefined, transition);
+            const copy = transition.copy();
+            copy.setSrc(Utils.backgroundToSrc(background));
+            this.transitionSceneBackground(undefined, copy);
         }
         this._actions.push(new SceneAction(
             this,
@@ -359,9 +360,10 @@ export class Scene extends Constructable<
 
     private _transitionToScene(scene?: Scene, transition?: ITransition): this {
         if (transition) {
-            if(scene) transition.setSrc(Utils.backgroundToSrc(scene.config.background));
-            this._setTransition(transition)
-                ._applyTransition(transition)
+            const copy = transition.copy();
+            if(scene) copy.setSrc(Utils.backgroundToSrc(scene.config.background));
+            this._setTransition(copy)
+                ._applyTransition(copy);
         }
         if (scene) {
             this._actions.push(

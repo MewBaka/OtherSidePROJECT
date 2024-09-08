@@ -114,4 +114,8 @@ export class FadeIn extends Base<FadeInProps> implements ITransition {
             }
         ];
     }
+
+    copy(): ITransition<FadeInProps> {
+        return new FadeIn(this.direction, this.offset, this.duration, this.src);
+    }
 }

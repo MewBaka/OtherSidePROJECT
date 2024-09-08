@@ -1,5 +1,4 @@
 import {Image as GameImage} from "@/lib/game/game/elements/image";
-import {useAspectRatio} from "@/lib/ui/providers/ratio";
 import React, {useEffect, useState} from "react";
 import {DOMKeyframesDefinition, useAnimate} from "framer-motion";
 import {GameState} from "@lib/ui/components/player/gameState";
@@ -25,7 +24,6 @@ export default function Image({
     state: GameState;
     onAnimationEnd?: () => any;
 }>) {
-    const {ratio} = useAspectRatio();
     const [scope, animate] = useAnimate();
     const [transform, setTransform] =
         useState<Transform<any> | null>(null);
@@ -147,7 +145,7 @@ export default function Image({
     };
 
     return (
-        <Isolated className={"absolute"}>
+        <Isolated className={"absolute overflow-hidden"}>
             {transition ? transition.toElementProps().map((elementProps, index, arr) => {
                 const mergedProps =
                     deepMerge<ImgElementProp>(defaultProps, transformProps, elementProps, transitionProps[index] || {});

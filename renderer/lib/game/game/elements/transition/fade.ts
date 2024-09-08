@@ -25,12 +25,14 @@ export class Fade extends Base<FadeProps> implements ITransition {
     };
     private src: string;
 
-    constructor(src: Scene | StaticImageData | string, duration: number = 1000) {
+    constructor(duration: number = 1000, src?: Scene | StaticImageData | string) {
         super();
         this.duration = duration;
-        this.src = typeof src === "string" ? src :
-            src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
-                Utils.staticImageDataToSrc(src);
+        if (src) {
+            this.src = typeof src === "string" ? src :
+                src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
+                    Utils.staticImageDataToSrc(src);
+        }
     }
 
     setSrc(src: string) {
@@ -66,6 +68,10 @@ export class Fade extends Base<FadeProps> implements ITransition {
                 src: this.src,
             }
         ];
+    }
+
+    copy(): ITransition<FadeProps> {
+        return new Fade(this.duration, this.src);
     }
 }
 

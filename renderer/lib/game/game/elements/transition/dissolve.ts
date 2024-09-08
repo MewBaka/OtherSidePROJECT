@@ -70,6 +70,10 @@ export class Dissolve extends Base<DissolveProps> implements ITransition {
             }
         ];
     }
+
+    copy(): ITransition<DissolveProps> {
+        return new Dissolve(this.duration, this.src);
+    }
 }
 
 
