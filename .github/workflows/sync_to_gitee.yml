@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up git config
         run: |
@@ -23,4 +25,4 @@ jobs:
           GT_TOKEN: ${{ secrets.GT_TOKEN }}
         run: |
           git remote add gitee https://oauth2:${GT_TOKEN}@gitee.com/Wangs-official/OtherSideProject.git
-          git push -f gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/})
+          git push -f gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
