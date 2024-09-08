@@ -6,17 +6,17 @@ on:
       - dev_nomen
       - main
   pull_request:
-    types: [closed]
+    types: [closed]  # 当PR关闭时触发，包括合并
 
 jobs:
   sync:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'push'  # 监听push事件和PR合并事件
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 克隆完整的历史记录
 
       - name: Set up git config
         run: |
