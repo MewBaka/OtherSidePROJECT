@@ -5,9 +5,12 @@ on:
     branches:
       - dev_nomen
       - main
+  pull_request:
+    types: [closed]
 
 jobs:
   sync:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,4 +28,4 @@ jobs:
           GT_TOKEN: ${{ secrets.GT_TOKEN }}
         run: |
           git remote add gitee https://oauth2:${GT_TOKEN}@gitee.com/Wangs-official/OtherSideProject.git
-          git push -f gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
+          git push gitee HEAD:refs/heads/$(echo ${GITHUB_REF#refs/heads/}) --force
