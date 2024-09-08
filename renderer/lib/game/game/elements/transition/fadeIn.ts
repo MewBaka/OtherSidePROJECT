@@ -4,6 +4,7 @@ import {animate} from "framer-motion";
 import {Scene} from "@lib/game/game/elements/scene";
 import {StaticImageData} from "next/image";
 import {Utils} from "@lib/game/game/common/Utils";
+import {getCallStack} from "@lib/util/data";
 
 type FadeInElementProps = {
     opacity: number;
@@ -26,19 +27,31 @@ export class FadeIn extends Base<FadeInProps> implements ITransition {
         opacity: 0,
         transform: ''
     };
-    private readonly src: string;
+    private src: string;
+    __stack: string;
 
-    constructor(src: Scene | StaticImageData | string, duration: number = 1000, direction: 'left' | 'right' | 'top' | 'bottom', offset: number) {
+    constructor(direction: 'left' | 'right' | 'top' | 'bottom', offset: number, duration: number = 1000, src?: Scene | StaticImageData | string) {
         super();
         this.duration = duration;
         this.direction = direction;
         this.offset = offset;
-        this.src = typeof src === "string" ? src :
-            src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
-                Utils.staticImageDataToSrc(src);
+        if (src) {
+            this.src = typeof src === "string" ? src :
+                src instanceof Scene ? Utils.backgroundToSrc(src.config.background) :
+                    Utils.staticImageDataToSrc(src);
+        }
+        this.__stack = getCallStack();
+    }
+
+    setSrc(src: string) {
+        this.src = src;
     }
 
     public start(onComplete?: () => void): void {
+        if (!this.src) {
+            throw new Error('src is required, but not provided\nat:\n' + this.__stack);
+        }
+
         this.state.opacity = 0;
         this.state.transform = this.getInitialTransform();
         this.events.emit(TransitionEventTypes.start, null);
@@ -100,5 +113,9 @@ export class FadeIn extends Base<FadeInProps> implements ITransition {
                 src: this.src,
             }
         ];
+    }
+
+    copy(): ITransition<FadeInProps> {
+        return new FadeIn(this.direction, this.offset, this.duration, this.src);
     }
 }

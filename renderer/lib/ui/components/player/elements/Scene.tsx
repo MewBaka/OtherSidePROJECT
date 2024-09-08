@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 import {Scene as GameScene, SceneEventTypes} from "@lib/game/game/elements/scene";
 import {useAspectRatio} from "@/lib/ui/providers/ratio";
 import React, {useEffect, useState} from "react";
@@ -133,23 +131,11 @@ export default function Scene({
 
     return (
         <div className={className}>
-            <div
-                className={clsx("absolute inset-0 flex items-center justify-center bg-cover bg-center")}
-                style={{
-                    width: `${ratio.w}px`,
-                    height: `${ratio.h}px`,
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                }}
-            >
-                <BackgroundTransition scene={scene} props={{
-                    width: ratio.w,
-                    height: ratio.h,
-                    src: SrcManager.cacheablize(Utils.backgroundToSrc(scene.state.background), baseUrl),
-                }} state={state}/>
-            </div>
+            <BackgroundTransition scene={scene} props={{
+                width: ratio.w,
+                height: ratio.h,
+                src: SrcManager.cacheablize(Utils.backgroundToSrc(scene.state.background), baseUrl),
+            }} state={state}/>
             {children}
         </div>
     )

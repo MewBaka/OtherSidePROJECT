@@ -27,6 +27,11 @@ export class Constructable<
         return this.actions;
     }
 
+    setActions(actions: TAction[]) {
+        this.actions.length = 0;
+        this.actions.push(...actions);
+    }
+
     /**@internal */
     getAllActions(includeJumpTo?: boolean, actions?: LogicAction.Actions[]): LogicAction.Actions[] {
         const set = new Set<LogicAction.Actions>();

@@ -16,22 +16,6 @@ if (isProd) {
     app.setPath('userData', `${app.getPath('userData')} (development)`)
 }
 
-function zoom(mainWindow: Electron.CrossProcessExports.BrowserWindow) {
-    let {width, height} = mainWindow.getBounds();
-    let zoomFactor = Math.min(width / WIDTH, height / HEIGHT);
-    mainWindow.webContents.setZoomFactor(zoomFactor);
-}
-
-function debounce(func: Function, wait: number) {
-    let timeout: NodeJS.Timeout;
-    return function (this: any, ...args: any[]) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
-const debouncedZoom = debounce(zoom, 280);
-
 ;(async () => {
     await app.whenReady();
 
@@ -47,11 +31,7 @@ const debouncedZoom = debounce(zoom, 280);
     mainWindow.setMenu(null);
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
-        mainWindow.setMinimumSize(WIDTH / 3, HEIGHT / 3);
-        debouncedZoom(mainWindow);
-    });
-    mainWindow.on('resize', () => {
-        debouncedZoom(mainWindow);
+        mainWindow.setMinimumSize(WIDTH, HEIGHT);
     });
 
     RemoteHandler.getInstance().register(ipcMain, mainWindow);

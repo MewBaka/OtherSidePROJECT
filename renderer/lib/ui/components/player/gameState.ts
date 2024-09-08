@@ -143,7 +143,6 @@ export class GameState {
             if (afterClick) afterClick();
         });
         texts.push(action);
-        return Promise.resolve(action);
     }
 
     public createMenu(menu: MenuData, afterChoose?: (choice: Choice) => void, scene?: Scene) {
@@ -151,12 +150,11 @@ export class GameState {
             throw new Error("Menu must have at least one choice");
         }
         const menus = this.findElementByScene(this._getLastSceneIfNot(scene))?.ele.menus;
-        const action = this.createWaitableAction(menu, () => {
+        const action = this.createWaitableAction(menu, (choice: Choice) => {
             menus.splice(menus.indexOf(action as any), 1);
-            if (afterChoose) afterChoose(menu.choices[0]);
+            if (afterChoose) afterChoose(choice);
         });
         menus.push(action);
-        return Promise.resolve(action);
     }
 
     public createImage(image: Image, scene?: Scene) {

@@ -162,18 +162,15 @@ new Script(({gameState}) => {
 然后，通过Lambda等方式来检测数字
 
 ```typescript
-const checkNumber = (n: number) => new Condition()
-    // 使用Lambda来检测数字是否正确
-    .If(({gameState, resolve}) => {
-            // 从当前游戏状态中获取储存空间
+new Condition()
+    .If(({gameState}) => {
             const namespace =
-                gameState.clientGame.game
-                    .getLiveGame()
-                    .storable
-                    .getNamespace(LiveGame.GameSpacesKey.game);
+                gameState
+                    .getStorable()
+                    .getNamespace("game")
 
             // 通过读取储存空间中的数字来判断玩家是否猜对
-            resolve(namespace.get("answer") === n);
+            return namespace.get("answer") === n;
         },
         
         character2.say("恭喜你！")
@@ -297,6 +294,80 @@ NarraLeaf清楚，使用NarraLeaf Core对于非开发者来说是一件困难的
 
 这些规定都是虚拟的，仅用作初版规范，可能会在未来版本中更改
 
+
+### 2.0 一览
+
+nleaf脚本参考了javascript中语法糖的写法
+
+```
+<element> [name][construct call] { [...statements] }
+```
+
+这是nleaf基础定义语法，该语法实际上是返回一个对象，name和construct call是可选的  
+当name不为空，则该对象会被分配到当前作用域中
+
+例如，定义一个匿名场景，并且分配给变量
+
+```nleaf
+define scene1 = scene {}
+```
+
+或者给定一个名字
+
+```nleaf
+scene scene1 {}
+```
+
+或者加入初始化参数
+
+```nleaf
+scene scene1({
+    background: i1_3_2_background,
+    images: {
+        BG_hospital_2: "@/public/static/game/images/background/BG_hospital_2.jpg"
+    }
+}) {
+    // do something
+}
+```
+
+这个语法有些像是JavaScript的类定义，而该语法只是Scene构造函数的语法糖
+
+对于其他元素，例如Character、Image、Sound等，也有类似的语法糖
+
+```nleaf
+character char1 {}
+```
+
+对于一些特殊元素，例如Transition和Transform，也有类似的语法糖
+    
+```nleaf
+transform fade({
+    sync: false
+}) {
+    {
+        opacity: 0,
+        duration: 2000
+    },
+    {
+        opacity: 1,
+        duration: 2000
+    }
+}
+```
+
+而应用变换则通过语句来执行
+
+```nleaf
+scene scene1 {
+    show yanye1 with fade
+}
+```
+
+通用来讲，流程化（Constructable）的元素（例如Scene和Story）在大括号中包含的是流程  
+其他可执行（Actionable）的元素，例如Character，在大括号中包含的是配置  
+而Transform和Transition则是特殊的元素，（Animation），它们在大括号中包含的是动画帧
+
 ### 2.1 文件名
 
 NarraLeaf脚本文件（NarraLeaf Script）的文件名应该以`.nleaf`结尾
@@ -311,8 +382,6 @@ NarraLeaf脚本文件（NarraLeaf Script）的文件名应该以`.nleaf`结尾
 以及一元运算符(语法糖)和多元运算符
 
 例如，`{}`表示作用域，`()`表示表达式，`;`表示语句
-
-nleaf强制要求使用`;`来结束语句
 
 ### 2.4 注释
 

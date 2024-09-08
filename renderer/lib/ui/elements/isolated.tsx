@@ -8,11 +8,12 @@ export default function Isolated(
     const {ratio} = useAspectRatio();
     return (
         <div className={
-            clsx("fixed inset-0 flex items-center justify-center", className)
+            clsx("inset-0 flex items-center justify-center", className)
         } style={{
-            width: '100vw',
-            height: '100vh',
-            position: 'fixed'
+            width: '100%',
+            height: '100%',
+            minWidth: `${ratio.min.w}px`,
+            minHeight: `${ratio.min.h}px`,
         }}>
             <div style={{
                 width: `${ratio.w}px`,

@@ -17,6 +17,10 @@ export interface ITransition<T extends ElementProp = {}> {
     start(onComplete?: () => void): void;
 
     toElementProps(): T[];
+
+    setSrc(src: string): void;
+
+    copy(): ITransition<T>;
 }
 
 export type EventTypes<T extends any[]> = {

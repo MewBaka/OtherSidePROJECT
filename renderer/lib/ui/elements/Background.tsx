@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import {useAspectRatio} from "@/lib/ui/providers/ratio";
 import {ReactNode} from "react";
+import {Constants} from "@lib/api/config";
 
 export default function Background({
                                        children
@@ -12,6 +13,8 @@ export default function Background({
     const aspectRatio = useAspectRatio();
     const ratio = aspectRatio.ratio;
 
+    const {clientWidth, clientHeight} = document.querySelector("#" + Constants.app.game.contentContainerId);
+
     return (
         <>
             <div
@@ -19,10 +22,13 @@ export default function Background({
                 style={{
                     width: `${ratio.w}px`,
                     height: `${ratio.h}px`,
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
+                    ...(clientWidth > ratio.min.w ? {
+                        left: "50%",
+                    } : {}),
+                    ...(clientHeight > ratio.min.h ? {
+                        top: "50%",
+                    } : {}),
+                    transform: `translate(${clientWidth > ratio.min.w ? "-50%" : "0"}, ${clientHeight > ratio.min.h ? "-50%" : "0"})`,
                 }}
             >
                 {children}

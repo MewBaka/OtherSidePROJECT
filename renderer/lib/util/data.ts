@@ -246,12 +246,18 @@ export class EventDispatcher<T extends EventTypes, Type extends T & {
     }
 }
 
-export function getCallStack(n: number = 1): string {
+/**
+ * Get the call stack
+ * @param n The number of stack frames to skip
+ * @param s The number of stack frames cut off from the end
+ */
+export function getCallStack(n: number = 1, s: number = 0): string {
     const stack = new Error().stack;
     if (!stack) {
         return "";
     }
-    return stack.split('\n').slice(n + 1).join('\n');
+    // return stack.split('\n').slice(n + 1).join('\n').trim();
+    return stack.split('\n').slice(n + 1, -s).join('\n').trim();
 }
 
 export function sleep(ms: number): Promise<void> {

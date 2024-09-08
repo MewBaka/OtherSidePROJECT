@@ -123,7 +123,9 @@ export class Scene extends Constructable<
      */
     public setBackground(background: Background["background"], transition?: ITransition) {
         if (transition) {
-            this.transitionSceneBackground(undefined, transition);
+            const copy = transition.copy();
+            copy.setSrc(Utils.backgroundToSrc(background));
+            this.transitionSceneBackground(undefined, copy);
         }
         this._actions.push(new SceneAction(
             this,
@@ -358,8 +360,10 @@ export class Scene extends Constructable<
 
     private _transitionToScene(scene?: Scene, transition?: ITransition): this {
         if (transition) {
-            this._setTransition(transition)
-                ._applyTransition(transition)
+            const copy = transition.copy();
+            if(scene) copy.setSrc(Utils.backgroundToSrc(scene.config.background));
+            this._setTransition(copy)
+                ._applyTransition(copy);
         }
         if (scene) {
             this._actions.push(
@@ -380,8 +384,10 @@ export class Scene extends Constructable<
         return this;
     }
 
-    public action(actions: (Actions | Actions[])[]): this {
-        const userActions = actions.flat(2);
+    public action(actions: (Actions | Actions[])[]): this;
+    public action(actions: ((scene: Scene) => Actions[])): this;
+    public action(actions: (Actions | Actions[])[] | ((scene: Scene) => Actions[])): this {
+        const userActions = Array.isArray(actions) ? actions.flat(2) : actions(this).flat(2);
         const images = this.getAllElements(this.getAllActions(false, userActions))
             .filter(element => element instanceof Image);
         const futureActions = [

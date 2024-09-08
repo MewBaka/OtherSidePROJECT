@@ -15,12 +15,12 @@ export const scene1 = new Scene("scene1", {
     invertY: true,
     invertX: false
 });
-export const transition1 = new Fade("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", 300);
+export const transition1 = new Fade(300);
 
 export const image1 = new Image("test_sensei", {
     src: "/static/images/kotoba_tcr_bingfu_lh_pm_wx_xy.png",
-    position: new Align({xalign: 0.3, yalign: 0.5, yoffset: -20}),
-    scale: 0.3,
+    position: new Align({xalign: 0.3, yalign: 0.5}),
+    scale: 0.1,
 });
 export const image1_2 = image1.copy();
 export const image2 = new Image("image_speechless", {

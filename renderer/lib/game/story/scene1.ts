@@ -8,7 +8,6 @@ import {
     Sentence,
     Story,
     Transform,
-    Utils,
     Word
 } from "@lib/game/game/common/core";
 import {GameState, LiveGame} from "@lib/game/game/common/game";
@@ -49,6 +48,7 @@ const scene3 = new Scene("scene3", {
     background: mainMenuBackground,
     invertY: true,
 });
+
 
 scene3.action([
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
@@ -134,27 +134,10 @@ scene2.action([
     // scene2.setBackgroundMusic(scene2Bgm).toActions(),
 
     scene2.jumpTo(scene3, {
-        transition: new Dissolve(mainMenuBackground, 2000)
+        transition: new Dissolve(2000, mainMenuBackground)
     }).toActions(),
 ]);
 
-// 兼容性最高的旧版写法
-/*
-scene1.applyTransition(fadeOutTransition)
-    .setSceneBackground(mainMenuBackground2)
-    .applyTransition(fadeInTransition).toActions(),
-scene1.applyTransition(new Dissolve(Image.staticImageDataToSrc(mainMenuBackground2), 2000))
-    .setSceneBackground(mainMenuBackground2).toActions(),
-*/
-
-// 新版写法
-/*
-scene1.transitionSceneBackground(undefined, new Dissolve(mainMenuBackground2, 2000))
-    .setSceneBackground(mainMenuBackground2)
-    .toActions(),
-*/
-
-// @todo: 在错误的场景上调用方法应该静态返回错误
 
 scene1.action([
     image1.show({
@@ -162,19 +145,20 @@ scene1.action([
         duration: 500,
         sync: true,
     }).toActions(),
-    // scene1.sleep(1000).toActions(),
+
+
+    // 我们不再需要这个图片，所以我们需要释放其资源
+    // 在释放之后调用其任何方法都是不合法并且不安全的
+    image2.dispose().toActions(),
     character1
         .say("你好！")
         .toActions(),
+    // scene1.sleep(200000).toActions(),
     Control.allAsync([
-        // shake(image1), // 通过自定义的函数返回操作
-        // Control.do([
-        // speechless(scene1, image2),
-        // image2.dispose().toActions(),
-        // ]).toActions(),
-        // image1.applyTransform(transformShake).toActions(),
         sound1.play().toActions(),
     ]).toActions(),
+
+    // image2.show().toActions(),
 
     scene1.applyTransform(transformShake).toActions(),
 
@@ -200,7 +184,7 @@ scene1.action([
             scene1.jumpTo(
                 scene2,
                 {
-                    transition: new FadeIn(mainMenuBackground2, 2000, "left", 30)
+                    transition: new FadeIn("left", 30, 2000)
                 }
             ).toActions(),
         ])
@@ -269,16 +253,12 @@ scene1.action([
     character2.say("游戏结束！")
         .toActions(),
 
-    // 我们不再需要这个图片，所以我们需要释放其资源
-    // 在释放之后调用其任何方法都是不合法并且不安全的
-    image2.dispose().toActions(),
-
     // 直接通过jumpTo方法跳转到下一个场景
     // 该方法会卸载当前场景，这意味着该方法之后的所有操作都不会被执行
     scene1.jumpTo(
         scene2,
         {
-            transition: new Dissolve(Utils.staticImageDataToSrc(mainMenuBackground2), 2000)
+            transition: new Dissolve(2000)
         }
     ).toActions(),
 ]);
@@ -289,11 +269,7 @@ function isNumberCorrect(gameState: GameState, number: number) {
     return namespace.get("number") === number;
 }
 
-// @todo: 测试多场景
-
-story.action([
-    scene1
-]);
+story.entry(scene1);
 
 export {
     story

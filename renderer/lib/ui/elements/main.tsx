@@ -4,6 +4,7 @@ import clsx from "clsx";
 import {useTheme} from "@lib/ui/providers/theme-mode";
 import React, {useEffect, useState} from "react";
 import {useAspectRatio} from "../providers/ratio";
+import {Constants} from "@lib/api/config";
 
 export default function Main({
                                  children,
@@ -16,11 +17,14 @@ export default function Main({
     const [style, setStyle] = useState({});
     const {setRatio} = useAspectRatio();
 
+    const MIN_WIDTH = 1600 * 0.5;
+    const MIN_HEIGHT = 900 * 0.5;
+
     useEffect(() => {
         let resizeTimeout: NodeJS.Timeout;
 
         const updateStyle = () => {
-            const container = document.getElementById("__content-container");
+            const container = document.getElementById(Constants.app.game.contentContainerId);
             if (container) {
                 const containerWidth = container.clientWidth;
                 const containerHeight = container.clientHeight;
@@ -34,6 +38,10 @@ export default function Main({
                     width = containerWidth;
                     height = containerWidth / aspectRatio;
                 }
+
+                // Apply minimum width and height
+                if (width < MIN_WIDTH) width = MIN_WIDTH;
+                if (height < MIN_HEIGHT) height = MIN_HEIGHT;
 
                 setStyle({
                     width: `${width}px`,
@@ -61,6 +69,10 @@ export default function Main({
                             width: `${width}px`,
                             height: `${height}px`,
                         }
+                    },
+                    min: {
+                        w: MIN_WIDTH,
+                        h: MIN_HEIGHT
                     }
                 });
             }
@@ -68,7 +80,8 @@ export default function Main({
 
         const handleResize = () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateStyle, 200);
+            // resizeTimeout = setTimeout(updateStyle, 50);
+            updateStyle();
         };
 
         updateStyle();
@@ -80,7 +93,7 @@ export default function Main({
     }, [theme, setRatio]);
 
     return (
-        <div id="__content-container" style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
+        <div id={Constants.app.game.contentContainerId} style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
             <main className={clsx("text-foreground bg-background", theme, className)} style={style}>
                 {children}
             </main>

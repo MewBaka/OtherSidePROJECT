@@ -68,7 +68,7 @@ export default function Say({
     }, [isFinished]);
 
     return (
-        <Isolated>
+        <Isolated className={"absolute"}>
             {sentence.state.display && elementBehaviors &&
                 <div className={
                     clsx("absolute bottom-0 w-[calc(100%-40px)] h-[calc(33%-40px)] bg-white m-4 box-border rounded-md shadow-md flex items-center justify-center", className)

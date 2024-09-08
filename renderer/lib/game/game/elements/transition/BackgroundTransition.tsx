@@ -108,13 +108,13 @@ export default function BackgroundTransition({scene, props, state}: {
         width: scene.backgroundImageState.width,
         height: scene.backgroundImageState.height,
         style: {
-            border: "solid 5px yellow",
+            border: "dashed 3px red",
             position: "absolute",
         },
     };
 
     return (
-        <>
+        <div>
             {
                 transition ? (() => {
                     return transition.toElementProps().map((elementProps, index, arr) => {
@@ -137,7 +137,7 @@ export default function BackgroundTransition({scene, props, state}: {
                     )
                 })()
             }
-        </>
+        </div>
     );
 }
 

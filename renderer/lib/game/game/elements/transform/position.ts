@@ -40,7 +40,8 @@ export type D2Position<X = any, Y = any> = {
     yoffset: UnknownAble<number>;
 }
 
-export type UnknownAble<T> = T | typeof PositionUtils.Unknown;
+export type Unknown = typeof PositionUtils.Unknown;
+export type UnknownAble<T> = T | Unknown;
 
 export class PositionUtils {
     static readonly Unknown: unique symbol = Symbol("Unknown");
@@ -60,12 +61,25 @@ export class PositionUtils {
     }
 
     static D2PositionToCSS(pos: D2Position, invertX = false, invertY = false): CSSProps {
-        const yRes = invertY ? {bottom: pos.y} : {top: pos.y};
-        const xRes = invertX ? {right: pos.x} : {left: pos.x};
+        const posY = this.calc(pos.y, pos.yoffset);
+        const posX = this.calc(pos.x, pos.xoffset);
+        const yRes = invertY ? {bottom: posY} : {top: posY};
+        const xRes = invertX ? {right: posX} : {left: posX};
         return this.wrap({
             ...yRes,
             ...xRes,
         })
+    }
+
+    static calc(pos: number | string, offset?: UnknownAble<number>): string {
+        if (!pos || PositionUtils.isUnknown(pos)) {
+            return "auto";
+        }
+        if (offset === undefined || PositionUtils.isUnknown(offset)) {
+            return `${pos}`;
+        }
+        const left = typeof pos === "number" ? `${pos}px` : pos;
+        return `calc(${left} + ${offset}px)`;
     }
 
     static toCoord2D(pos: IPosition | D2Position): Coord2D {

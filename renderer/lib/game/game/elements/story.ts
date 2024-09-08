@@ -4,6 +4,7 @@ import {deepMerge} from "@lib/util/data";
 import {SceneAction, StoryAction} from "@lib/game/game/actions";
 import {RawData, RenderableNode} from "@lib/game/game/save/actionTree";
 import {Scene} from "@lib/game/game/elements/scene";
+import {StaticChecker} from "@lib/game/game/common/Utils";
 
 export type StoryConfig = {};
 export type ElementStateRaw = Record<string, any>;
@@ -113,15 +114,12 @@ export class Story extends Constructable<
         return this;
     }
 
-    public action(scene: Scene[] | Scene): this {
-        const scenes = Array.isArray(scene) ? scene : [scene];
-        const actions = scenes.map(s => s._sceneRoot);
-        this._action(actions);
-
-        scenes.forEach(scene => {
-            scene.registerSrc();
-        });
-
+    public entry(scene: Scene): this {
+        const actions = scene._sceneRoot;
+        this.setActions([actions]);
+        scene.registerSrc();
+        const states = new StaticChecker(scene).start();
+        console.log("check result", states);
         return this;
     }
 }

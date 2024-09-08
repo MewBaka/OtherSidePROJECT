@@ -153,7 +153,9 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
      */
     public setSrc(src: string | StaticImageData, transition?: ITransition): this {
         if (transition) {
-            this._transitionSrc(transition);
+            const copy = transition.copy();
+            copy.setSrc(Utils.srcToString(src));
+            this._transitionSrc(copy);
         }
         const action = new ImageAction<typeof ImageAction.ActionTypes.setSrc>(
             this,
@@ -305,7 +307,7 @@ export class Image extends Actionable<typeof ImageTransactionTypes> {
         return this;
     }
 
-    _$setDispose() { // @fixme: 图片在丢弃之后依旧会被保存到存档里
+    _$setDispose() {
         this.state.disposed = true;
         return this;
     }

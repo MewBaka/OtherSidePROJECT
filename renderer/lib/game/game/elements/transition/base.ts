@@ -13,6 +13,8 @@ export class Base<T extends ElementProp> implements ITransition<T> {
         return [] as T[];
     }
 
+    setSrc(src: string) {}
+
     protected requestAnimation(
         {
             start, end, duration
@@ -47,6 +49,10 @@ export class Base<T extends ElementProp> implements ITransition<T> {
             },
             ...options,
         });
+    }
+
+    copy(): ITransition<T> {
+        return new Base<T>();
     }
 }
 
