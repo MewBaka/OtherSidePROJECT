@@ -1,5 +1,5 @@
 ![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
-  
+
 <h1 align="center">OtherSideProject 「侧面PROJECT」</h1>
 
 <p align="center">全新异世冒险百合类视觉小说《侧面PROJECT》</p>
@@ -14,7 +14,8 @@
 > [!WARNING]  
 > 因更多的游戏元素需要，侧面PROJECT制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
 > Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)
-> 仓库之中，但之后不再维护。Nomen制作的Electron版本(基于NarraLeaf)将作为侧面Project的主要版本。
+> 仓库之中，但之后不再维护。Nomen制作的Electron版本将作为侧面Project的主要版本。  
+> Electron版本使用了[NarraLeaf-React](https://github.com/helloyork/narraleaf-react)框架进行开发
 >
 > Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'
 > Py引擎更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
@@ -29,12 +30,12 @@
 
 打开飞书链接时，可能要求您登录，**点击右上角的叉号即可**
 
-|    🤔     |                               GitHub                                |                               飞书                                |
-|:--------:|:-------------------------------------------------------------------:|:---------------------------------------------------------------:|
-|   世界观    | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)  | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
-|   人物设定   |                                 ---                                 |                               ---                               |
-|   策划案    |                                 ---                                 | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
-| 开发文档 |[前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                               ---                               |
+|  🤔  |                                       GitHub                                        |                                  飞书                                   |
+|:----:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+| 世界观  |      [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)       | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
+| 人物设定 |                                         ---                                         |                                  ---                                  |
+| 策划案  |                                         ---                                         | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
+| 开发文档 | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                                  ---                                  |
 
 ## 3. 捐赠
 
