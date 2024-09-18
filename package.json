@@ -21,6 +21,7 @@
     "howler": "^2.2.4",
     "lodash": "^4.17.21",
     "msgpack-lite": "^0.1.26",
+    "narraleaf-react": "^0.0.1-beta.6",
     "next-themes": "^0.3.0",
     "react-feather": "^2.0.10"
   },
@@ -35,7 +36,7 @@
     "eslint": "^9.9.1",
     "jsonc": "^2.0.0",
     "next": "^14.2.4",
-    "nextron": "^9.1.0",
+    "nextron": "^6.1.0",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

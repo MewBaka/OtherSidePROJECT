@@ -1,7 +1,15 @@
+import type {TransformDefinitions} from "narraleaf-react";
 import {
+    Align,
     Character,
+    CommonPosition,
+    CommonPositionType,
     Condition,
     Control,
+    Dissolve,
+    FadeIn,
+    GameState,
+    LiveGame,
     Menu,
     Scene,
     Script,
@@ -9,9 +17,7 @@ import {
     Story,
     Transform,
     Word
-} from "@lib/game/game/common/core";
-import {GameState, LiveGame} from "@lib/game/game/common/game";
-import type {TransformDefinitions} from "@lib/game/game/common/types";
+} from "narraleaf-react";
 
 import {
     character1,
@@ -26,9 +32,6 @@ import {
     transformShake,
     transition1
 } from "@lib/game/story/definitions";
-import {Dissolve} from "@lib/game/game/elements/transition/dissolve";
-import {FadeIn} from "@lib/game/game/elements/transition/fadeIn";
-import {Align, CommonPosition, CommonPositionType} from "@lib/game/game/elements/transform/position";
 
 const story = new Story("test");
 
@@ -217,8 +220,7 @@ scene1.action([
 
         // 从当前游戏状态中获取储存空间
         const namespace =
-            ctx.gameState.clientGame.game
-                .getLiveGame()
+            ctx.gameState
                 .getStorable()
                 .getNamespace(LiveGame.GameSpacesKey.game)
 

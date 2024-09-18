@@ -1,12 +1,12 @@
 "use client";
 
-import React, {useEffect, useState} from 'react';
-import {AnimatePresence} from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 import SplashScreen from '@/lib/ui/elements/splash-screen';
-import {useRouter} from 'next/navigation';
-import {Constants} from '@/lib/api/config';
-import Isolated from '@/lib/ui/elements/isolated';
+import { useRouter } from 'next/navigation';
+import { Constants } from '@/lib/api/config';
+import { Isolated } from 'narraleaf-react';
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function HomePage() {
         <>
             <Isolated className="bg-white">
                 <AnimatePresence>
-                    {isLoading && <SplashScreen/>}
+                    {isLoading && <SplashScreen />}
                 </AnimatePresence>
             </Isolated>
         </>
