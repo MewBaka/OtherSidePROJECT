@@ -1,15 +1,14 @@
 "use client";
 
-import {story} from "@/lib/game/story/scene1";
-import Player from "@lib/ui/components/player/Player";
-import {useGame} from "@/lib/ui/providers/game-state";
+import { story } from "@/lib/game/story/scene1";
+import { Player } from "narraleaf-react";
 
 export default function Page() {
-    const {game} = useGame();
-    console.log(game)
     return (
-        <div id={"__player_container"}>
-            <Player story={story}/>
-        </div>
+        <Player story={story} onReady={(game) => {
+            console.log("给木 is ready", game);
+            game.getLiveGame().loadStory(story);
+            game.getLiveGame().newGame();
+        }} width={"100%"} height={"100%"} />
     );
 };

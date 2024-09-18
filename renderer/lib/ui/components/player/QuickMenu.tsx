@@ -5,10 +5,9 @@ import {AnimatePresence, motion} from 'framer-motion';
 import QuickButton from '../../elements/player/quick-button';
 import {Clock, MoreHorizontal, MoreVertical, Save, Settings, SkipBack} from 'react-feather';
 import clsx from 'clsx';
-import {useGame} from '../../providers/game-state';
+import {useGame} from 'narraleaf-react';
 import {useRouter} from 'next/navigation';
 import {Constants} from '@/lib/api/config';
-import Related from '../../elements/related';
 
 export default function QuickMenu() {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -18,7 +17,7 @@ export default function QuickMenu() {
     const menuRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
-    const [afmEnabled, setAfmEnabled] = useState<boolean>(game.preference.getPreference("afm"));
+    const [afmEnabled, setAfmEnabled] = useState<boolean>(false);
 
     const toggleMenu = () => {
         setIsExpanded(!isExpanded);
@@ -28,8 +27,6 @@ export default function QuickMenu() {
     };
 
     const toggleAfm = () => {
-        game.preference.setPreference("afm", !game.preference.getPreference("afm"));
-        setAfmEnabled(game.preference.getPreference("afm"));
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,7 +53,6 @@ export default function QuickMenu() {
     }, []);
 
     return (
-        <Related>
             <div ref={menuRef} className="absolute top-4 left-4 flex flex-col space-y-3" style={{
                 zIndex: Constants.style.zIndex.QUICK_MENU
             }}>
@@ -108,6 +104,5 @@ export default function QuickMenu() {
                     )}
                 </AnimatePresence>
             </div>
-        </Related>
     );
 }

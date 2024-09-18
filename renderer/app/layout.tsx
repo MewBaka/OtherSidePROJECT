@@ -6,7 +6,6 @@ import type { Metadata } from 'next/types';
 
 import '@lib/styles/globals.css'
 import Provider from '@lib/ui/provider';
-import Main from '@lib/ui/elements/main';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +23,7 @@ export default function RootLayout({
     <html lang="en" className={clsx("h-full bg-black")}>
       <body className={clsx("h-full select-none", inter.className)}>
           <div className={clsx("")}>
-            <Provider className={clsx("flex flex-col min-h- screen h-full max-h-screen min-h-screen")}>
+            <Provider className={clsx("flex flex-col screen h-full max-h-screen min-h-screen")}>
                 {children}
             </Provider>
           </div>

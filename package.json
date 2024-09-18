@@ -21,6 +21,7 @@
     "howler": "^2.2.4",
     "lodash": "^4.17.21",
     "msgpack-lite": "^0.1.26",
+    "narraleaf-react": "^0.0.1-beta.8",
     "next-themes": "^0.3.0",
     "react-feather": "^2.0.10"
   },

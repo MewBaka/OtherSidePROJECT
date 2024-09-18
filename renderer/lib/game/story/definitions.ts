@@ -1,14 +1,14 @@
-import {Scene} from "@lib/game/game/elements/scene";
+import {Scene} from "narraleaf-react";
 import mainMenuBackground from "@/public/static/images/main-menu-background.png";
 import mainMenuBackground2 from "@/public/static/images/main-menu-background2.jpg";
-import {Character} from "@lib/game/game/elements/text";
-import {Sound, SoundType} from "@lib/game/game/elements/sound";
-import {Image} from "@lib/game/game/elements/image";
+import {Character} from "narraleaf-react";
+import {Sound, SoundType} from "narraleaf-react";
+import {Image} from "narraleaf-react";
 import ImageSpeechless from "@/public/static/images/test_speechless.png";
-import {Transform} from "@lib/game/game/elements/transform/transform";
-import type {TransformDefinitions} from "@lib/game/game/elements/transform/type";
-import {Fade} from "@lib/game/game/elements/transition/fade";
-import {Align, Coord2D} from "@lib/game/game/elements/transform/position";
+import {Transform} from "narraleaf-react";
+import type {TransformDefinitions} from "narraleaf-react";
+import {Fade} from "narraleaf-react";
+import {Align, Coord2D} from "narraleaf-react";
 
 export const scene1 = new Scene("scene1", {
     background: mainMenuBackground,
@@ -27,7 +27,6 @@ export const image2 = new Image("image_speechless", {
     src: ImageSpeechless,
     position: new Align({xalign: 0.3, yalign: 0.7, xoffset: 70}),
     scale: 0.1,
-    cache: true
 });
 export const character1 = new Character("还没有名字");
 export const character2 = new Character("我");

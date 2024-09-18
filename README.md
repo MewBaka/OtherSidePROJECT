@@ -25,12 +25,12 @@ Gitee仓库完全于GitHub仓库同步，仅用于**备份仓库**，请勿在Gi
 
 打开飞书链接时，可能要求您登录，**点击右上角的叉号即可**
 
-|    🤔     |                               GitHub                                |                               飞书                                |
-|:--------:|:-------------------------------------------------------------------:|:---------------------------------------------------------------:|
-|   世界观    | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)  | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
-|   人物设定   |                                 ---                                 |                               ---                               |
-|   策划案    |                                 ---                                 | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
-| 开发文档 |[前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                               ---                               |
+|  🤔  |                                       GitHub                                        |                                  飞书                                   |
+|:----:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+| 世界观  |      [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)       | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
+| 人物设定 |                                         ---                                         |                                  ---                                  |
+| 策划案  |                                         ---                                         | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
+| 开发文档 | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                                  ---                                  |
 
 ## 3. 捐赠
 
