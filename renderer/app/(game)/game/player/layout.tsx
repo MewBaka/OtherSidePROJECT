@@ -12,13 +12,15 @@ export default function Layout({
     return (
         <>
             <GameProviders>
-                <Isolated className="relative">
-                    <div
-                        className="absolute inset-0 w-full h-full flex items-left justify-start bg-white">
-                        <QuickMenu />
+                {/* <Isolated className="relative"> */}
+                    {/* <div */}
+                        {/* className="absolute inset-0 w-full h-full flex items-left justify-start bg-white"> */}
+                        <>
+                        {/* <QuickMenu /> */}
                         {children}
-                    </div>
-                </Isolated>
+                        </>
+                    {/* </div> */}
+                {/* </Isolated> */}
             </GameProviders>
         </>
     )

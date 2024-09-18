@@ -6,7 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import SplashScreen from '@/lib/ui/elements/splash-screen';
 import { useRouter } from 'next/navigation';
 import { Constants } from '@/lib/api/config';
-import { Isolated } from 'narraleaf-react';
+// import { Isolated } from 'narraleaf-react';
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -29,11 +29,11 @@ export default function HomePage() {
 
     return (
         <>
-            <Isolated className="bg-white">
+            {/* <Isolated className="bg-white"> */}
                 <AnimatePresence>
                     {isLoading && <SplashScreen />}
                 </AnimatePresence>
-            </Isolated>
+            {/* </Isolated> */}
         </>
     )
 }

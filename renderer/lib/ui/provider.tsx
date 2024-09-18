@@ -1,5 +1,5 @@
 import { NextUIProviders } from "./providers/nextui"
-import { AspectRatioProvider } from "./providers/ratio";
+// import { AspectRatioProvider } from "./providers/ratio";
 import { StrictProvider } from "./providers/strict-mode"
 import { ThemeProvider } from "./providers/theme-mode"
 import React from "react";
@@ -13,9 +13,9 @@ export default function Provider({ children, className }: {
             <StrictProvider>
                 <ThemeProvider>
                     <NextUIProviders className={className}>
-                        <AspectRatioProvider>
+                        {/* <AspectRatioProvider> */}
                             {children}
-                        </AspectRatioProvider>
+                        {/* </AspectRatioProvider> */}
                     </NextUIProviders>
                 </ThemeProvider>
             </StrictProvider>
