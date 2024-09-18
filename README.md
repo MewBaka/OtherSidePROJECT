@@ -1,5 +1,3 @@
-![](https://github.com/user-attachments/assets/a0202b53-1e11-482a-ac8d-b1fdefbc1828)
-
 <h1 align="center">OtherSideProject 「侧面PROJECT」</h1>
 
 <p align="center">全新异世冒险百合类视觉小说《侧面PROJECT》</p>
@@ -7,22 +5,19 @@
 <div align=center>
   <img src="https://img.shields.io/github/license/mewbaka/othersideproject">
   <img src="https://img.shields.io/badge/language-TypeScript-brightgreen">
-  <img src="https://img.shields.io/github/release/mewbaka/othersideproject.svg">
   <img src="https://img.shields.io/github/stars/mewbaka/othersideproject">
+  <a href='https://gitee.com/Wangs-official/OtherSideProject/stargazers'><img src='https://gitee.com/Wangs-official/OtherSideProject/badge/star.svg?theme=white' alt='star'></img></a>
 </div>
-
-> [!WARNING]  
-> 因更多的游戏元素需要，侧面PROJECT制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
-> Py版本的源代码仍然保留于[`MewBaka/OtherSideProject-RenPy`](https://github.com/MewBaka/OtherSideProject-RenPy)
-> 仓库之中，但之后不再维护。Nomen制作的Electron版本将作为侧面Project的主要版本。  
-> Electron版本使用了[NarraLeaf-React](https://github.com/helloyork/narraleaf-react)框架进行开发
->
-> Ren'Py似乎无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'
-> Py引擎更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
 
 ## 1. 开发
 
-请查看[NarraLeaf语义规定](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md)
+请查看[NarraLeaf语义规定](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) 或查看[NarraLeaf官方仓库](https://github.com/helloyork/narraleaf-react)提供的文档
+
+### 1.1 在Gitee之上的同步仓库
+
+Gitee仓库完全于GitHub仓库同步，仅用于**备份仓库**，请勿在Gitee仓库提交任何代码或打开任何ISSUES，我们不予受理。
+
+[![WangZiXu2009/侧面PROJECT](https://gitee.com/Wangs-official/OtherSideProject/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/Wangs-official/OtherSideProject)
 
 ## 2. 文档以及设定
 
@@ -47,7 +42,7 @@
 
 ## 4. 开发周期
 
-**正式发布**：20250801
+**正式发布**：20250801（预计）
 
 ## 5. 适用平台以及分发平台
 
@@ -74,7 +69,7 @@ Nextron
 
 ### 6.1 游戏开发
 
-**代码设计/开发**：Nomen
+**代码设计/开发**：Nomen，WangZixu_旭
 
 **网站开发**：WangZixu_旭
 
@@ -108,7 +103,7 @@ Nextron
 
 ### 7.1 OtherSideProject-RenPy (R版)
 
-已废弃
+已废弃，现已放置到 MewBaka/OtherSideProject-RenPy
 
 ### 7.2 OtherSideProject-WebGAL（W版）
 
@@ -198,6 +193,12 @@ LGBT 群体的看法和感受，并充分理解这类内容可能不适合所有
 
 ### 9.1 昕夕亭——Minecraft服务器
 
+> Made with Love. 💖
+
 点击链接火速进入：https://docs.mc.qiusyan.top/
 
-> Made with Love. 💖
+### 9.2 Amemei Lists
+
+> 一个不知名的小游戏网站
+
+点击链接进入：https://amemei-lists.top/
