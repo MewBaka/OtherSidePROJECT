@@ -33,6 +33,10 @@ import {
     transition1
 } from "@lib/game/story/definitions";
 
+type GameNameSpaceContext = {
+    number: number;
+};
+
 const story = new Story("test");
 
 const YouAreCorrect = character2.say("恭喜你！")
@@ -222,7 +226,7 @@ scene1.action([
         const namespace =
             ctx.gameState
                 .getStorable()
-                .getNamespace(LiveGame.GameSpacesKey.game)
+                .getNamespace<GameNameSpaceContext>(LiveGame.GameSpacesKey.game)
 
         // 选择一个数字
         const availableNumbers = [3, 6, 8];
@@ -267,7 +271,7 @@ scene1.action([
 
 function isNumberCorrect(gameState: GameState, number: number) {
     const namespace =
-        gameState.getStorable().getNamespace("game");
+        gameState.getStorable().getNamespace<GameNameSpaceContext>("game");
     return namespace.get("number") === number;
 }
 
