@@ -5,7 +5,7 @@ import { Player } from "narraleaf-react";
 
 export default function Page() {
     return (
-        <Player story={story} onReady={(game) => {
+        <Player story={story} onReady={({game}) => {
             console.log("给木 is ready", game);
             game.getLiveGame().loadStory(story);
             game.getLiveGame().newGame();
