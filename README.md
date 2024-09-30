@@ -21,22 +21,11 @@ Gitee仓库完全于GitHub仓库同步，仅用于**备份仓库**，请勿在Gi
 
 ## 2. 文档以及设定
 
-推荐您前往**飞书**查看这些内容，至少很舒服
-
-打开飞书链接时，可能要求您登录，**点击右上角的叉号即可**
-
-|  🤔  |                                       GitHub                                        |                                  飞书                                   |
-|:----:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| 世界观  |      [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/World.md)       | [前往](https://fcny1b8pc03m.feishu.cn/wiki/A4JjwqW2JiweUokbRV8c39Xxnbd) |
-| 人物设定 |                                         ---                                         |                                  ---                                  |
-| 策划案  |                                         ---                                         | [前往](https://fcny1b8pc03m.feishu.cn/wiki/J53DwMKXSiDQLDkkS7acASpNnqh) |
-| 开发文档 | [前往](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) |                                  ---                                  |
+文档已迁移到Wiki中，点击链接前往：https://github.com/MewBaka/OtherSideProject/wiki
 
 ## 3. 捐赠
 
 本游戏使用捐赠作为主要收入来源，您可以前往我们的爱发电来支持我们
-
-<img width="92" alt="image" src="https://github.com/user-attachments/assets/6ac597f5-c699-49ea-b33d-e8628b32d7e3">
 
 [点击此处前往](https://afdian.com/a/OtherSideProject)
 
@@ -88,8 +77,6 @@ Nextron
 ### 6.3 剧情/宣发脚本设计
 
 **人物设定，剧情脚本编写**：MewStory团队（WangZixu_旭，瓦西里.舒克申_Official，神郭嘉，程方宇 Cecffrvy，Bika）
-
-![](https://github.com/user-attachments/assets/24d3b1f4-29ac-4da0-851b-73c58aedbfcc)
 
 ### 6.4 贡献者
 
