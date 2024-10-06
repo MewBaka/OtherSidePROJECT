@@ -41,15 +41,14 @@ const story = new Story("test");
 
 const YouAreCorrect = character2.say("恭喜你！")
     .say("你猜对了！")
-    .toActions();
+    ;
 
 const checkNumber = (n: number) => new Condition()
     .If(({gameState}) => {
             return isNumberCorrect(gameState, n);
         },
-        YouAreCorrect
-    ).Else(character2.say("很遗憾，你猜错了").toActions())
-    .toActions();
+        [YouAreCorrect]
+    ).Else([character2.say("很遗憾，你猜错了")]);
 
 const scene3 = new Scene("scene3", {
     background: mainMenuBackground,
@@ -71,7 +70,7 @@ scene3.action([
         },
     ], {
         sync: true,
-    })).toActions(),
+    })),
 
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
         {
@@ -86,16 +85,16 @@ scene3.action([
         },
     ], {
         sync: true,
-    })).toActions(),
+    })),
     image1.hide({
         ease: "linear",
         duration: 2000,
-    }).toActions(),
+    }),
     new Character(null)
         .say("hello")
         .say("world")
-        .toActions(),
-    scene3.deactivate().toActions(),
+        ,
+    scene3.deactivate(),
 ]);
 
 const scene2 = new Scene("scene2", {
@@ -108,11 +107,11 @@ const scene2 = new Scene("scene2", {
 scene2.action([
     new Character(null)
         .say("hello")
-        .toActions(),
-    // scene2.sleep(1000).toActions(),
+        ,
+    // scene2.sleep(1000),
     // image1_2.show({
     //     duration: 0.5,
-    // }).toActions(),
+    // }),
     image1.show(new Transform<TransformDefinitions.ImageTransformProps>([
         {
             props: {
@@ -128,74 +127,74 @@ scene2.action([
         },
     ], {
         sync: true,
-    })).toActions(),
+    })),
 
     new Character(null)
         .say("world")
-        .toActions(),
+        ,
     image1.hide({
         ease: "linear",
         duration: 2000,
-    }).toActions(),
+    }),
 
-    // scene2.setBackgroundMusic(scene2Bgm).toActions(),
+    // scene2.setBackgroundMusic(scene2Bgm),
 
     scene2.jumpTo(scene3, {
         transition: new Dissolve(2000, mainMenuBackground)
-    }).toActions(),
+    }),
 ]);
 
 
 scene1.action([
+    new Character(null)
+        .say([
+            new Word("框架测试剧情，并非最终版本", {color: "#f00"}),
+        ]),
+
     image1.show({
         ease: "circOut",
         duration: 500,
         sync: true,
-    }).toActions(),
+    }),
 
 
     // 我们不再需要这个图片，所以我们需要释放其资源
     // 在释放之后调用其任何方法都是不合法并且不安全的
-    image2.dispose().toActions(),
+    image2.dispose(),
     character1
-        .say("你好！")
-        .toActions(),
-    // scene1.sleep(200000).toActions(),
+        .say("你好！"),
+    // scene1.sleep(200000),
     Control.allAsync([
-        sound1.play().toActions(),
-    ]).toActions(),
+        sound1.play(),
+    ]),
 
-    // image2.show().toActions(),
+    // image2.show(),
 
-    scene1.applyTransform(transformShake).toActions(),
+    scene1.applyTransform(transformShake),
 
 
-    character1.say("你最近过的怎么样？")
-        .toActions(),
+    character1.say("你最近过的怎么样？"),
 
-    image1.setSrc("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", transition1).toActions(),
+    image1.setSrc("/static/images/kotoba_tcr_bingfu_lh_pm_xz.png", transition1),
 
     new Menu("我最近过的怎么样？")
         .choose("我过的很好", [
             character2.say("是吗？")
                 .say("那真的是太棒了")
-                .toActions()
         ])
         .choose("还不错吧", [
             character2.say("我也一样")
-                .say("过的还不错")
-                .toActions(),
+                .say("过的还不错"),
 
-            image1.hide().toActions(),
+            image1.hide(),
 
             scene1.jumpTo(
                 scene2,
                 {
                     transition: new FadeIn("left", 30, 2000)
                 }
-            ).toActions(),
-        ])
-        .toActions(),
+            ),
+        ]),
 
 
     image1.applyTransform(new Transform<TransformDefinitions.ImageTransformProps>([
@@ -210,14 +209,14 @@ scene1.action([
         },
     ], {
         sync: true,
-    })).toActions(),
+    })),
 
     character2
         .say("那你愿不愿意陪我玩一个游戏？")
         .say("听好游戏规则")
         .say([new Word("我会思考一个介于 "), new Word("1 和 10", {color: "#f00"}), "之间的数字"])
-        .say("你要猜这个数字是多少")
-        .toActions(),
+        .say("你要猜这个数字是多少"),
+    
     new Script((ctx) => {
         // 由于游戏脚本创建必须没有副作用，所以这里不能直接修改游戏状态
         // 使用Script来更新状态，使用Storable来管理状态
@@ -240,24 +239,22 @@ scene1.action([
         // 带有副作用的脚本必须返回一个清理函数
         // 清理函数会在某种情况下被调用，以清理脚本中的副作用
         return () => namespace.set("number", void 0);
-    }).toActions(),
+    }),
 
     new Menu(new Sentence(character2, "那么，你猜这个数字是多少？"))
         .choose({
-            action: checkNumber(3),
+            action: [checkNumber(3)],
             prompt: "3"
         })
         .choose({
-            action: checkNumber(6),
+            action: [checkNumber(6)],
             prompt: "6"
         })
         .choose({
-            action: checkNumber(8),
+            action: [checkNumber(8)],
             prompt: "8"
-        })
-        .toActions(),
-    character2.say("游戏结束！")
-        .toActions(),
+        }),
+    character2.say("游戏结束！"),
 
     // 直接通过jumpTo方法跳转到下一个场景
     // 该方法会卸载当前场景，这意味着该方法之后的所有操作都不会被执行
@@ -266,7 +263,7 @@ scene1.action([
         {
             transition: new Dissolve(2000)
         }
-    ).toActions(),
+    ),
 ]);
 
 function isNumberCorrect(gameState: GameState, number: number) {
