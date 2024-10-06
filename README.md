@@ -11,7 +11,7 @@
 
 ## 1. 开发
 
-请查看[NarraLeaf语义规定](https://github.com/MewBaka/OtherSideProject/blob/main/doc/DevDoc-NarraLeaf.md) 或查看[NarraLeaf官方仓库](https://github.com/helloyork/narraleaf-react)提供的文档
+参阅[NarraLeaf-React](https://github.com/NarraLeaf/narraleaf-react)
 
 ### 1.1 在Gitee之上的同步仓库
 
