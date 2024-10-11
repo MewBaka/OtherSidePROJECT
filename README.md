@@ -1,6 +1,6 @@
 <div align=center>
 <img src = 'https://s3.bmp.ovh/imgs/2024/10/06/7ae3ce3722e60124.png' width=200px>
-<h1>OtherSideProject 「侧面PROJECT」</h1>
+<h1>OtherSidePROJECT 「侧面PROJECT」</h1>
 <p>全新异世冒险类视觉小说《侧面PROJECT》</p>
 <img src="https://img.shields.io/github/license/mewbaka/othersideproject">
 <img src="https://img.shields.io/badge/language-TypeScript-brightgreen">
@@ -154,7 +154,7 @@ https://github.com/MewBaka/OtherSideProject-RenPy
 
 根据 MPL-2.0 许可证规定，您不能删除或篡改原始版权声明，但是您可以在文件下方填写属于您的版权声明
 
-请保留原版权声明：**Copyright © 2024 MewBaka&OtherSideProject, All Rights** **Reserved**.
+请保留原版权声明：**Copyright © 2024 MewBaka&OtherSidePROJECT, All Rights** **Reserved**.
 
 您不得以此项目盈利（如二次倒卖），若发现，团队有权利向平台方举报并要求停止您的侵权行为
 
