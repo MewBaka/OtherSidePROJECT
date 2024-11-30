@@ -17,7 +17,7 @@
     "electron-serve": "^1.3.0",
     "electron-store": "^8.2.0",
     "msgpack-lite": "^0.1.26",
-    "narraleaf-react": "^0.1.1",
+    "narraleaf-react": "^0.2.0",
     "next-themes": "^0.3.0",
     "react-feather": "^2.0.10"
   },
