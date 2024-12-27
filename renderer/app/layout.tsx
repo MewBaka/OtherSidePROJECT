@@ -20,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={clsx("h-full bg-black")}>
-      <body className={clsx("h-full select-none", inter.className)}>
-          <div className={clsx("")}>
-            <Provider className={clsx("flex flex-col screen h-full max-h-screen min-h-screen")}>
+    <html lang="en" className={clsx("w-full h-full bg-black")}>
+      <body className={clsx("w-full h-full select-none", inter.className)}>
+          <div className={clsx("w-full h-full")}>
+            <Provider className={clsx("w-full h-full")}>
                 {children}
             </Provider>
           </div>

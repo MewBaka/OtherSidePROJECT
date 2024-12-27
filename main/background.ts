@@ -38,8 +38,11 @@ if (isProd) {
 
     if (!isProd || isDevMode) {
         mainWindow.webContents.on('before-input-event', (_, input) => {
-            if (input.key === 'F12') {
+            if (input.key === 'F12' && input.type === 'keyDown') {
                 mainWindow.webContents.openDevTools();
+            }
+            if (input.key === 'F11' && input.type === 'keyDown') {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
             }
         });
     }
@@ -57,7 +60,3 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 })
-
-ipcMain.on('message', async (event, arg) => {
-    event.reply('message', `${arg} World!`)
-});
