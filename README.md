@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/github/stars/mewbaka/othersideproject">
 <a href='https://gitee.com/Wangs-official/OtherSideProject/stargazers'><img src='https://gitee.com/Wangs-official/OtherSideProject/badge/star.svg?theme=white' alt='star'></img></a>
 <hr>
-<b>即便如此，我们也无法确定是否可以正常发布。但是NarraLeaf是可以正常发布的</b>
-<b>不必担心，我们仍在努力的去写剧情</b>
+<b>即便如此，我们也无法确定是否可以正常发布。但是NarraLeaf是可以正常发布的</b><br>
+<b>不必担心，我们仍在努力的去写剧情</b><br>
 <b>From WangZixu 2025.01.05</b>
 </div>
