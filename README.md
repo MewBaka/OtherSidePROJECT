@@ -14,12 +14,13 @@
 
 本游戏使用[NarraLeaf-React](https://github.com/NarraLeaf/narraleaf-react)开发
 
-游戏基于 [MPL-2.0 license](https://github.com/MewBaka/OtherSideProject#MPL-2.0-1-ov-file)  开放源代码，请在 遵守许可证规定以及遵守国家法律法规的情况下进行二次开发/创作活动
+游戏基于 [MPL-2.0 license](https://github.com/MewBaka/OtherSideProject#MPL-2.0-1-ov-file)  开放源代码，请在
+遵守许可证规定以及遵守国家法律法规的情况下进行二次开发/创作活动
 
- 本游戏（或NarraLeaf引擎）包括了数个许可证授权的免费项目，包括MIT许可证和GNU宽松通用公共许可证，具体使用的软件列表以及源代码链接，请在下方查看
+本游戏（或NarraLeaf引擎）包括了数个许可证授权的免费项目，包括MIT许可证和GNU宽松通用公共许可证，具体使用的软件列表以及源代码链接，请在下方查看
 
-|     名称      |              链接              |
-| :-----------: | :----------------------------: |
+|      名称       |               链接               |
+|:-------------:|:------------------------------:|
 | Framer Motion | https://www.framer.com/motion/ |
 |   Howler.js   |     https://howlerjs.com/      |
 
@@ -30,7 +31,7 @@
 若您是这些资源的创作者，但不同意本游戏使用您的素材，请您及时联系我们，我们会在下个推送版本内删除这些素材
 
 | 名称 | 原链接 | 文件路径 | 首次出现位置 |
-| :--: | :----: | :------: | :----------: |
+|:--:|:---:|:----:|:------:|
 
 ### 🇨🇳 在Gitee之上的同步仓库
 
@@ -122,9 +123,8 @@ Q78KG
 ### 🌏 OtherSideProject-RenPy (R版)
 
 > [!WARNING]  
-> 因更多的游戏元素需要，侧面PROJECT制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'Py版本的源代码仍然保留于MewBaka组织之中，但之后不再维护。Nomen制作的Electron（NarraLeaf）版本将作为侧面PROJECT的主要版本
->
-> Ren'Py版本无法胜任更多更丰富的游戏元素，单是游戏的过渡动画就足矣让开发部掉一堆头发。我们认为，Ren'Py版本更适合开发轻量级的GalGame游戏（或是视觉小说）。而Electron版本的好处在于是使用前端技术开发，在保证质量的同时也可以加入更多的游戏元素。因此，我们停止了对于Ren'Py版本的所有支持
+> 因更多的游戏元素需要，侧面PROJECT制作组于2024.8.20停止了对于Ren'Py版本的所有支持，Ren'
+> Py版本的源代码仍然保留于MewBaka组织之中，但之后不再维护。Nomen制作的Electron（NarraLeaf）版本将作为侧面PROJECT的主要版本
 
 https://github.com/MewBaka/OtherSideProject-RenPy
 
@@ -150,7 +150,8 @@ https://github.com/MewBaka/OtherSideProject-RenPy
 
 本游戏的部分内容使用了互联网公开的免费商用型音效库/图标库/背景图像库，具体信息请在 总览-公开资源的使用 位置查看
 
-其他内容均为 **侧面PROJECT制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用、非商用（需署名）** 范围，不允许**商用**
+其他内容均为 **侧面PROJECT制作团队** 以及 **MewBaka笨猫** 团队独有版权作品，允许 **个人使用、非商用（需署名）** 范围，不允许*
+*商用**
 
 根据 MPL-2.0 许可证规定，您不能删除或篡改原始版权声明，但是您可以在文件下方填写属于您的版权声明
 
